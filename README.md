@@ -9,7 +9,7 @@ O EventUSP consistirá de um site para ampliar o acesso e divulgação dos event
 
 O site terá como features:
   - Postagem de eventos com data e horário, localização, organizador e outros detalhes do evento (cardápio, colaboradores, etc.).
-  - Confirmação se você vai ou não, também podendo ver quantas pessoas vão.
+  - Confirmação de participação, também podendo ver quantas pessoas vão.
   - Avaliações com comentários de outras pessoas sobre edições anteriores desse mesmo evento.
   - Calendário.
 
