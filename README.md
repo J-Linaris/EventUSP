@@ -5,13 +5,13 @@ Esse site tem o objetivo de reunir eventos da Universidade de São Paulo (USP) e
 
 ## Sobre
 
-O projeto de MAC0350 - a ser nomeado - consistirá de um site para ampliar os horizontes dos eventos universitários.
+O EventUSP consistirá de um site para ampliar o acesso e divulgação dos eventos universitários situados em todos os campus da Universidade de São Paulo.
 
 O site terá como features:
-  Postagem de eventos com data, localização e outras informações.
-  Confirmação se você vai ou não, também podendo ver quantas pessoas vão.
-  Avaliações com comentários de outras pessoas sobre edições anteriores desse mesmo evento.
-  Jogo do pontinho.
+  - Postagem de eventos com data e horário, localização, organizador e outros detalhes do evento (cardápio, colaboradores, etc.).
+  - Confirmação se você vai ou não, também podendo ver quantas pessoas vão.
+  - Avaliações com comentários de outras pessoas sobre edições anteriores desse mesmo evento.
+  - Calendário.
 
 GPT: Uma descrição mais detalhada sobre o projeto. Fale sobre o propósito, a motivação e os objetivos principais do site. Você pode incluir também o público-alvo e como o projeto foi desenvolvido.
 
