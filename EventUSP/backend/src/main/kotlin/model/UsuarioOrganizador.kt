@@ -11,8 +11,9 @@ class UsuarioOrganizador(
     senha: String,
     var cpf: String,
     var instituicao: String? = null,
-    var telefone: String? = null
-) : UsuarioParticipante(id, nome, email, senha) {
+    var telefone: String? = null,
+    fotoPerfil: String? = null
+) : UsuarioParticipante(id, nome, email, senha, fotoPerfil) {
     
     var eventosOrganizados: MutableList<Evento> = mutableListOf()
     
@@ -22,9 +23,8 @@ class UsuarioOrganizador(
      * @param descricao Descrição do evento
      * @param dataHora Data e hora do evento
      * @param localizacao Localização do evento
-     * @param imagem URL da imagem do evento
+     * @param imagemCapa URL da imagem de capa do evento
      * @param categoria Categoria do evento
-     * @param capacidadeMaxima Capacidade máxima de participantes
      * @return O evento criado
      */
     fun criarEvento(
@@ -32,18 +32,16 @@ class UsuarioOrganizador(
         descricao: String,
         dataHora: java.time.LocalDateTime,
         localizacao: String,
-        imagem: String,
-        categoria: String,
-        capacidadeMaxima: Int
+        imagemCapa: String,
+        categoria: String
     ): Evento {
         val evento = Evento(
             titulo = titulo,
             descricao = descricao,
             dataHora = dataHora,
             localizacao = localizacao,
-            imagem = imagem,
+            imagemCapa = imagemCapa,
             categoria = categoria,
-            capacidadeMaxima = capacidadeMaxima,
             organizador = this
         )
         eventosOrganizados.add(evento)
@@ -69,9 +67,8 @@ class UsuarioOrganizador(
      * @param descricao Nova descrição (opcional)
      * @param dataHora Nova data e hora (opcional)
      * @param localizacao Nova localização (opcional)
-     * @param imagem Nova URL de imagem (opcional)
+     * @param imagemCapa Nova URL de imagem de capa (opcional)
      * @param categoria Nova categoria (opcional)
-     * @param capacidadeMaxima Nova capacidade máxima (opcional)
      * @return true se o evento foi atualizado com sucesso, false caso contrário
      */
     fun atualizarEvento(
@@ -80,9 +77,8 @@ class UsuarioOrganizador(
         descricao: String? = null,
         dataHora: java.time.LocalDateTime? = null,
         localizacao: String? = null,
-        imagem: String? = null,
-        categoria: String? = null,
-        capacidadeMaxima: Int? = null
+        imagemCapa: String? = null,
+        categoria: String? = null
     ): Boolean {
         // Verifica se o evento pertence a este organizador
         if (evento.organizador != this) return false
@@ -92,11 +88,43 @@ class UsuarioOrganizador(
         descricao?.let { evento.descricao = it }
         dataHora?.let { evento.dataHora = it }
         localizacao?.let { evento.localizacao = it }
-        imagem?.let { evento.imagem = it }
+        imagemCapa?.let { evento.imagemCapa = it }
         categoria?.let { evento.categoria = it }
-        capacidadeMaxima?.let { evento.capacidadeMaxima = it }
         
         return true
+    }
+    
+    /**
+     * Adiciona uma imagem adicional a um evento
+     * @param evento O evento a receber a imagem
+     * @param url URL da imagem
+     * @param descricao Descrição opcional da imagem
+     * @param ordem Ordem de exibição da imagem
+     * @return A imagem adicionada ou null se o evento não pertencer a este organizador
+     */
+    fun adicionarImagemAoEvento(
+        evento: Evento,
+        url: String,
+        descricao: String? = null,
+        ordem: Int = evento.imagensAdicionais.size
+    ): ImagemEvento? {
+        // Verifica se o evento pertence a este organizador
+        if (evento.organizador != this) return null
+        
+        return evento.adicionarImagem(url, descricao, ordem)
+    }
+    
+    /**
+     * Remove uma imagem adicional de um evento
+     * @param evento O evento que contém a imagem
+     * @param imagem A imagem a ser removida
+     * @return true se a imagem foi removida com sucesso, false caso contrário
+     */
+    fun removerImagemDoEvento(evento: Evento, imagem: ImagemEvento): Boolean {
+        // Verifica se o evento pertence a este organizador
+        if (evento.organizador != this) return false
+        
+        return evento.removerImagem(imagem)
     }
     
     override fun equals(other: Any?): Boolean {

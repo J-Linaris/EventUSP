@@ -1,6 +1,7 @@
 package br.usp.eventUSP.model
 
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 /**
@@ -12,13 +13,19 @@ class Evento(
     var descricao: String,
     var dataHora: LocalDateTime,
     var localizacao: String,
-    var imagem: String,
+    var imagemCapa: String, // Renomeado para imagemCapa para maior clareza
     var categoria: String,
-    var capacidadeMaxima: Int,
     var organizador: UsuarioOrganizador
 ) {
     var participantesInteressados: MutableList<UsuarioParticipante> = mutableListOf()
     var numeroLikes: Int = 0
+    var reviews: MutableList<Review> = mutableListOf()
+    var imagensAdicionais: MutableList<ImagemEvento> = mutableListOf()
+    
+    // Para compatibilidade com o código existente
+    var imagem: String
+        get() = imagemCapa
+        set(value) { imagemCapa = value }
     
     /**
      * Adiciona um participante interessado no evento
@@ -62,11 +69,85 @@ class Evento(
     }
     
     /**
-     * Verifica se o evento está lotado
-     * @return true se o evento está lotado, false caso contrário
+     * Verifica se já se passaram pelo menos 48 horas desde o fim do evento
+     * @return true se já se passaram pelo menos 48 horas, false caso contrário
      */
-    fun estaLotado(): Boolean {
-        return participantesInteressados.size >= capacidadeMaxima
+    fun passaram48HorasDesdeOFim(): Boolean {
+        if (!jaOcorreu()) return false
+        val horasPassadas = ChronoUnit.HOURS.between(dataHora, LocalDateTime.now())
+        return horasPassadas >= 48
+    }
+    
+    /**
+     * Adiciona uma review ao evento
+     * @param participante O usuário participante que está adicionando a review
+     * @param nota A nota (de 0 a 5) dada ao evento
+     * @param comentario O comentário sobre o evento
+     * @return A review criada ou null se não foi possível criar
+     */
+    fun adicionarReview(participante: UsuarioParticipante, nota: Int, comentario: String): Review? {
+        // Verifica se o participante está na lista de interessados
+        if (!participantesInteressados.contains(participante)) return null
+        
+        // Verifica se já se passaram 48 horas desde o fim do evento
+        if (!passaram48HorasDesdeOFim()) return null
+        
+        // Verifica se o participante já fez uma review
+        if (reviews.any { it.participante == participante }) return null
+        
+        val review = Review(
+            evento = this,
+            participante = participante,
+            nota = nota,
+            comentario = comentario
+        )
+        
+        reviews.add(review)
+        return review
+    }
+    
+    /**
+     * Calcula a média das notas das reviews
+     * @return A média das notas ou null se não houver reviews
+     */
+    fun mediaDasReviews(): Double? {
+        if (reviews.isEmpty()) return null
+        return reviews.map { it.nota.toDouble() }.average()
+    }
+    
+    /**
+     * Adiciona uma imagem adicional ao evento
+     * @param url URL da imagem
+     * @param descricao Descrição opcional da imagem
+     * @param ordem Ordem de exibição da imagem
+     * @return A imagem adicionada
+     */
+    fun adicionarImagem(url: String, descricao: String? = null, ordem: Int = imagensAdicionais.size): ImagemEvento {
+        val imagem = ImagemEvento(
+            evento = this,
+            url = url,
+            descricao = descricao,
+            ordem = ordem
+        )
+        imagensAdicionais.add(imagem)
+        return imagem
+    }
+    
+    /**
+     * Remove uma imagem adicional do evento
+     * @param imagem A imagem a ser removida
+     * @return true se a imagem foi removida com sucesso, false caso contrário
+     */
+    fun removerImagem(imagem: ImagemEvento): Boolean {
+        return imagensAdicionais.remove(imagem)
+    }
+    
+    /**
+     * Obtém as imagens adicionais ordenadas
+     * @return Lista de imagens ordenadas pela propriedade ordem
+     */
+    fun obterImagensOrdenadas(): List<ImagemEvento> {
+        return imagensAdicionais.sortedBy { it.ordem }
     }
     
     override fun equals(other: Any?): Boolean {

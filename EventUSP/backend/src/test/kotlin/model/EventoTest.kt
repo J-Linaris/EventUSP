@@ -21,7 +21,8 @@ class EventoTest {
             email = "organizador@usp.br",
             senha = "senha123",
             cpf = "12345678901",
-            instituicao = "ICMC"
+            instituicao = "ICMC",
+            fotoPerfil = "https://exemplo.com/foto-organizador.jpg"
         )
         
         evento = Evento(
@@ -30,9 +31,8 @@ class EventoTest {
             descricao = "Workshop para iniciantes em Kotlin",
             dataHora = LocalDateTime.now().plusDays(10),
             localizacao = "ICMC - Sala 5-001",
-            imagem = "https://exemplo.com/imagem.jpg",
+            imagemCapa = "https://exemplo.com/imagem-capa.jpg",
             categoria = "Tecnologia",
-            capacidadeMaxima = 30,
             organizador = organizador
         )
         
@@ -40,7 +40,8 @@ class EventoTest {
             id = 2L,
             nome = "Participante 1",
             email = "participante1@usp.br",
-            senha = "senha456"
+            senha = "senha456",
+            fotoPerfil = "https://exemplo.com/foto-participante1.jpg"
         )
         
         participante2 = UsuarioParticipante(
@@ -57,12 +58,13 @@ class EventoTest {
         assertEquals("Workshop de Kotlin", evento.titulo)
         assertEquals("Workshop para iniciantes em Kotlin", evento.descricao)
         assertEquals("ICMC - Sala 5-001", evento.localizacao)
-        assertEquals("https://exemplo.com/imagem.jpg", evento.imagem)
+        assertEquals("https://exemplo.com/imagem-capa.jpg", evento.imagemCapa)
+        assertEquals("https://exemplo.com/imagem-capa.jpg", evento.imagem) // Verificar compatibilidade
         assertEquals("Tecnologia", evento.categoria)
-        assertEquals(30, evento.capacidadeMaxima)
         assertEquals(organizador, evento.organizador)
         assertEquals(0, evento.numeroLikes)
         assertTrue(evento.participantesInteressados.isEmpty())
+        assertTrue(evento.imagensAdicionais.isEmpty())
     }
     
     @Test
@@ -126,9 +128,8 @@ class EventoTest {
             descricao = "Este evento já ocorreu",
             dataHora = LocalDateTime.now().minusDays(1),
             localizacao = "ICMC",
-            imagem = "url.jpg",
+            imagemCapa = "url.jpg",
             categoria = "Palestra",
-            capacidadeMaxima = 50,
             organizador = organizador
         )
         
@@ -137,26 +138,95 @@ class EventoTest {
     }
     
     @Test
-    fun `deve identificar quando evento está lotado`() {
-        val eventoComCapacidade2 = Evento(
-            id = 3L,
-            titulo = "Evento Pequeno",
-            descricao = "Evento com capacidade para 2 pessoas",
+    fun `deve adicionar imagem adicional ao evento com sucesso`() {
+        val imagem = evento.adicionarImagem(
+            url = "https://exemplo.com/imagem-adicional.jpg",
+            descricao = "Descrição da imagem"
+        )
+        
+        assertEquals(1, evento.imagensAdicionais.size)
+        assertEquals(evento, imagem.evento)
+        assertEquals("https://exemplo.com/imagem-adicional.jpg", imagem.url)
+        assertEquals("Descrição da imagem", imagem.descricao)
+        assertEquals(0, imagem.ordem) // Primeira imagem recebe ordem 0
+    }
+    
+    @Test
+    fun `deve adicionar múltiplas imagens com ordem correta`() {
+        val imagem1 = evento.adicionarImagem("https://exemplo.com/imagem1.jpg")
+        val imagem2 = evento.adicionarImagem("https://exemplo.com/imagem2.jpg")
+        val imagem3 = evento.adicionarImagem("https://exemplo.com/imagem3.jpg")
+        
+        assertEquals(3, evento.imagensAdicionais.size)
+        assertEquals(0, imagem1.ordem)
+        assertEquals(1, imagem2.ordem)
+        assertEquals(2, imagem3.ordem)
+    }
+    
+    @Test
+    fun `deve adicionar imagem com ordem personalizada`() {
+        val imagem = evento.adicionarImagem(
+            url = "https://exemplo.com/imagem-especial.jpg",
+            ordem = 5
+        )
+        
+        assertEquals(5, imagem.ordem)
+    }
+    
+    @Test
+    fun `deve remover imagem do evento com sucesso`() {
+        val imagem = evento.adicionarImagem("https://exemplo.com/imagem-para-remover.jpg")
+        
+        assertEquals(1, evento.imagensAdicionais.size)
+        assertTrue(evento.removerImagem(imagem))
+        assertEquals(0, evento.imagensAdicionais.size)
+    }
+    
+    @Test
+    fun `deve retornar falso ao tentar remover imagem que não existe no evento`() {
+        val outroEvento = Evento(
+            id = 99L,
+            titulo = "Outro Evento",
+            descricao = "Descrição",
             dataHora = LocalDateTime.now().plusDays(5),
-            localizacao = "ICMC",
-            imagem = "url.jpg",
-            categoria = "Workshop",
-            capacidadeMaxima = 2,
+            localizacao = "Local",
+            imagemCapa = "url.jpg",
+            categoria = "Categoria",
             organizador = organizador
         )
         
-        assertFalse(eventoComCapacidade2.estaLotado())
+        val imagemDeOutroEvento = ImagemEvento(
+            evento = outroEvento,
+            url = "https://exemplo.com/imagem-outro-evento.jpg"
+        )
         
-        eventoComCapacidade2.adicionarParticipanteInteressado(participante1)
-        assertFalse(eventoComCapacidade2.estaLotado())
+        assertFalse(evento.removerImagem(imagemDeOutroEvento))
+    }
+    
+    @Test
+    fun `deve obter imagens ordenadas corretamente`() {
+        // Adiciona imagens fora de ordem
+        val imagem2 = evento.adicionarImagem("https://exemplo.com/imagem2.jpg", ordem = 2)
+        val imagem0 = evento.adicionarImagem("https://exemplo.com/imagem0.jpg", ordem = 0)
+        val imagem1 = evento.adicionarImagem("https://exemplo.com/imagem1.jpg", ordem = 1)
         
-        eventoComCapacidade2.adicionarParticipanteInteressado(participante2)
-        assertTrue(eventoComCapacidade2.estaLotado())
+        val imagensOrdenadas = evento.obterImagensOrdenadas()
+        
+        assertEquals(3, imagensOrdenadas.size)
+        assertEquals(imagem0, imagensOrdenadas[0])
+        assertEquals(imagem1, imagensOrdenadas[1])
+        assertEquals(imagem2, imagensOrdenadas[2])
+    }
+    
+    @Test
+    fun `deve manter compatibilidade entre imagemCapa e imagem`() {
+        // Definir imagem pelo campo imagemCapa
+        evento.imagemCapa = "https://exemplo.com/nova-capa.jpg"
+        assertEquals("https://exemplo.com/nova-capa.jpg", evento.imagem)
+        
+        // Definir imagem pelo campo imagem (compatibilidade)
+        evento.imagem = "https://exemplo.com/outra-capa.jpg"
+        assertEquals("https://exemplo.com/outra-capa.jpg", evento.imagemCapa)
     }
     
     @Test
@@ -167,9 +237,8 @@ class EventoTest {
             descricao = "Outra descrição",
             dataHora = LocalDateTime.now().plusDays(20),
             localizacao = "Outro local",
-            imagem = "outra-imagem.jpg",
+            imagemCapa = "outra-imagem.jpg",
             categoria = "Outra categoria",
-            capacidadeMaxima = 10,
             organizador = organizador
         )
         
@@ -179,9 +248,8 @@ class EventoTest {
             descricao = "Workshop para iniciantes em Kotlin",
             dataHora = evento.dataHora,
             localizacao = evento.localizacao,
-            imagem = evento.imagem,
+            imagemCapa = evento.imagemCapa,
             categoria = evento.categoria,
-            capacidadeMaxima = evento.capacidadeMaxima,
             organizador = organizador
         )
         
