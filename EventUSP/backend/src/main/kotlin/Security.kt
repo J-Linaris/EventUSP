@@ -1,4 +1,4 @@
-package com.example
+package br.usp.eventUSP
 
 import io.ktor.http.*
 import io.ktor.server.application.*
