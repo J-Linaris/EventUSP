@@ -1,0 +1,42 @@
+#navBarComponent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3vh 2vw;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #151515;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.navbarButtonsComponent {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.navbarButton{
+    background-color: #151515;
+}
+
+.searchBar{
+    background-color: #151515;
+    border-radius: 10px;
+    width: 12rem;
+    height:  1.3rem;
+    border-color: #303030;
+    border-style: solid;
+}
+
+.searchBar:focus {
+    outline: none;
+}
+
+#logo {
+    height: 2.7em;
+    will-change: filter;
+    transition: filter 300ms;
+}
+#logo:hover {
+    filter: drop-shadow(0 0 0.7rem #B60101);
+}
