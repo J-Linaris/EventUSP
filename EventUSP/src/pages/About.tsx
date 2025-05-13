@@ -11,7 +11,6 @@ import "./basicStyle.css"
 // import eventUSPLogo from "./assets/EventUSPLogoSemFundo.png";
 // import home from "./pages/Home.tsx";
 // import login from "./pages/Login.tsx";
-// import about from "./pages/About.tsx";
 
 function About() {
     return (

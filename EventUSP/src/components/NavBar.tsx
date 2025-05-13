@@ -27,9 +27,9 @@ function Navbar() {
 
             {/* Botões alinhados da direita para a esquerda */}
             <div className="navbarButtonsComponent">
-                <Link to="/login">
+                <Link to="/">
                     <button className="navbarButton">
-                        Login
+                        Página Inicial
                     </button>
                 </Link>
                 <Link to="/meusEventos">
@@ -45,6 +45,11 @@ function Navbar() {
                 <Link to="/about">
                     <button className="navbarButton">
                         Sobre nós
+                    </button>
+                </Link>
+                <Link to="/login">
+                    <button className="navbarButton">
+                        Login
                     </button>
                 </Link>
             </div>
