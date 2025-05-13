@@ -8,17 +8,16 @@ import "./basicStyle.css"
 //     // Navigate,
 //     // Outlet
 // } from 'react-router-dom';
-// import eventUSPLogo from "./assets/EventUSPLogoSemFundo.png";
-// import home from "./pages/Home.tsx";
-// import login from "./pages/Login.tsx";
-// import about from "./pages/About.tsx";
+import Navbar from "../components/NavBar.tsx";
 
 function Home() {
     return (
-       <div className="home-page">
-           Página Inicial
-       </div>
-
+        <>
+           <div className="home-page">
+            <Navbar />
+               Página Inicial
+           </div>
+        </>
     );
 }
 

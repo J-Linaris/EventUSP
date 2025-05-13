@@ -1,4 +1,5 @@
 import "./basicStyle.css"
+import Navbar from "../components/NavBar.tsx";
 // import {
 //     BrowserRouter,
 //     Routes,
@@ -8,15 +9,15 @@ import "./basicStyle.css"
 //     // Navigate,
 //     // Outlet
 // } from 'react-router-dom';
-// import eventUSPLogo from "./assets/EventUSPLogoSemFundo.png";
-// import home from "./pages/Home.tsx";
-// import login from "./pages/Login.tsx";
 
 function About() {
     return (
-        <div className="home-page">
-            Sobre nós
-        </div>
+        <>
+            <div className="home-page">
+                <Navbar />
+                Sobre nós
+            </div>
+        </>
     );
 }
 

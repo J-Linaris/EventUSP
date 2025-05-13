@@ -7,8 +7,7 @@ import {
     // Navigate,
     // Outlet
 } from 'react-router-dom';
-import './App.css'
-import Navbar from "./components/NavBar.tsx";
+import './App.css';
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Login from "./pages/Login.tsx";
@@ -19,7 +18,6 @@ function App() {
 
   return (
       <BrowserRouter>
-      <Navbar />
           {/* Definição das rotas */}
           <Routes>
               <Route path="/" element={<Home />} /> /* Você está definindo a rota aqui*/

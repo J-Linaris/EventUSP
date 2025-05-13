@@ -1,4 +1,5 @@
 import "./basicStyle.css"
+import Navbar from "../components/NavBar.tsx";
 // import {
 //     BrowserRouter,
 //     Routes,
@@ -8,17 +9,16 @@ import "./basicStyle.css"
 //     // Navigate,
 //     // Outlet
 // } from 'react-router-dom';
-// import eventUSPLogo from "./assets/EventUSPLogoSemFundo.png";
-// import home from "./pages/Home.tsx";
-// import login from "./pages/Login.tsx";
-// import about from "./pages/About.tsx";
 
 
 function Calendario() {
     return (
-        <div className="home-page">
-            Página Calendário
-        </div>
+        <>
+            <div className="home-page">
+                <Navbar />
+                Página Calendário
+            </div>
+        </>
 
     );
 }
