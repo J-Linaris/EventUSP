@@ -31,7 +31,6 @@ class EventoTest {
             descricao = "Workshop para iniciantes em Kotlin",
             dataHora = LocalDateTime.now().plusDays(10),
             localizacao = "ICMC - Sala 5-001",
-            imagemCapa = "https://exemplo.com/imagem-capa.jpg",
             categoria = "Tecnologia",
             organizador = organizador
         )
@@ -58,13 +57,11 @@ class EventoTest {
         assertEquals("Workshop de Kotlin", evento.titulo)
         assertEquals("Workshop para iniciantes em Kotlin", evento.descricao)
         assertEquals("ICMC - Sala 5-001", evento.localizacao)
-        assertEquals("https://exemplo.com/imagem-capa.jpg", evento.imagemCapa)
-        assertEquals("https://exemplo.com/imagem-capa.jpg", evento.imagem) // Verificar compatibilidade
         assertEquals("Tecnologia", evento.categoria)
         assertEquals(organizador, evento.organizador)
         assertEquals(0, evento.numeroLikes)
         assertTrue(evento.participantesInteressados.isEmpty())
-        assertTrue(evento.imagensAdicionais.isEmpty())
+        assertTrue(evento.imagens.isEmpty())
     }
     
     @Test
@@ -128,7 +125,6 @@ class EventoTest {
             descricao = "Este evento já ocorreu",
             dataHora = LocalDateTime.now().minusDays(1),
             localizacao = "ICMC",
-            imagemCapa = "url.jpg",
             categoria = "Palestra",
             organizador = organizador
         )
@@ -138,13 +134,13 @@ class EventoTest {
     }
     
     @Test
-    fun `deve adicionar imagem adicional ao evento com sucesso`() {
+    fun `deve adicionar imagem ao evento com sucesso`() {
         val imagem = evento.adicionarImagem(
             url = "https://exemplo.com/imagem-adicional.jpg",
             descricao = "Descrição da imagem"
         )
         
-        assertEquals(1, evento.imagensAdicionais.size)
+        assertEquals(1, evento.imagens.size)
         assertEquals(evento, imagem.evento)
         assertEquals("https://exemplo.com/imagem-adicional.jpg", imagem.url)
         assertEquals("Descrição da imagem", imagem.descricao)
@@ -157,7 +153,7 @@ class EventoTest {
         val imagem2 = evento.adicionarImagem("https://exemplo.com/imagem2.jpg")
         val imagem3 = evento.adicionarImagem("https://exemplo.com/imagem3.jpg")
         
-        assertEquals(3, evento.imagensAdicionais.size)
+        assertEquals(3, evento.imagens.size)
         assertEquals(0, imagem1.ordem)
         assertEquals(1, imagem2.ordem)
         assertEquals(2, imagem3.ordem)
@@ -177,9 +173,9 @@ class EventoTest {
     fun `deve remover imagem do evento com sucesso`() {
         val imagem = evento.adicionarImagem("https://exemplo.com/imagem-para-remover.jpg")
         
-        assertEquals(1, evento.imagensAdicionais.size)
+        assertEquals(1, evento.imagens.size)
         assertTrue(evento.removerImagem(imagem))
-        assertEquals(0, evento.imagensAdicionais.size)
+        assertEquals(0, evento.imagens.size)
     }
     
     @Test
@@ -190,7 +186,6 @@ class EventoTest {
             descricao = "Descrição",
             dataHora = LocalDateTime.now().plusDays(5),
             localizacao = "Local",
-            imagemCapa = "url.jpg",
             categoria = "Categoria",
             organizador = organizador
         )
@@ -219,17 +214,6 @@ class EventoTest {
     }
     
     @Test
-    fun `deve manter compatibilidade entre imagemCapa e imagem`() {
-        // Definir imagem pelo campo imagemCapa
-        evento.imagemCapa = "https://exemplo.com/nova-capa.jpg"
-        assertEquals("https://exemplo.com/nova-capa.jpg", evento.imagem)
-        
-        // Definir imagem pelo campo imagem (compatibilidade)
-        evento.imagem = "https://exemplo.com/outra-capa.jpg"
-        assertEquals("https://exemplo.com/outra-capa.jpg", evento.imagemCapa)
-    }
-    
-    @Test
     fun `deve comparar eventos corretamente pelo id`() {
         val eventoMesmoId = Evento(
             id = 1L,
@@ -237,7 +221,6 @@ class EventoTest {
             descricao = "Outra descrição",
             dataHora = LocalDateTime.now().plusDays(20),
             localizacao = "Outro local",
-            imagemCapa = "outra-imagem.jpg",
             categoria = "Outra categoria",
             organizador = organizador
         )
@@ -248,7 +231,6 @@ class EventoTest {
             descricao = "Workshop para iniciantes em Kotlin",
             dataHora = evento.dataHora,
             localizacao = evento.localizacao,
-            imagemCapa = evento.imagemCapa,
             categoria = evento.categoria,
             organizador = organizador
         )

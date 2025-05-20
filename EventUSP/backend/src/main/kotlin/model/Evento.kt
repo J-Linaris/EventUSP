@@ -13,19 +13,13 @@ class Evento(
     var descricao: String,
     var dataHora: LocalDateTime,
     var localizacao: String,
-    var imagemCapa: String, // Renomeado para imagemCapa para maior clareza
     var categoria: String,
     var organizador: UsuarioOrganizador
 ) {
     var participantesInteressados: MutableList<UsuarioParticipante> = mutableListOf()
     var numeroLikes: Int = 0
     var reviews: MutableList<Review> = mutableListOf()
-    var imagensAdicionais: MutableList<ImagemEvento> = mutableListOf()
-    
-    // Para compatibilidade com o código existente
-    var imagem: String
-        get() = imagemCapa
-        set(value) { imagemCapa = value }
+    var imagens: MutableList<ImagemEvento> = mutableListOf()
     
     /**
      * Adiciona um participante interessado no evento
@@ -116,38 +110,38 @@ class Evento(
     }
     
     /**
-     * Adiciona uma imagem adicional ao evento
+     * Adiciona uma imagem ao evento
      * @param url URL da imagem
      * @param descricao Descrição opcional da imagem
      * @param ordem Ordem de exibição da imagem
      * @return A imagem adicionada
      */
-    fun adicionarImagem(url: String, descricao: String? = null, ordem: Int = imagensAdicionais.size): ImagemEvento {
+    fun adicionarImagem(url: String, descricao: String? = null, ordem: Int = imagens.size): ImagemEvento {
         val imagem = ImagemEvento(
             evento = this,
             url = url,
             descricao = descricao,
             ordem = ordem
         )
-        imagensAdicionais.add(imagem)
+        imagens.add(imagem)
         return imagem
     }
     
     /**
-     * Remove uma imagem adicional do evento
+     * Remove uma imagem do evento
      * @param imagem A imagem a ser removida
      * @return true se a imagem foi removida com sucesso, false caso contrário
      */
     fun removerImagem(imagem: ImagemEvento): Boolean {
-        return imagensAdicionais.remove(imagem)
+        return imagens.remove(imagem)
     }
     
     /**
-     * Obtém as imagens adicionais ordenadas
+     * Obtém as imagens ordenadas
      * @return Lista de imagens ordenadas pela propriedade ordem
      */
     fun obterImagensOrdenadas(): List<ImagemEvento> {
-        return imagensAdicionais.sortedBy { it.ordem }
+        return imagens.sortedBy { it.ordem }
     }
     
     override fun equals(other: Any?): Boolean {
