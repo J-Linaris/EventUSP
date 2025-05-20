@@ -1,7 +1,7 @@
 package br.usp.eventUSP.model
 
 /**
- * Classe que representa uma imagem adicional de um evento
+ * Classe que representa uma imagem de um evento
  */
 class ImagemEvento(
     var id: Long? = null,

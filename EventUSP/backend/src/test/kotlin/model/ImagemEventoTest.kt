@@ -28,7 +28,6 @@ class ImagemEventoTest {
             descricao = "Workshop para iniciantes em Kotlin",
             dataHora = LocalDateTime.now().plusDays(10),
             localizacao = "ICMC - Sala 5-001",
-            imagemCapa = "https://exemplo.com/imagem-capa.jpg",
             categoria = "Tecnologia",
             organizador = organizador
         )
@@ -36,7 +35,7 @@ class ImagemEventoTest {
         imagemEvento = ImagemEvento(
             id = 1L,
             evento = evento,
-            url = "https://exemplo.com/imagem-adicional.jpg",
+            url = "https://exemplo.com/imagem.jpg",
             descricao = "Foto do palestrante",
             ordem = 1
         )
@@ -46,7 +45,7 @@ class ImagemEventoTest {
     fun `deve inicializar imagem evento corretamente`() {
         assertEquals(1L, imagemEvento.id)
         assertEquals(evento, imagemEvento.evento)
-        assertEquals("https://exemplo.com/imagem-adicional.jpg", imagemEvento.url)
+        assertEquals("https://exemplo.com/imagem.jpg", imagemEvento.url)
         assertEquals("Foto do palestrante", imagemEvento.descricao)
         assertEquals(1, imagemEvento.ordem)
     }
