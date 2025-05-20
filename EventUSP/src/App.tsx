@@ -13,6 +13,7 @@ import About from "./pages/About.tsx";
 import Login from "./pages/Login.tsx";
 import MeusEventos from "./pages/MeusEventos.jsx";
 import Calendario from "./pages/Calendario.tsx";
+import CreateAccount from "./pages/CreateAccount.tsx";
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
               <Route path="/" element={<Home />} /> /* Você está definindo a rota aqui*/
               <Route path="/about" element={<About />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/create-account" element={<CreateAccount />} />
               <Route path="/meusEventos" element={<MeusEventos />} />
               <Route path="/calendario" element={<Calendario />} />
           </Routes>

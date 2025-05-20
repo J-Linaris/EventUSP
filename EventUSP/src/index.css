@@ -30,6 +30,15 @@ body {
   min-height: 100vh;
 }
 
+input{
+  background-color: #151515;
+  border-radius: 10px;
+  width: 12rem;
+  height:  1.3rem;
+  border-color: #303030;
+  border-style: solid;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
