@@ -1,23 +1,23 @@
-// import {
-//     BrowserRouter,
-//     Routes,
-//     Route,
-//     Link,
-//     // NavLink,
-//     // Navigate,
-//     // Outlet
-// } from 'react-router-dom';
 import { useState } from "react";
 import "./basicStyle.css";
 import "./CreateAccount.css";
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // Componente de upload (simples)
-function UploadFoto() {
+interface UploadFotoProps {
+    onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+function UploadFoto({ onFileChange }: UploadFotoProps) {
     return (
         <div className="upload-foto">
             <label htmlFor="fotoPerfil">Foto de perfil:</label>
-            <input type="file" id="fotoPerfil" accept="image/*" />
+            <input 
+                type="file" 
+                id="fotoPerfil" 
+                accept="image/*" 
+                onChange={onFileChange}
+            />
         </div>
     );
 }
@@ -27,6 +27,108 @@ function CreateAccount() {
     const [user, setUser] = useState('');
     const [senha, setSenha] = useState('');
     const [tipoConta, setTipoConta] = useState<'organizador' | 'participante' | ''>('');
+    const [fotoPerfil, setFotoPerfil] = useState<File | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
+    
+    const navigate = useNavigate();
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            setFotoPerfil(event.target.files[0]);
+        }
+    };
+
+    const validarFormulario = () => {
+        if (!email || !user || !senha) {
+            setError('Por favor, preencha todos os campos obrigatórios.');
+            return false;
+        }
+        
+        if (!tipoConta) {
+            setError('Por favor, selecione o tipo de conta.');
+            return false;
+        }
+        
+        if (tipoConta === 'organizador' && !fotoPerfil) {
+            setError('Como organizador, você precisa fazer upload de uma foto de perfil.');
+            return false;
+        }
+        
+        // Validação básica de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError('Por favor, insira um email válido.');
+            return false;
+        }
+        
+        // Validação de senha (mínimo 6 caracteres)
+        if (senha.length < 6) {
+            setError('A senha deve ter pelo menos 6 caracteres.');
+            return false;
+        }
+        
+        return true;
+    };
+
+    const criarConta = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError('');
+        
+        if (!validarFormulario()) {
+            return;
+        }
+        
+        setLoading(true);
+        
+        try {
+            // Preparar dados para enviar
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('username', user);
+            formData.append('password', senha);
+            formData.append('accountType', tipoConta);
+            
+            if (fotoPerfil) {
+                formData.append('profilePhoto', fotoPerfil);
+            }
+            
+            // Enviar dados para o backend
+            const response = await fetch('/proxy/api/users/register', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Erro ao criar conta.');
+            }
+            
+            const data = await response.json();
+            
+            // Armazenar token JWT se o backend retornar um
+            if (data.token) {
+                localStorage.setItem('authToken', data.token);
+            }
+            
+            setSuccess(true);
+            
+            // Redirecionar após cadastro bem-sucedido
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+            
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Ocorreu um erro ao criar sua conta. Por favor, tente novamente.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="create-account-page">
@@ -35,8 +137,7 @@ function CreateAccount() {
                     <span id="texto-bem-vindo">Crie sua conta Event<span id="span-USP-eventusp">USP</span></span>
                 </div>
                 <div className="form-holder">
-                    <div className="form-fields">
-
+                    <form onSubmit={criarConta} className="form-fields">
                         <div className="tipo-conta-selector">
                             <label>
                                 <input
@@ -68,7 +169,7 @@ function CreateAccount() {
                             required
                         />
                         <input
-                            type="user"
+                            type="text"
                             placeholder="Insira seu nome de usuário"
                             value={user}
                             onChange={(e) => setUser(e.target.value)}
@@ -82,14 +183,24 @@ function CreateAccount() {
                             required
                         />
 
-                        {tipoConta === 'organizador' && <UploadFoto />}
-                    </div>
-                    <div className="form-footer">
-                        <button className="form-footer-button" type="submit">Criar conta</button>
-                    <Link to="/login">
-                        <button className="form-footer-button">Voltar ao Login</button>
-                    </Link>
-                    </div>
+                        {tipoConta === 'organizador' && <UploadFoto onFileChange={handleFileChange} />}
+                        
+                        {error && <div className="error-message">{error}</div>}
+                        {success && <div className="success-message">Conta criada com sucesso! Redirecionando...</div>}
+                        
+                        <div className="form-footer">
+                            <button 
+                                className="form-footer-button" 
+                                type="submit"
+                                disabled={loading}
+                            >
+                                {loading ? 'Criando...' : 'Criar conta'}
+                            </button>
+                            <Link to="/login">
+                                <button className="form-footer-button" type="button">Voltar ao Login</button>
+                            </Link>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
