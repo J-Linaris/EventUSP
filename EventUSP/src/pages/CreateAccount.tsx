@@ -183,7 +183,6 @@ function CreateAccount() {
                             onChange={(e) => setSenha(e.target.value)}
                             required
                         />
-
                         {tipoConta === 'organizador' && <UploadFoto onFileChange={handleFileChange} />}
                         
                         {error && <div className="error-message">{error}</div>}
