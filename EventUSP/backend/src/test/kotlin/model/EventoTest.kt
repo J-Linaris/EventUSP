@@ -20,8 +20,6 @@ class EventoTest {
             nome = "Organizador Teste",
             email = "organizador@usp.br",
             senha = "senha123",
-            cpf = "12345678901",
-            instituicao = "ICMC",
             fotoPerfil = "https://exemplo.com/foto-organizador.jpg"
         )
         

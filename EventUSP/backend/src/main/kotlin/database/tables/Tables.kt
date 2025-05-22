@@ -12,7 +12,7 @@ object EventoTable : LongIdTable("eventos") {
     val descricao = text("descricao")
     val dataHora = datetime("data_hora")
     val localizacao = varchar("localizacao", 255)
-    val imagemCapa = varchar("imagem_capa", 255)
+    val imagens = varchar("imagens", 255)
     val categoria = varchar("categoria", 100)
     val organizadorId = reference("organizador_id", UsuarioOrganizadorTable)
     val numeroLikes = integer("numero_likes").default(0)
@@ -25,6 +25,7 @@ object UsuarioOrganizadorTable : LongIdTable("usuarios_organizadores") {
     val nome = varchar("nome", 255)
     val email = varchar("email", 255).uniqueIndex()
     val senha = varchar("senha", 255)
+    val fotoPerfil = varchar("foto_perfil",255).nullable()
     // Adicione outros campos conforme necessário
 }
 
@@ -49,7 +50,7 @@ object ReviewTable : LongIdTable("reviews") {
 }
 
 /**
- * Tabela para armazenar as imagens adicionais dos eventos
+ * Tabela para armazenar as imagens dos eventos
  */
 object ImagemEventoTable : LongIdTable("imagens_evento") {
     val eventoId = reference("evento_id", EventoTable)

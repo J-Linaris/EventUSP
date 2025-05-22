@@ -20,7 +20,6 @@ class ReviewTest {
             nome = "Organizador Teste",
             email = "organizador@usp.br",
             senha = "senha123",
-            cpf = "12345678901",
             fotoPerfil = "https://exemplo.com/foto-organizador.jpg"
         )
         
@@ -38,7 +37,6 @@ class ReviewTest {
             descricao = "Descrição do evento",
             dataHora = LocalDateTime.now().minusDays(3), // Evento ocorreu há 3 dias
             localizacao = "Local do Evento",
-            imagemCapa = "https://exemplo.com/imagem-capa.jpg",
             categoria = "Categoria",
             organizador = organizador
         )

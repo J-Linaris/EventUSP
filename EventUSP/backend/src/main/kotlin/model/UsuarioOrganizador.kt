@@ -9,9 +9,6 @@ class UsuarioOrganizador(
     nome: String,
     email: String,
     senha: String,
-    var cpf: String,
-    var instituicao: String? = null,
-    var telefone: String? = null,
     fotoPerfil: String? = null
 ) : UsuarioParticipante(id, nome, email, senha, fotoPerfil) {
     
@@ -23,7 +20,6 @@ class UsuarioOrganizador(
      * @param descricao Descrição do evento
      * @param dataHora Data e hora do evento
      * @param localizacao Localização do evento
-     * @param imagemCapa URL da imagem de capa do evento
      * @param categoria Categoria do evento
      * @return O evento criado
      */
@@ -32,15 +28,13 @@ class UsuarioOrganizador(
         descricao: String,
         dataHora: java.time.LocalDateTime,
         localizacao: String,
-        imagemCapa: String,
         categoria: String
-    ): Evento {
+            ): Evento {
         val evento = Evento(
             titulo = titulo,
             descricao = descricao,
             dataHora = dataHora,
             localizacao = localizacao,
-            imagemCapa = imagemCapa,
             categoria = categoria,
             organizador = this
         )
@@ -67,7 +61,6 @@ class UsuarioOrganizador(
      * @param descricao Nova descrição (opcional)
      * @param dataHora Nova data e hora (opcional)
      * @param localizacao Nova localização (opcional)
-     * @param imagemCapa Nova URL de imagem de capa (opcional)
      * @param categoria Nova categoria (opcional)
      * @return true se o evento foi atualizado com sucesso, false caso contrário
      */
@@ -77,7 +70,6 @@ class UsuarioOrganizador(
         descricao: String? = null,
         dataHora: java.time.LocalDateTime? = null,
         localizacao: String? = null,
-        imagemCapa: String? = null,
         categoria: String? = null
     ): Boolean {
         // Verifica se o evento pertence a este organizador
@@ -88,14 +80,13 @@ class UsuarioOrganizador(
         descricao?.let { evento.descricao = it }
         dataHora?.let { evento.dataHora = it }
         localizacao?.let { evento.localizacao = it }
-        imagemCapa?.let { evento.imagemCapa = it }
         categoria?.let { evento.categoria = it }
         
         return true
     }
     
     /**
-     * Adiciona uma imagem adicional a um evento
+     * Adiciona uma imagem a um evento
      * @param evento O evento a receber a imagem
      * @param url URL da imagem
      * @param descricao Descrição opcional da imagem
@@ -106,7 +97,7 @@ class UsuarioOrganizador(
         evento: Evento,
         url: String,
         descricao: String? = null,
-        ordem: Int = evento.imagensAdicionais.size
+        ordem: Int = evento.imagens.size
     ): ImagemEvento? {
         // Verifica se o evento pertence a este organizador
         if (evento.organizador != this) return null
@@ -115,7 +106,7 @@ class UsuarioOrganizador(
     }
     
     /**
-     * Remove uma imagem adicional de um evento
+     * Remove uma imagem de um evento
      * @param evento O evento que contém a imagem
      * @param imagem A imagem a ser removida
      * @return true se a imagem foi removida com sucesso, false caso contrário
@@ -132,12 +123,10 @@ class UsuarioOrganizador(
         if (other !is UsuarioOrganizador) return false
         if (!super.equals(other)) return false
         
-        return cpf == other.cpf
+        return true
     }
     
     override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + cpf.hashCode()
-        return result
+        return super.hashCode()
     }
 }

@@ -16,6 +16,7 @@ class UsuarioOrganizadorDAO(id: EntityID<Long>) : LongEntity(id) {
     var nome by UsuarioOrganizadorTable.nome
     var email by UsuarioOrganizadorTable.email
     var senha by UsuarioOrganizadorTable.senha
+    var fotoPerfil by UsuarioOrganizadorTable.fotoPerfil
     
     // Relacionamentos
     val eventos by EventoDAO referrersOn EventoTable.organizadorId
@@ -28,7 +29,8 @@ class UsuarioOrganizadorDAO(id: EntityID<Long>) : LongEntity(id) {
             id = id.value,
             nome = nome,
             email = email,
-            senha = senha
+            senha = senha,
+            fotoPerfil = fotoPerfil
         )
     }
 }

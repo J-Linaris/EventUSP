@@ -1,9 +1,13 @@
 package br.usp.eventUSP.repository
 
 import br.usp.eventUSP.database.dao.EventoDAO
+import br.usp.eventUSP.database.dao.ImagemEventoDAO
 import br.usp.eventUSP.database.dao.UsuarioOrganizadorDAO
 import br.usp.eventUSP.database.dao.UsuarioParticipanteDAO
+import org.jetbrains.exposed.sql.insertIgnore
+import br.usp.eventUSP.database.tables.ParticipantesInteressadosTable
 import br.usp.eventUSP.model.Evento
+import br.usp.eventUSP.model.ImagemEvento
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 
@@ -25,7 +29,6 @@ class EventoRepository {
             descricao = evento.descricao
             dataHora = evento.dataHora
             localizacao = evento.localizacao
-            imagemCapa = evento.imagemCapa
             categoria = evento.categoria
             organizador = organizadorDAO
             numeroLikes = evento.numeroLikes
@@ -35,7 +38,21 @@ class EventoRepository {
         evento.participantesInteressados.forEach { participante ->
             val participanteDAO = UsuarioParticipanteDAO.findById(participante.id!!)
             if (participanteDAO != null) {
-                eventoDAO.participantesInteressados = eventoDAO.participantesInteressados + participanteDAO
+                ParticipantesInteressadosTable.insertIgnore {
+                    it[eventoId] = eventoDAO.id
+                    it[participanteId] = participanteDAO.id
+                }
+            }
+        }
+
+
+        // Adiciona as imagens do evento
+        evento.imagens.forEach { imagem ->
+            ImagemEventoDAO.new {
+                this.evento = eventoDAO
+                url = imagem.url
+                descricao = imagem.descricao
+                ordem = imagem.ordem
             }
         }
 
@@ -92,7 +109,6 @@ class EventoRepository {
         eventoDAO.descricao = evento.descricao
         eventoDAO.dataHora = evento.dataHora
         eventoDAO.localizacao = evento.localizacao
-        eventoDAO.imagemCapa = evento.imagemCapa
         eventoDAO.categoria = evento.categoria
         eventoDAO.numeroLikes = evento.numeroLikes
 

@@ -18,9 +18,7 @@ class UsuarioParticipanteTest {
             id = 1L,
             nome = "Organizador Teste",
             email = "organizador@usp.br",
-            senha = "senha123",
-            cpf = "12345678901",
-            instituicao = "ICMC"
+            senha = "senha123"
         )
         
         participante = UsuarioParticipante(

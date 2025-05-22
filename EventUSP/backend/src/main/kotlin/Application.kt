@@ -8,10 +8,10 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    configureHTTP()
     // Inicializa o banco de dados
     DatabaseConfig.init()
 
     configureSecurity()
-    configureHTTP()
     configureRouting()
 }

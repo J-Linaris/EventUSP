@@ -14,7 +14,6 @@ import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -35,17 +34,17 @@ fun Application.configureRouting() {
 
                 get("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@get call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val evento = eventoRepository.findById(id)
-                        ?: return@get call.respond(HttpStatusCode.NotFound, "Evento não encontrado")
+                        ?: return@get call.respondText("Evento não encontrado", status = HttpStatusCode.NotFound)
 
                     call.respond(evento)
                 }
 
                 get("/categoria/{categoria}") {
                     val categoria = call.parameters["categoria"]
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "Categoria não especificada")
+                        ?: return@get call.respondText("Categoria não especificada", status = HttpStatusCode.BadRequest)
 
                     val eventos = eventoRepository.findByCategoria(categoria)
                     call.respond(eventos)
@@ -62,13 +61,13 @@ fun Application.configureRouting() {
                         val createdEvento = eventoRepository.create(evento)
                         call.respond(HttpStatusCode.Created, createdEvento)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.BadRequest, e.message ?: "Erro ao criar evento")
+                        call.respondText(e.message ?: "Erro ao criar evento", status = HttpStatusCode.BadRequest)
                     }
                 }
 
                 put("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@put call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@put call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val evento = call.receive<Evento>()
                     evento.id = id
@@ -77,19 +76,19 @@ fun Application.configureRouting() {
                         val updatedEvento = eventoRepository.update(evento)
                         call.respond(updatedEvento)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.NotFound, e.message ?: "Evento não encontrado")
+                        call.respondText(e.message ?: "Evento não encontrado", status = HttpStatusCode.NotFound)
                     }
                 }
 
                 delete("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@delete call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val deleted = eventoRepository.delete(id)
                     if (deleted) {
                         call.respond(HttpStatusCode.NoContent)
                     } else {
-                        call.respond(HttpStatusCode.NotFound, "Evento não encontrado")
+                        call.respondText("Evento não encontrado", status = HttpStatusCode.NotFound)
                     }
                 }
             }
@@ -105,10 +104,10 @@ fun Application.configureRouting() {
 
                 get("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@get call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val organizador = organizadorRepository.findById(id)
-                        ?: return@get call.respond(HttpStatusCode.NotFound, "Organizador não encontrado")
+                        ?: return@get call.respondText("Organizador não encontrado", status = HttpStatusCode.NotFound)
 
                     call.respond(organizador)
                 }
@@ -121,7 +120,7 @@ fun Application.configureRouting() {
 
                 put("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@put call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@put call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val organizador = call.receive<UsuarioOrganizador>()
                     organizador.id = id
@@ -130,19 +129,19 @@ fun Application.configureRouting() {
                         val updatedOrganizador = organizadorRepository.update(organizador)
                         call.respond(updatedOrganizador)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.NotFound, e.message ?: "Organizador não encontrado")
+                        call.respondText(e.message ?: "Organizador não encontrado", status = HttpStatusCode.NotFound)
                     }
                 }
 
                 delete("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@delete call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val deleted = organizadorRepository.delete(id)
                     if (deleted) {
                         call.respond(HttpStatusCode.NoContent)
                     } else {
-                        call.respond(HttpStatusCode.NotFound, "Organizador não encontrado")
+                        call.respondText("Organizador não encontrado", status = HttpStatusCode.NotFound)
                     }
                 }
             }
@@ -158,10 +157,10 @@ fun Application.configureRouting() {
 
                 get("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@get call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val participante = participanteRepository.findById(id)
-                        ?: return@get call.respond(HttpStatusCode.NotFound, "Participante não encontrado")
+                        ?: return@get call.respondText("Participante não encontrado", status = HttpStatusCode.NotFound)
 
                     call.respond(participante)
                 }
@@ -174,7 +173,7 @@ fun Application.configureRouting() {
 
                 put("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@put call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@put call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val participante = call.receive<UsuarioParticipante>()
                     participante.id = id
@@ -183,19 +182,19 @@ fun Application.configureRouting() {
                         val updatedParticipante = participanteRepository.update(participante)
                         call.respond(updatedParticipante)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.NotFound, e.message ?: "Participante não encontrado")
+                        call.respondText(e.message ?: "Participante não encontrado", status = HttpStatusCode.NotFound)
                     }
                 }
 
                 delete("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@delete call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val deleted = participanteRepository.delete(id)
                     if (deleted) {
                         call.respond(HttpStatusCode.NoContent)
                     } else {
-                        call.respond(HttpStatusCode.NotFound, "Participante não encontrado")
+                        call.respondText("Participante não encontrado", status = HttpStatusCode.NotFound)
                     }
                 }
             }
@@ -211,17 +210,17 @@ fun Application.configureRouting() {
 
                 get("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@get call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val review = reviewRepository.findById(id)
-                        ?: return@get call.respond(HttpStatusCode.NotFound, "Review não encontrada")
+                        ?: return@get call.respondText("Review não encontrada", status = HttpStatusCode.NotFound)
 
                     call.respond(review)
                 }
 
                 get("/evento/{eventoId}") {
                     val eventoId = call.parameters["eventoId"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID de evento inválido")
+                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
 
                     val reviews = reviewRepository.findByEvento(eventoId)
                     call.respond(reviews)
@@ -229,7 +228,7 @@ fun Application.configureRouting() {
 
                 get("/participante/{participanteId}") {
                     val participanteId = call.parameters["participanteId"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID de participante inválido")
+                        ?: return@get call.respondText("ID de participante inválido", status = HttpStatusCode.BadRequest)
 
                     val reviews = reviewRepository.findByParticipante(participanteId)
                     call.respond(reviews)
@@ -241,13 +240,13 @@ fun Application.configureRouting() {
                         val createdReview = reviewRepository.create(review)
                         call.respond(HttpStatusCode.Created, createdReview)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.BadRequest, e.message ?: "Erro ao criar review")
+                        call.respondText(e.message ?: "Erro ao criar review", status = HttpStatusCode.BadRequest)
                     }
                 }
 
                 put("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@put call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@put call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val review = call.receive<Review>()
                     review.id = id
@@ -256,19 +255,19 @@ fun Application.configureRouting() {
                         val updatedReview = reviewRepository.update(review)
                         call.respond(updatedReview)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.NotFound, e.message ?: "Review não encontrada")
+                        call.respondText(e.message ?: "Review não encontrada", status = HttpStatusCode.NotFound)
                     }
                 }
 
                 delete("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@delete call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val deleted = reviewRepository.delete(id)
                     if (deleted) {
                         call.respond(HttpStatusCode.NoContent)
                     } else {
-                        call.respond(HttpStatusCode.NotFound, "Review não encontrada")
+                        call.respondText("Review não encontrada", status = HttpStatusCode.NotFound)
                     }
                 }
             }
@@ -284,17 +283,17 @@ fun Application.configureRouting() {
 
                 get("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@get call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val imagem = imagemRepository.findById(id)
-                        ?: return@get call.respond(HttpStatusCode.NotFound, "Imagem não encontrada")
+                        ?: return@get call.respondText("Imagem não encontrada", status = HttpStatusCode.NotFound)
 
                     call.respond(imagem)
                 }
 
                 get("/evento/{eventoId}") {
                     val eventoId = call.parameters["eventoId"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID de evento inválido")
+                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
 
                     val imagens = imagemRepository.findByEvento(eventoId)
                     call.respond(imagens)
@@ -302,7 +301,7 @@ fun Application.configureRouting() {
 
                 get("/evento/{eventoId}/ordenadas") {
                     val eventoId = call.parameters["eventoId"]?.toLongOrNull()
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "ID de evento inválido")
+                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
 
                     val imagens = imagemRepository.findByEventoOrdenadas(eventoId)
                     call.respond(imagens)
@@ -314,13 +313,13 @@ fun Application.configureRouting() {
                         val createdImagem = imagemRepository.create(imagem)
                         call.respond(HttpStatusCode.Created, createdImagem)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.BadRequest, e.message ?: "Erro ao criar imagem")
+                        call.respondText(e.message ?: "Erro ao criar imagem", status = HttpStatusCode.BadRequest)
                     }
                 }
 
                 put("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@put call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@put call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val imagem = call.receive<ImagemEvento>()
                     imagem.id = id
@@ -329,19 +328,19 @@ fun Application.configureRouting() {
                         val updatedImagem = imagemRepository.update(imagem)
                         call.respond(updatedImagem)
                     } catch (e: IllegalArgumentException) {
-                        call.respond(HttpStatusCode.NotFound, e.message ?: "Imagem não encontrada")
+                        call.respondText(e.message ?: "Imagem não encontrada", status = HttpStatusCode.NotFound)
                     }
                 }
 
                 delete("/{id}") {
                     val id = call.parameters["id"]?.toLongOrNull()
-                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "ID inválido")
+                        ?: return@delete call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
 
                     val deleted = imagemRepository.delete(id)
                     if (deleted) {
                         call.respond(HttpStatusCode.NoContent)
                     } else {
-                        call.respond(HttpStatusCode.NotFound, "Imagem não encontrada")
+                        call.respondText("Imagem não encontrada", status = HttpStatusCode.NotFound)
                     }
                 }
             }
@@ -404,10 +403,7 @@ fun Application.configureRouting() {
                     
                     // Verificar se todos os campos obrigatórios foram fornecidos
                     if (email.isBlank() || username.isBlank() || password.isBlank() || accountType.isBlank()) {
-                        call.respond(
-                            HttpStatusCode.BadRequest,
-                            mapOf("message" to "Todos os campos são obrigatórios")
-                        )
+                        call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Todos os campos são obrigatórios"))
                         return@post
                     }
                     
@@ -417,19 +413,13 @@ fun Application.configureRouting() {
                             "organizador" -> {
                                 // Verificar se o email já está em uso por outro organizador
                                 if (organizadorRepository.findByEmail(email) != null) {
-                                    call.respond(
-                                        HttpStatusCode.Conflict,
-                                        mapOf("message" to "Email já está em uso")
-                                    )
+                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email já está em uso"))
                                     return@post
                                 }
                                 
                                 // Verificar se a foto foi enviada (obrigatória para organizador)
                                 if (profilePhotoPath == null) {
-                                    call.respond(
-                                        HttpStatusCode.BadRequest,
-                                        mapOf("message" to "Foto de perfil é obrigatória para organizadores")
-                                    )
+                                    call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Foto de perfil é obrigatória para organizadores"))
                                     return@post
                                 }
                                 
@@ -447,22 +437,16 @@ fun Application.configureRouting() {
                                 // Gerar token JWT
                                 val token = generateToken(createdOrganizador.id.toString(), "organizador")
                                 
-                                call.respond(
-                                    HttpStatusCode.Created,
-                                    mapOf(
-                                        "message" to "Organizador criado com sucesso",
-                                        "user" to createdOrganizador,
-                                        "token" to token
-                                    )
-                                )
+                                call.respond(HttpStatusCode.Created, mapOf(
+                                    "message" to "Organizador criado com sucesso",
+                                    "user" to createdOrganizador,
+                                    "token" to token
+                                ))
                             }
                             "participante" -> {
                                 // Verificar se o email já está em uso por outro participante
                                 if (participanteRepository.findByEmail(email) != null) {
-                                    call.respond(
-                                        HttpStatusCode.Conflict,
-                                        mapOf("message" to "Email já está em uso")
-                                    )
+                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email já está em uso"))
                                     return@post
                                 }
                                 
@@ -479,27 +463,18 @@ fun Application.configureRouting() {
                                 // Gerar token JWT
                                 val token = generateToken(createdParticipante.id.toString(), "participante")
                                 
-                                call.respond(
-                                    HttpStatusCode.Created,
-                                    mapOf(
-                                        "message" to "Participante criado com sucesso",
-                                        "user" to createdParticipante,
-                                        "token" to token
-                                    )
-                                )
+                                call.respond(HttpStatusCode.Created, mapOf(
+                                    "message" to "Participante criado com sucesso",
+                                    "user" to createdParticipante,
+                                    "token" to token
+                                ))
                             }
                             else -> {
-                                call.respond(
-                                    HttpStatusCode.BadRequest,
-                                    mapOf("message" to "Tipo de conta inválido")
-                                )
+                                call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Tipo de conta inválido"))
                             }
                         }
                     } catch (e: Exception) {
-                        call.respond(
-                            HttpStatusCode.InternalServerError,
-                            mapOf("message" to "Erro ao criar usuário: ${e.message}")
-                        )
+                        call.respond(HttpStatusCode.InternalServerError, mapOf("message" to "Erro ao criar usuário: ${e.message}"))
                     }
                 }
                 

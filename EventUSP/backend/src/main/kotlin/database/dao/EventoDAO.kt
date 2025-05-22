@@ -19,7 +19,6 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
     var descricao by EventoTable.descricao
     var dataHora by EventoTable.dataHora
     var localizacao by EventoTable.localizacao
-    var imagemCapa by EventoTable.imagemCapa
     var categoria by EventoTable.categoria
     var organizador by UsuarioOrganizadorDAO referencedOn EventoTable.organizadorId
     var numeroLikes by EventoTable.numeroLikes
@@ -27,7 +26,7 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
     // Relacionamentos
     val participantesInteressados by UsuarioParticipanteDAO via ParticipantesInteressadosTable
     val reviews by ReviewDAO referrersOn ReviewTable.eventoId
-    val imagensAdicionais by ImagemEventoDAO referrersOn ImagemEventoTable.eventoId
+    val imagens by ImagemEventoDAO referrersOn ImagemEventoTable.eventoId
     
     /**
      * Converte o DAO para o modelo
@@ -39,7 +38,6 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
             descricao = descricao,
             dataHora = dataHora,
             localizacao = localizacao,
-            imagemCapa = imagemCapa,
             categoria = categoria,
             organizador = organizador.toModel()
         )
@@ -48,7 +46,7 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
         evento.numeroLikes = numeroLikes
         evento.participantesInteressados = participantesInteressados.map { it.toModel() }.toMutableList()
         evento.reviews = reviews.map { it.toModel() }.toMutableList()
-        evento.imagensAdicionais = imagensAdicionais.map { it.toModel() }.toMutableList()
+        evento.imagens = imagens.map { it.toModel() }.toMutableList()
         
         return evento
     }
