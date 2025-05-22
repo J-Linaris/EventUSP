@@ -87,7 +87,7 @@ function CreateAccount() {
                     <div className="form-footer">
                         <button className="form-footer-button" type="submit">Criar conta</button>
                     <Link to="/login">
-                        <button className="form-footer-button">Login</button>
+                        <button className="form-footer-button">Voltar ao Login</button>
                     </Link>
                     </div>
                 </div>
