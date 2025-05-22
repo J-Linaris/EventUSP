@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom';
-import eventUSPLogo from "../assets/EventUSPLogoSemFundo.png";
+import eventUSPLogo from "../../public/EventUSPLogoSemFundo.png";
 import "./NavBar.css";
 
 // import Home from "./pages/Home.tsx";

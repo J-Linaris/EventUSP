@@ -11,12 +11,15 @@ import br.usp.eventUSP.repository.ReviewRepository
 import br.usp.eventUSP.repository.UsuarioOrganizadorRepository
 import br.usp.eventUSP.repository.UsuarioParticipanteRepository
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.io.File
+import java.util.*
 
 fun Application.configureRouting() {
     routing {
@@ -340,6 +343,170 @@ fun Application.configureRouting() {
                     } else {
                         call.respond(HttpStatusCode.NotFound, "Imagem não encontrada")
                     }
+                }
+            }
+            
+            // Rotas para Autenticação e Registro de Usuários
+            route("/users") {
+                val organizadorRepository = UsuarioOrganizadorRepository()
+                val participanteRepository = UsuarioParticipanteRepository()
+            
+                // Rota para registro de usuários
+                post("/register") {
+                    // Receber os dados do formulário multipart
+                    val multipart = call.receiveMultipart()
+                    
+                    var email = ""
+                    var username = ""
+                    var password = ""
+                    var accountType = ""
+                    var profilePhotoPath: String? = null
+                    
+                    // Processar cada parte do formulário
+                    multipart.forEachPart { part ->
+                        when (part) {
+                            is PartData.FormItem -> {
+                                // Processar campos de texto
+                                when (part.name) {
+                                    "email" -> email = part.value
+                                    "username" -> username = part.value
+                                    "password" -> password = part.value
+                                    "accountType" -> accountType = part.value
+                                }
+                            }
+                            is PartData.FileItem -> {
+                                // Processar arquivo (foto de perfil)
+                                if (part.name == "profilePhoto") {
+                                    // Criar diretório de uploads se não existir
+                                    val uploadsDir = File("uploads")
+                                    if (!uploadsDir.exists()) {
+                                        uploadsDir.mkdirs()
+                                    }
+                                    
+                                    // Gerar nome único para o arquivo
+                                    val fileName = "${UUID.randomUUID()}_${part.originalFileName}"
+                                    val filePath = File(uploadsDir, fileName)
+                                    
+                                    // Salvar arquivo
+                                    part.streamProvider().use { input ->
+                                        filePath.outputStream().buffered().use { output ->
+                                            input.copyTo(output)
+                                        }
+                                    }
+                                    
+                                    profilePhotoPath = "uploads/$fileName"
+                                }
+                            }
+                            else -> {}
+                        }
+                        part.dispose()
+                    }
+                    
+                    // Verificar se todos os campos obrigatórios foram fornecidos
+                    if (email.isBlank() || username.isBlank() || password.isBlank() || accountType.isBlank()) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            mapOf("message" to "Todos os campos são obrigatórios")
+                        )
+                        return@post
+                    }
+                    
+                    try {
+                        // Criar o usuário com base no tipo de conta
+                        when (accountType) {
+                            "organizador" -> {
+                                // Verificar se o email já está em uso por outro organizador
+                                if (organizadorRepository.findByEmail(email) != null) {
+                                    call.respond(
+                                        HttpStatusCode.Conflict,
+                                        mapOf("message" to "Email já está em uso")
+                                    )
+                                    return@post
+                                }
+                                
+                                // Verificar se a foto foi enviada (obrigatória para organizador)
+                                if (profilePhotoPath == null) {
+                                    call.respond(
+                                        HttpStatusCode.BadRequest,
+                                        mapOf("message" to "Foto de perfil é obrigatória para organizadores")
+                                    )
+                                    return@post
+                                }
+                                
+                                // Criar organizador
+                                val organizador = UsuarioOrganizador(
+                                    id = null,
+                                    nome = username,
+                                    email = email,
+                                    senha = password, // Na implementação real, a senha deve ser hasheada
+                                    fotoPerfil = profilePhotoPath
+                                )
+                                
+                                val createdOrganizador = organizadorRepository.create(organizador)
+                                
+                                // Gerar token JWT
+                                val token = generateToken(createdOrganizador.id.toString(), "organizador")
+                                
+                                call.respond(
+                                    HttpStatusCode.Created,
+                                    mapOf(
+                                        "message" to "Organizador criado com sucesso",
+                                        "user" to createdOrganizador,
+                                        "token" to token
+                                    )
+                                )
+                            }
+                            "participante" -> {
+                                // Verificar se o email já está em uso por outro participante
+                                if (participanteRepository.findByEmail(email) != null) {
+                                    call.respond(
+                                        HttpStatusCode.Conflict,
+                                        mapOf("message" to "Email já está em uso")
+                                    )
+                                    return@post
+                                }
+                                
+                                // Criar participante
+                                val participante = UsuarioParticipante(
+                                    id = null,
+                                    nome = username,
+                                    email = email,
+                                    senha = password // Na implementação real, a senha deve ser hasheada
+                                )
+                                
+                                val createdParticipante = participanteRepository.create(participante)
+                                
+                                // Gerar token JWT
+                                val token = generateToken(createdParticipante.id.toString(), "participante")
+                                
+                                call.respond(
+                                    HttpStatusCode.Created,
+                                    mapOf(
+                                        "message" to "Participante criado com sucesso",
+                                        "user" to createdParticipante,
+                                        "token" to token
+                                    )
+                                )
+                            }
+                            else -> {
+                                call.respond(
+                                    HttpStatusCode.BadRequest,
+                                    mapOf("message" to "Tipo de conta inválido")
+                                )
+                            }
+                        }
+                    } catch (e: Exception) {
+                        call.respond(
+                            HttpStatusCode.InternalServerError,
+                            mapOf("message" to "Erro ao criar usuário: ${e.message}")
+                        )
+                    }
+                }
+                
+                // Rota de login
+                post("/login") {
+                    // TODO: Implementar autenticação
+                    call.respond(HttpStatusCode.NotImplemented, mapOf("message" to "Rota de login ainda não implementada"))
                 }
             }
         }

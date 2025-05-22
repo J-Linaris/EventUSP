@@ -6,6 +6,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 import br.usp.eventUSP.database.tables.*
+import io.ktor.server.config.*
 
 /**
  * Configuração do banco de dados MySQL para o sistema EventUSP
@@ -18,10 +19,13 @@ object DatabaseConfig {
         // Configura o HikariCP para gerenciamento de pool de conexões
         val config = HikariConfig().apply {
             driverClassName = "com.mysql.cj.jdbc.Driver"
-            jdbcUrl = "jdbc:mysql://localhost:3306/eventusp?useSSL=false&serverTimezone=UTC"
+            jdbcUrl = "jdbc:mysql://localhost:3306/eventusp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
             username = "root" // Altere para o seu usuário do MySQL
             password = "root" // Altere para a sua senha do MySQL
             maximumPoolSize = 10
+            connectionTestQuery = "SELECT 1"
+            validationTimeout = 3000
+            connectionTimeout = 5000
         }
         
         // Conecta ao banco de dados

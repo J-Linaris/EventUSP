@@ -1,0 +1,17 @@
+{
+  "name": "eventusp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/J-Linaris/EventUSP.git"
+  },
+  "private": true,
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}
