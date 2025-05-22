@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./basicStyle.css";
 import "./CreateAccount.css";
 import { Link, useNavigate } from 'react-router-dom';
+import * as React from "react";
 
 // Componente de upload (simples)
 interface UploadFotoProps {

@@ -15,6 +15,13 @@ plugins {
 group = "br.usp"
 version = "0.0.1"
 
+// Configuração para compatibilidade com Gradle 8.7+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 application {
     mainClass.set("br.usp.eventUSP.ApplicationKt")
 
@@ -36,6 +43,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cors-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-config-yaml:$ktorVersion")
 
     // Database - Exposed
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
@@ -43,8 +51,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
-    // MySQL Database
-    implementation("mysql:mysql-connector-java:$mysqlVersion")
+    // MySQL Database - Usando o conector mais estável para MySQL 8
+    implementation("com.mysql:mysql-connector-j:$mysqlVersion")
 
     // H2 Database (keeping for development/testing)
     implementation("com.h2database:h2:$h2Version")
@@ -69,6 +77,71 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
 }
 
-tasks.test {
+// Usar o estilo moderno de configuração de tarefas para o Gradle 8.7+
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
+
+// Configuração de compilação do Kotlin para compatibilidade com Gradle 8.7
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xemit-jvm-type-annotations")
+        apiVersion = "1.9"
+        languageVersion = "1.9"
+    }
+}
+
+// Configuração adicional para compatibilidade
+tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
+// Configuração de JavaCompile para compatibilidade
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.compilerArgs.add("-parameters")
+}
+
+// Verificação explícita de tipos para evitar erros de compilação
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.allWarningsAsErrors = false
+}
+
+// Configuração adicional para compatibilidade
+tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
+// Configuração de JavaCompile para compatibilidade
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.compilerArgs.add("-parameters")
+}
+
+// Verificação explícita de tipos para evitar erros de compilação
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.allWarningsAsErrors = false
+}
+
+// Configuração adicional para compatibilidade
+tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
+// Configuração de JavaCompile para compatibilidade
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    options.compilerArgs.add("-parameters")
+}
+
+// Verificação explícita de tipos para evitar erros de compilação
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.allWarningsAsErrors = false
 }
