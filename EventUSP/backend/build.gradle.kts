@@ -54,7 +54,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
-    // MySQL Database - Usando o conector mais estável para MySQL 8
+    // MySQL Database - Usando o conector mais estável para MySQL   8
     implementation("com.mysql:mysql-connector-j:$mysqlVersion")
 
     // H2 Database (keeping for development/testing)
