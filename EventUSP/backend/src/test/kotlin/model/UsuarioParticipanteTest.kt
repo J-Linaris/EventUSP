@@ -14,12 +14,12 @@ class UsuarioParticipanteTest {
     
     @BeforeEach
     fun setup() {
-        organizador = UsuarioOrganizador(
-            id = 1L,
-            nome = "Organizador Teste",
-            email = "organizador@usp.br",
-            senha = "senha123"
-        )
+        organizador = UsuarioOrganizador()
+        organizador.id = 1L
+        organizador.nome = "Organizador Teste"
+        organizador.email = "organizador@usp.br"
+        organizador.senha = "senha123"
+        organizador.fotoPerfil = "https://exemplo.com/foto-organizador.jpg"
         
         participante = UsuarioParticipante(
             id = 2L,

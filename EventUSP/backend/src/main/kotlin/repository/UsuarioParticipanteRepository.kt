@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
  */
 class UsuarioParticipanteRepository {
     /**
-     * Cria um novo usuário participante no banco de dados
+     * Cria um usuário participante no banco de dados
      * @param usuario O usuário participante a ser criado
      * @return O usuário participante criado com o ID gerado
      */

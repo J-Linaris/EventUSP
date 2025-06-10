@@ -189,6 +189,7 @@ function CreateAccount() {
                         {success && <div className="success-message">Conta criada com sucesso! Redirecionando...</div>}
                         
                         <div className="form-footer">
+                            <div className="form-footer-button-wrapper">
                             <button 
                                 className="form-footer-button" 
                                 type="submit"
@@ -196,9 +197,12 @@ function CreateAccount() {
                             >
                                 {loading ? 'Criando...' : 'Criar conta'}
                             </button>
-                            <Link to="/login">
+                            </div>
+                            <div className="form-footer-button-wrapper">
+                            <Link to="/login" className="link-button-wrapper">
                                 <button className="form-footer-button" type="button">Voltar ao Login</button>
                             </Link>
+                            </div>
                         </div>
                     </form>
                 </div>

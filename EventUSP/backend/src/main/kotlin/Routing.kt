@@ -19,6 +19,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
 import java.util.*
+import br.usp.eventUSP.UserResponse
 
 fun Application.configureRouting() {
     routing {
@@ -424,23 +425,30 @@ fun Application.configureRouting() {
                                 }
                                 
                                 // Criar organizador
-                                val organizador = UsuarioOrganizador(
-                                    id = null,
-                                    nome = username,
-                                    email = email,
-                                    senha = password, // Na implementação real, a senha deve ser hasheada
-                                    fotoPerfil = profilePhotoPath
-                                )
+//                                val organizador = UsuarioOrganizador(
+//                                    id = null,
+//                                    nome = username,
+//                                    email = email,
+//                                    senha = password, // Na implementação real, a senha deve ser hasheada
+//                                    fotoPerfil = profilePhotoPath
+//                                )
+                                // Cria organizador
+                                val organizador = UsuarioOrganizador()
+                                organizador.id = null
+                                organizador.nome = username
+                                organizador.email = email
+                                organizador.senha = password
+                                organizador.fotoPerfil = profilePhotoPath
                                 
                                 val createdOrganizador = organizadorRepository.create(organizador)
                                 
                                 // Gerar token JWT
                                 val token = generateToken(createdOrganizador.id.toString(), "organizador")
                                 
-                                call.respond(HttpStatusCode.Created, mapOf(
-                                    "message" to "Organizador criado com sucesso",
-                                    "user" to createdOrganizador,
-                                    "token" to token
+                                call.respond(HttpStatusCode.Created, UserResponse<UsuarioOrganizador>(
+                                    message = "Organizador criado com sucesso",
+                                    user = createdOrganizador,
+                                    token = token
                                 ))
                             }
                             "participante" -> {
@@ -459,14 +467,15 @@ fun Application.configureRouting() {
                                 )
                                 
                                 val createdParticipante = participanteRepository.create(participante)
-                                
+
                                 // Gerar token JWT
                                 val token = generateToken(createdParticipante.id.toString(), "participante")
                                 
-                                call.respond(HttpStatusCode.Created, mapOf(
-                                    "message" to "Participante criado com sucesso",
-                                    "user" to createdParticipante,
-                                    "token" to token
+                                call.respond(HttpStatusCode.Created,
+                                    UserResponse<UsuarioParticipante>(
+                                    message = "Participante criado com sucesso",
+                                    user = createdParticipante,
+                                    token = token
                                 ))
                             }
                             else -> {

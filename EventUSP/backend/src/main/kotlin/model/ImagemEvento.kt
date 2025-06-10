@@ -1,8 +1,9 @@
 package br.usp.eventUSP.model
-
+import kotlinx.serialization.Serializable
 /**
  * Classe que representa uma imagem de um evento
  */
+@Serializable
 class ImagemEvento(
     var id: Long? = null,
     var evento: Evento,

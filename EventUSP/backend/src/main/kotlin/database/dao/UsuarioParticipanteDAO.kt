@@ -7,10 +7,15 @@ import br.usp.eventUSP.model.UsuarioParticipante
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import kotlinx.serialization.Serializable
 
 /**
  * DAO para a entidade UsuarioParticipante
  */
+
+// Cria um data class para UsuarioParticipante ser serializável (transformado entre nosso modelo e um JSON)
+
+
 class UsuarioParticipanteDAO(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<UsuarioParticipanteDAO>(UsuarioParticipanteTable)
     

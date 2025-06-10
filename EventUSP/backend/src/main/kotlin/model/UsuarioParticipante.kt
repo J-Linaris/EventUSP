@@ -1,13 +1,16 @@
 package br.usp.eventUSP.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Classe que representa um usuário participante no sistema EventUSP
  */
+@Serializable
 open class UsuarioParticipante(
     var id: Long? = null,
-    var nome: String,
-    var email: String,
-    var senha: String,
+    var nome: String = "",
+    var email: String = "",
+    var senha: String = "",
     var fotoPerfil: String? = null
 ) {
     var eventosComLike: MutableList<Evento> = mutableListOf()

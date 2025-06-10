@@ -1,5 +1,7 @@
 package br.usp.eventUSP.model
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Contextual
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -7,11 +9,12 @@ import java.util.*
 /**
  * Classe que representa um evento no sistema EventUSP
  */
+@Serializable
 class Evento(
     var id: Long? = null,
     var titulo: String,
     var descricao: String,
-    var dataHora: LocalDateTime,
+    @Contextual var dataHora: LocalDateTime,
     var localizacao: String,
     var categoria: String,
     var organizador: UsuarioOrganizador
