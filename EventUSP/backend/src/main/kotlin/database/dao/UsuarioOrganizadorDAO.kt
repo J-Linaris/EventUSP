@@ -25,12 +25,12 @@ class UsuarioOrganizadorDAO(id: EntityID<Long>) : LongEntity(id) {
      * Converte o DAO para o modelo
      */
     fun toModel(): UsuarioOrganizador {
-        return UsuarioOrganizador(
-            id = id.value,
-            nome = nome,
-            email = email,
-            senha = senha,
-            fotoPerfil = fotoPerfil
-        )
+        val org = UsuarioOrganizador()
+        org.id = id.value
+        org.nome = nome
+        org.email = email
+        org.senha = senha
+        org.fotoPerfil = fotoPerfil
+        return org
     }
 }

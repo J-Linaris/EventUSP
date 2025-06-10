@@ -1,17 +1,20 @@
 package br.usp.eventUSP.model
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 /**
  * Classe que representa uma avaliação (review) de um evento
  */
+@Serializable
 class Review(
     var id: Long? = null,
     val evento: Evento,
     val participante: UsuarioParticipante,
     var nota: Int, // valor de 0 a 5
     var comentario: String,
-    val dataHora: LocalDateTime = LocalDateTime.now()
+    @Contextual val dataHora: LocalDateTime = LocalDateTime.now()
 ) {
     init {
         require(nota in 0..5) { "A nota deve estar entre 0 e 5" }

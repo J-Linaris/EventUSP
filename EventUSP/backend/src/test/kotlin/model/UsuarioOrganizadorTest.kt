@@ -12,13 +12,12 @@ class UsuarioOrganizadorTest {
     
     @BeforeEach
     fun setup() {
-        organizador = UsuarioOrganizador(
-            id = 1L,
-            nome = "Organizador Teste",
-            email = "organizador@usp.br",
-            senha = "senha123",
-            fotoPerfil = "https://exemplo.com/foto-organizador.jpg"
-        )
+        organizador = UsuarioOrganizador()
+        organizador.id = 1L
+        organizador.nome = "Organizador Teste"
+        organizador.email = "organizador@usp.br"
+        organizador.senha = "senha123"
+        organizador.fotoPerfil = "https://exemplo.com/foto-organizador.jpg"
         
         evento = Evento(
             id = 1L,
@@ -50,13 +49,18 @@ class UsuarioOrganizadorTest {
     
     @Test
     fun `deve inicializar organizador com valores opcionais nulos`() {
-        val organizadorSemOpcionais = UsuarioOrganizador(
-            id = 2L,
-            nome = "Outro Organizador",
-            email = "outro@usp.br",
-            senha = "senha456"
-        )
-        
+//        val organizadorSemOpcionais = UsuarioOrganizador(
+//            id = 2L,
+//            nome = "Outro Organizador",
+//            email = "outro@usp.br",
+//            senha = "senha456"
+//        )
+        val organizadorSemOpcionais = UsuarioOrganizador()
+        organizadorSemOpcionais.id = 2L
+        organizadorSemOpcionais.nome = "Outro Organizador"
+        organizadorSemOpcionais.email = "outro@usp.br"
+        organizadorSemOpcionais.senha = "senha456"
+//        organizador.fotoPerfil = "https://exemplo.com/foto-organizador-outro.jpg"
         assertNull(organizadorSemOpcionais.fotoPerfil)
     }
     
@@ -97,13 +101,19 @@ class UsuarioOrganizadorTest {
     
     @Test
     fun `não deve cancelar evento de outro organizador`() {
-        val outroOrganizador = UsuarioOrganizador(
-            id = 3L,
-            nome = "Outro Organizador",
-            email = "outro@usp.br",
-            senha = "senha789"
-        )
-        
+//        val outroOrganizador = UsuarioOrganizador(
+//            id = 3L,
+//            nome = "Outro Organizador",
+//            email = "outro@usp.br",
+//            senha = "senha789"
+//        )
+        val outroOrganizador = UsuarioOrganizador()
+        outroOrganizador.id = 3L
+        outroOrganizador.nome = "Outro Organizador"
+        outroOrganizador.email = "outro@usp.br"
+        outroOrganizador.senha = "senha789"
+
+
         val eventoDeOutroOrganizador = Evento(
             id = 2L,
             titulo = "Evento de Outro Organizador",
@@ -169,13 +179,18 @@ class UsuarioOrganizadorTest {
     
     @Test
     fun `não deve atualizar evento de outro organizador`() {
-        val outroOrganizador = UsuarioOrganizador(
-            id = 3L,
-            nome = "Outro Organizador",
-            email = "outro@usp.br",
-            senha = "senha789"
-        )
-        
+//        val outroOrganizador = UsuarioOrganizador(
+//            id = 3L,
+//            nome = "Outro Organizador",
+//            email = "outro@usp.br",
+//            senha = "senha789"
+//        )
+        val outroOrganizador = UsuarioOrganizador()
+        outroOrganizador.id = 3L
+        outroOrganizador.nome = "Outro Organizador"
+        outroOrganizador.email = "outro@usp.br"
+        outroOrganizador.senha = "senha789"
+
         val eventoDeOutroOrganizador = Evento(
             id = 2L,
             titulo = "Evento de Outro Organizador",
@@ -228,13 +243,18 @@ class UsuarioOrganizadorTest {
     
     @Test
     fun `não deve adicionar imagem a evento de outro organizador`() {
-        val outroOrganizador = UsuarioOrganizador(
-            id = 3L,
-            nome = "Outro Organizador",
-            email = "outro@usp.br",
-            senha = "senha789"
-        )
-        
+//        val outroOrganizador = UsuarioOrganizador(
+//            id = 3L,
+//            nome = "Outro Organizador",
+//            email = "outro@usp.br",
+//            senha = "senha789"
+//        )
+        val outroOrganizador = UsuarioOrganizador()
+        outroOrganizador.id = 3L
+        outroOrganizador.nome = "Outro Organizador"
+        outroOrganizador.email = "outro@usp.br"
+        outroOrganizador.senha = "senha789"
+
         val eventoDeOutroOrganizador = Evento(
             id = 2L,
             titulo = "Evento de Outro Organizador",
@@ -270,12 +290,17 @@ class UsuarioOrganizadorTest {
     
     @Test
     fun `não deve remover imagem de evento de outro organizador`() {
-        val outroOrganizador = UsuarioOrganizador(
-            id = 3L,
-            nome = "Outro Organizador",
-            email = "outro@usp.br",
-            senha = "senha789"
-        )
+//        val outroOrganizador = UsuarioOrganizador(
+//            id = 3L,
+//            nome = "Outro Organizador",
+//            email = "outro@usp.br",
+//            senha = "senha789"
+//        )
+        val outroOrganizador = UsuarioOrganizador()
+        outroOrganizador.id = 3L
+        outroOrganizador.nome = "Outro Organizador"
+        outroOrganizador.email = "outro@usp.br"
+        outroOrganizador.senha = "senha789"
         
         val eventoDeOutroOrganizador = Evento(
             id = 2L,
@@ -297,20 +322,30 @@ class UsuarioOrganizadorTest {
     
     @Test
     fun `deve comparar organizadores corretamente`() {
-        val organizadorMesmoId = UsuarioOrganizador(
-            id = 1L,
-            nome = "Outro Nome",
-            email = "outro@usp.br",
-            senha = "outrasenha"
-        )
+//        val organizadorMesmoId = UsuarioOrganizador(
+//            id = 1L,
+//            nome = "Outro Nome",
+//            email = "outro@usp.br",
+//            senha = "outrasenha"
+//        )
+        val organizadorMesmoId = UsuarioOrganizador()
+        organizadorMesmoId.id = 1L
+        organizadorMesmoId.nome = "Outro Nome"
+        organizadorMesmoId.email = "outro@usp.br"
+        organizadorMesmoId.senha = "outrasenha"
         
-        val organizadorMesmoEmail = UsuarioOrganizador(
-            id = 100L,
-            nome = "Outro Nome",
-            email = "organizador@usp.br",
-            senha = "outrasenha"
-        )
-        
+//        val organizadorMesmoEmail = UsuarioOrganizador(
+//            id = 100L,
+//            nome = "Outro Nome",
+//            email = "organizador@usp.br",
+//            senha = "outrasenha"
+//        )
+        val organizadorMesmoEmail = UsuarioOrganizador()
+        organizadorMesmoEmail.id = 100L
+        organizadorMesmoEmail.nome = "Outro Nome"
+        organizadorMesmoEmail.email = "organizador@usp.br"
+        organizadorMesmoEmail.senha = "outrasenha"
+
         assertEquals(organizador, organizadorMesmoId)
         assertEquals(organizador, organizadorMesmoEmail)
     }

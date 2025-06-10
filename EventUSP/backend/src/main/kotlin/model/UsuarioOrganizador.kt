@@ -1,17 +1,20 @@
 package br.usp.eventUSP.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Classe que representa um usuário organizador no sistema EventUSP
  * Herda de UsuarioParticipante e adiciona funcionalidades específicas para organização de eventos
  */
+@Serializable
 class UsuarioOrganizador(
-    id: Long? = null,
-    nome: String,
-    email: String,
-    senha: String,
-    fotoPerfil: String? = null
-) : UsuarioParticipante(id, nome, email, senha, fotoPerfil) {
-    
+//    id: Long? = null,
+//    nome: String,
+//    email: String,
+//    senha: String,
+//    fotoPerfil: String? = null
+//) : UsuarioParticipante(id, nome, email, senha, fotoPerfil) {
+) : UsuarioParticipante(){
     var eventosOrganizados: MutableList<Evento> = mutableListOf()
     
     /**
