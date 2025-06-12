@@ -1,15 +1,45 @@
 package br.usp.eventUSP.model
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import java.time.LocalDateTime
+import br.usp.eventUSP.database.tables.UsuarioOrganizadorTable
+import br.usp.eventUSP.repository.UsuarioOrganizadorRepository
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.deleteAll
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsuarioOrganizadorTest {
     
     private lateinit var organizador: UsuarioOrganizador
     private lateinit var evento: Evento
-    
+
+    private lateinit var repository: UsuarioOrganizadorRepository
+
+    @BeforeAll
+    fun setUpDatabase() {
+        // Use um banco de dados em memória para testes!
+        Database.connect(
+            "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;",
+            driver = "org.h2.Driver"
+        )
+        transaction {
+            SchemaUtils.create(UsuarioOrganizadorTable)
+        }
+        repository = UsuarioOrganizadorRepository() // ou como for sua inicialização
+    }
+
+    @BeforeEach
+    fun cleanDatabase() {
+        transaction {
+            UsuarioOrganizadorTable.deleteAll()
+        }
+    }
+
     @BeforeEach
     fun setup() {
         organizador = UsuarioOrganizador()
@@ -349,4 +379,22 @@ class UsuarioOrganizadorTest {
         assertEquals(organizador, organizadorMesmoId)
         assertEquals(organizador, organizadorMesmoEmail)
     }
+
+    @Test
+    fun `deve criar organizador e persistir no banco de dados`() {
+        // Coloca o organizador criado no repositório
+        repository.create(organizador)
+
+        // Agora consultamos direto na tabela para garantir que persistiu
+        val organizadorNoBanco = transaction {
+            UsuarioOrganizadorTable.select { UsuarioOrganizadorTable.email eq organizador.email }.singleOrNull()
+        }
+
+        assertNotNull(organizadorNoBanco)
+        assertEquals(organizador.nome, organizadorNoBanco?.get(UsuarioOrganizadorTable.nome))
+        assertEquals(organizador.email, organizadorNoBanco?.get(UsuarioOrganizadorTable.email))
+        assertEquals(organizador.senha, organizadorNoBanco?.get(UsuarioOrganizadorTable.senha))
+        assertEquals(organizador.fotoPerfil, organizadorNoBanco?.get(UsuarioOrganizadorTable.fotoPerfil))
+    }
+
 }
