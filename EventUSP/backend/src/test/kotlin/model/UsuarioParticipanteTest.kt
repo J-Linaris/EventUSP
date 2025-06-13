@@ -28,7 +28,7 @@ class UsuarioParticipanteTest {
     fun setUpDatabase() {
         // Use um banco de dados em memória para testes!
         Database.connect(
-            "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;",
+            "jdbc:h2:mem:test-participant;DB_CLOSE_DELAY=-1;",
             driver = "org.h2.Driver"
         )
         transaction {

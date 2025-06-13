@@ -120,16 +120,5 @@ class UsuarioOrganizador(
         
         return evento.removerImagem(imagem)
     }
-    
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is UsuarioOrganizador) return false
-        if (!super.equals(other)) return false
-        
-        return true
-    }
-    
-    override fun hashCode(): Int {
-        return super.hashCode()
-    }
+
 }
