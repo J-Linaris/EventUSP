@@ -1,17 +1,49 @@
 package br.usp.eventUSP.model
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 import java.time.LocalDateTime
+import br.usp.eventUSP.database.tables.UsuarioOrganizadorTable
+import br.usp.eventUSP.database.tables.UsuarioParticipanteTable
+import br.usp.eventUSP.repository.UsuarioOrganizadorRepository
+import br.usp.eventUSP.repository.UsuarioParticipanteRepository
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.deleteAll
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsuarioParticipanteTest {
     
     private lateinit var participante: UsuarioParticipante
     private lateinit var participanteSemFoto: UsuarioParticipante
     private lateinit var evento: Evento
     private lateinit var organizador: UsuarioOrganizador
-    
+
+    private lateinit var repository: UsuarioParticipanteRepository
+
+    @BeforeAll
+    fun setUpDatabase() {
+        // Use um banco de dados em memória para testes!
+        Database.connect(
+            "jdbc:h2:mem:test-participant;DB_CLOSE_DELAY=-1;",
+            driver = "org.h2.Driver"
+        )
+        transaction {
+            SchemaUtils.create(UsuarioParticipanteTable)
+        }
+        repository = UsuarioParticipanteRepository() // ou como for sua inicialização
+    }
+
+    @BeforeEach
+    fun cleanDatabase() {
+        transaction {
+            UsuarioParticipanteTable.deleteAll()
+        }
+    }
+
     @BeforeEach
     fun setup() {
         organizador = UsuarioOrganizador()
@@ -163,5 +195,21 @@ class UsuarioParticipanteTest {
         assertEquals(participante, participanteMesmoId)
         assertEquals(participante, participanteMesmoEmail)
         assertNotEquals(participante, participanteDiferente)
+    }
+
+    @Test
+    fun `deve criar participante e persistir no banco de dados`() {
+        // Coloca o participante criado no repositório
+        repository.create(participante)
+
+        // Agora consultamos direto na tabela para garantir que persistiu
+        val participanteNoBanco = transaction {
+            UsuarioParticipanteTable.select { UsuarioParticipanteTable.email eq participante.email }.singleOrNull()
+        }
+
+        assertNotNull(participanteNoBanco)
+        assertEquals(participante.nome, participanteNoBanco?.get(UsuarioParticipanteTable.nome))
+        assertEquals(participante.email, participanteNoBanco?.get(UsuarioParticipanteTable.email))
+        assertEquals(participante.senha, participanteNoBanco?.get(UsuarioParticipanteTable.senha))
     }
 }

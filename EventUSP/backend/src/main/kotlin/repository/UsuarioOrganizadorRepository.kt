@@ -18,6 +18,7 @@ class UsuarioOrganizadorRepository {
             nome = usuario.nome
             email = usuario.email
             senha = usuario.senha
+            fotoPerfil = usuario.fotoPerfil
         }
         
         usuarioDAO.toModel()
@@ -62,6 +63,7 @@ class UsuarioOrganizadorRepository {
         usuarioDAO.nome = usuario.nome
         usuarioDAO.email = usuario.email
         usuarioDAO.senha = usuario.senha
+        usuarioDAO.fotoPerfil = usuario.fotoPerfil
         
         usuarioDAO.toModel()
     }

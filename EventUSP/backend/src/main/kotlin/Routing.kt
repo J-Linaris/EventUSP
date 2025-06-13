@@ -4,7 +4,7 @@ import br.usp.eventUSP.model.Evento
 import br.usp.eventUSP.model.ImagemEvento
 import br.usp.eventUSP.model.Review
 import br.usp.eventUSP.model.UsuarioOrganizador
-import br.usp.eventUSP.model.UsuarioParticipante
+import br.usp.eventUSP.model. UsuarioParticipante
 import br.usp.eventUSP.repository.EventoRepository
 import br.usp.eventUSP.repository.ImagemEventoRepository
 import br.usp.eventUSP.repository.ReviewRepository
@@ -489,8 +489,30 @@ fun Application.configureRouting() {
                 
                 // Rota de login
                 post("/login") {
-                    // TODO: Implementar autenticação
-                    call.respond(HttpStatusCode.NotImplemented, mapOf("message" to "Rota de login ainda não implementada"))
+                    val body = call.receive<LoginRequest>()
+
+                    val organizadorRepo = UsuarioOrganizadorRepository()
+                    val participanteRepo = UsuarioParticipanteRepository()
+
+                    val organizador = organizadorRepo.findByEmail(body.email)
+                    if (organizador != null && organizador.senha == body.senha) {
+                        call.respond(LoginResponse<UsuarioOrganizador>(
+                            message = "Login efetuado com sucesso!",
+                            user = organizador
+                        ))
+                        return@post
+                    }
+
+                    val participante = participanteRepo.findByEmail(body.email)
+                    if (participante != null && participante.senha == body.senha) {
+                        call.respond(LoginResponse<UsuarioParticipante>(
+                            message = "Login efetuado com sucesso!",
+                            user = participante
+                        ))
+                        return@post
+                    }
+
+                    call.respond(HttpStatusCode.Unauthorized, "Credenciais inválidas")
                 }
             }
         }
