@@ -12,11 +12,12 @@ data class UserResponse<T>(
 @Serializable
 data class LoginRequest(
     val email: String,
-    val senha: String
+    val password: String
 )
 
 @Serializable
 data class LoginResponse<T>(
     val message: String,
+    val token: String,
     val user: T
 )

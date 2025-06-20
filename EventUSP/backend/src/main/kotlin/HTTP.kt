@@ -12,9 +12,13 @@ fun Application.configureHTTP() {
         header("X-Engine", "Ktor") // will send this header with each response
     }
     install(CORS) {
+        allowHost("localhost:5173", schemes = listOf("http")) // Permite requisições de localhost:5173
+        allowMethod(HttpMethod.Post) // Permite o método POST
+        allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
+        allowHeader(HttpHeaders.ContentType) // Permite o cabeçalho Content-Type
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")

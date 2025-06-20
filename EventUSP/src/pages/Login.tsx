@@ -1,16 +1,8 @@
-// import {
-//     BrowserRouter,
-//     Routes,
-//     Route,
-//     Link,
-//     // NavLink,
-//     // Navigate,
-//     // Outlet
-// } from 'react-router-dom';
 import { useState } from "react";
-import "./basicStyle.css";
+import { Link } from "react-router-dom";
+import * as React from "react";
 import "./Login.css";
-import {Link} from 'react-router-dom';
+
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -22,25 +14,31 @@ function Login() {
         setErro("");
 
         try {
-            const response = await fetch("/proxy/login", {
+            const response = await fetch("/proxy/api/users/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email, senha }),
+                body: JSON.stringify({
+                    email: email,
+                    password: senha, // <-- o backend espera "password"
+                }),
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Erro ao fazer login.");
+                const errorData = await response.json().catch(() => null);
+                const message = errorData?.message || "Erro ao fazer login.";
+                throw new Error(message);
             }
 
             const data = await response.json();
-            // Exemplo: armazenar o token JWT no localStorage
-            localStorage.setItem("token", data.token);
 
-            // Redirecionar ou atualizar estado de login
-            window.location.href = "/home"; // ajuste conforme seu app
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("username", data.user.nome);
+            localStorage.setItem("email", data.user.email);
+            localStorage.setItem("accountType", data.user.accountType); // opcional, se vier
+
+            window.location.href = "/";
         } catch (err: unknown) {
             if (err instanceof Error) {
                 setErro(err.message);
@@ -53,34 +51,40 @@ function Login() {
     return (
         <div className="login-page">
             <div id="login-square">
-                    <div className="login-header">
-                        <span id="texto-bem-vindo">Bem-vindo ao Event<span id="span-USP-eventusp">USP</span>!</span>
+                <div className="login-header">
+                    <span id="texto-bem-vindo">
+                        Bem-vindo ao Event<span id="span-USP-eventusp">USP</span>!
+                    </span>
+                </div>
+                <form onSubmit={handleSubmit} className="login-form">
+                    <div className="form-fields">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="password"
+                            placeholder="Senha"
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
+                            required
+                        />
                     </div>
-                    <form onSubmit={handleSubmit} className="login-form">
-                        <div className="form-fields">
-                            <input
-                                type="email"
-                                placeholder="Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                            <input
-                                type="password"
-                                placeholder="Senha"
-                                value={senha}
-                                onChange={(e) => setSenha(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="form-footer">
-                            <Link to="/create-account">
-                                <button className="form-footer-button">Criar conta</button>
-                            </Link>
-                            <button className="form-footer-button" type="submit">Entrar</button>
-                        </div>
-                        {erro && <div className="erro-login">{erro}</div>}
-                    </form>
+                    <div className="form-footer">
+                        <Link to="/create-account">
+                            <button className="form-footer-button" type="button">
+                                Criar conta
+                            </button>
+                        </Link>
+                        <button className="form-footer-button" type="submit">
+                            Entrar
+                        </button>
+                    </div>
+                    {erro && <div className="erro-login">{erro}</div>}
+                </form>
             </div>
         </div>
     );

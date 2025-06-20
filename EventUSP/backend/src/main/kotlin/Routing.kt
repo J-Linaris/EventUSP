@@ -20,6 +20,7 @@ import io.ktor.server.routing.*
 import java.io.File
 import java.util.*
 import br.usp.eventUSP.UserResponse
+import kotlinx.serialization.json.Json
 
 fun Application.configureRouting() {
     routing {
@@ -489,27 +490,53 @@ fun Application.configureRouting() {
                 
                 // Rota de login
                 post("/login") {
-                    val body = call.receive<LoginRequest>()
+                    try {
+                        val requestBody = call.receiveText() // Recebe como texto primeiro para inspecionar
+                        println("Received login request body: $requestBody") // Log do corpo bruto
+                        val loginRequest =
+                            Json.decodeFromString<LoginRequest>(requestBody) // Tenta desserializar manualmente para pegar o erro
 
-                    val organizadorRepo = UsuarioOrganizadorRepository()
-                    val participanteRepo = UsuarioParticipanteRepository()
+//                        val body = call.receive<LoginRequest>()
 
-                    val organizador = organizadorRepo.findByEmail(body.email)
-                    if (organizador != null && organizador.senha == body.senha) {
-                        call.respond(LoginResponse<UsuarioOrganizador>(
-                            message = "Login efetuado com sucesso!",
-                            user = organizador
-                        ))
-                        return@post
+//                        val organizador = organizadorRepo.findByEmail(body.email)
+                        val organizador = organizadorRepository.findByEmail(loginRequest.email)
+                        if (organizador != null && organizador.senha == loginRequest.password) {
+//                        if (organizador != null && organizador.senha == body.senha) {
+
+                            // Gera Token do Organizador logado
+                            val token = generateToken(organizador.id.toString(), "organizador")
+
+                            call.respond(
+                                LoginResponse<UsuarioOrganizador>(
+                                    message = "Login efetuado com sucesso!",
+                                    token = token,
+                                    user = organizador
+                                )
+                            )
+                            return@post
+                        }
+
+//                      val participante = participanteRepo.findByEmail(body.email)
+                        val participante = participanteRepository.findByEmail(loginRequest.email)
+//                        if (participante != null && participante.senha == body.senha) {
+                        if (participante != null && participante.senha == loginRequest.password) {
+
+                            // Gera Token do Participante logado
+                            val token = generateToken(participante.id.toString(), "participante")
+
+                            call.respond(
+                                LoginResponse<UsuarioParticipante>(
+                                    message = "Login efetuado com sucesso!",
+                                    token = token,
+                                    user = participante
+                                )
+                            )
+                            return@post
+                        }
                     }
-
-                    val participante = participanteRepo.findByEmail(body.email)
-                    if (participante != null && participante.senha == body.senha) {
-                        call.respond(LoginResponse<UsuarioParticipante>(
-                            message = "Login efetuado com sucesso!",
-                            user = participante
-                        ))
-                        return@post
+                    catch (e: Exception) {
+                        println("Error processing login request: ${e.message}") // Log de qualquer exceção
+                        call.respond(HttpStatusCode.BadRequest, "Erro na requisição: ${e.message}")
                     }
 
                     call.respond(HttpStatusCode.Unauthorized, "Credenciais inválidas")
