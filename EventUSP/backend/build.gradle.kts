@@ -54,6 +54,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 
+    // Para serializar LocalDateTime
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
     // MySQL Database - Usando o conector mais estável para MySQL   8
     implementation("com.mysql:mysql-connector-j:$mysqlVersion")
 

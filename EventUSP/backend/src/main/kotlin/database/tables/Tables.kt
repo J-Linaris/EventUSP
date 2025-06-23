@@ -12,7 +12,6 @@ object EventoTable : LongIdTable("eventos") {
     val descricao = text("descricao")
     val dataHora = datetime("data_hora")
     val localizacao = varchar("localizacao", 255)
-    val imagens = varchar("imagens", 255)
     val categoria = varchar("categoria", 100)
     val organizadorId = reference("organizador_id", UsuarioOrganizadorTable)
     val numeroLikes = integer("numero_likes").default(0)

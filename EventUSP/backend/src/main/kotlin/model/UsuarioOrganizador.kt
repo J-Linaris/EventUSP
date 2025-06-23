@@ -1,6 +1,7 @@
 package br.usp.eventUSP.model
 
 import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
 
 /**
  * Classe que representa um usuário organizador no sistema EventUSP
@@ -29,7 +30,7 @@ class UsuarioOrganizador(
     fun criarEvento(
         titulo: String,
         descricao: String,
-        dataHora: java.time.LocalDateTime,
+        dataHora: LocalDateTime,
         localizacao: String,
         categoria: String
             ): Evento {

@@ -13,14 +13,13 @@ import br.usp.eventUSP.repository.UsuarioParticipanteRepository
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
 import java.util.*
-import br.usp.eventUSP.UserResponse
 import kotlinx.serialization.json.Json
+import java.time.LocalDateTime
 
 fun Application.configureRouting() {
     routing {
@@ -57,14 +56,33 @@ fun Application.configureRouting() {
                     call.respond(eventos)
                 }
 
-                post {
-                    val evento = call.receive<Evento>()
-                    try {
-                        val createdEvento = eventoRepository.create(evento)
-                        call.respond(HttpStatusCode.Created, createdEvento)
-                    } catch (e: IllegalArgumentException) {
-                        call.respondText(e.message ?: "Erro ao criar evento", status = HttpStatusCode.BadRequest)
+                post("/criar") {
+                    val organizadorRepository = UsuarioOrganizadorRepository()
+
+                    val eventoReq = call.receive<EventoRequest>()
+
+                    println("Payload recebido para criação de evento: $eventoReq")
+
+                    // Busca o organizador pelo ID recebido
+                    val organizador = organizadorRepository.findById(eventoReq.organizadorId)
+                    if (organizador == null) {
+                        println("Organizador não encontrado")
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Organizador não encontrado no repositório"))
+                        return@post
                     }
+
+                    // Criação do evento usando método do organizador
+                    val evento = organizador.criarEvento(
+                        eventoReq.titulo,
+                        eventoReq.descricao,
+                        LocalDateTime.parse(eventoReq.dataHora),
+                        eventoReq.localizacao,
+                        eventoReq.categoria
+                    )
+                    // Persiste no banco
+                    val eventoSalvo = eventoRepository.create(evento)
+
+                    call.respond(HttpStatusCode.Created, eventoSalvo)
                 }
 
                 put("/{id}") {
