@@ -16,11 +16,11 @@ class ImagemEventoRepository {
      * @return A imagem de evento criada com o ID gerado
      */
     fun create(imagem: ImagemEvento): ImagemEvento = transaction {
-        val eventoDAO = EventoDAO.findById(imagem.evento.id!!)
-            ?: throw IllegalArgumentException("Evento não encontrado")
+    //    val eventoDAO = EventoDAO.findById(imagem.eventoId!!)
+     //       ?: throw IllegalArgumentException("Evento não encontrado")
 
         val imagemDAO = ImagemEventoDAO.new {
-            evento = eventoDAO
+        //    evento = eventoDAO
             url = imagem.url
             descricao = imagem.descricao
             ordem = imagem.ordem
@@ -38,26 +38,26 @@ class ImagemEventoRepository {
         ImagemEventoDAO.findById(id)?.toModel()
     }
 
-    /**
-     * Busca todas as imagens de um evento
-     * @param eventoId O ID do evento
-     * @return Lista de imagens do evento
-     */
-    fun findByEvento(eventoId: Long): List<ImagemEvento> = transaction {
-        ImagemEventoDAO.find { br.usp.eventUSP.database.tables.ImagemEventoTable.eventoId eq eventoId }
-            .map { it.toModel() }
-    }
+//    /**
+//     * Busca todas as imagens de um evento
+//     * @param eventoId O ID do evento
+//     * @return Lista de imagens do evento
+//     */
+//    fun findByEvento(eventoId: Long): List<ImagemEvento> = transaction {
+//        ImagemEventoDAO.find { br.usp.eventUSP.database.tables.ImagemEventoTable.eventoId eq eventoId }
+//            .map { it.toModel() }
+//    }
 
-    /**
-     * Busca todas as imagens de um evento ordenadas
-     * @param eventoId O ID do evento
-     * @return Lista de imagens do evento ordenadas pelo campo ordem
-     */
-    fun findByEventoOrdenadas(eventoId: Long): List<ImagemEvento> = transaction {
-        ImagemEventoDAO.find { br.usp.eventUSP.database.tables.ImagemEventoTable.eventoId eq eventoId }
-            .orderBy(br.usp.eventUSP.database.tables.ImagemEventoTable.ordem to SortOrder.ASC)
-            .map { it.toModel() }
-    }
+//    /**
+//     * Busca todas as imagens de um evento ordenadas
+//     * @param eventoId O ID do evento
+//     * @return Lista de imagens do evento ordenadas pelo campo ordem
+//     */
+//    fun findByEventoOrdenadas(eventoId: Long): List<ImagemEvento> = transaction {
+//        ImagemEventoDAO.find { br.usp.eventUSP.database.tables.ImagemEventoTable.eventoId eq eventoId }
+//            .orderBy(br.usp.eventUSP.database.tables.ImagemEventoTable.ordem to SortOrder.ASC)
+//            .map { it.toModel() }
+//    }
 
     /**
      * Busca todas as imagens de eventos

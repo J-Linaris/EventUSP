@@ -49,7 +49,7 @@ class EventoRepository {
         // Adiciona as imagens do evento
         evento.imagens.forEach { imagem ->
             ImagemEventoDAO.new {
-                this.evento = eventoDAO
+              //  this.evento = eventoDAO
                 url = imagem.url
                 descricao = imagem.descricao
                 ordem = imagem.ordem

@@ -124,7 +124,6 @@ class Evento(
      */
     fun adicionarImagem(url: String, descricao: String? = null, ordem: Int = imagens.size): ImagemEvento {
         val imagem = ImagemEvento(
-            evento = this,
             url = url,
             descricao = descricao,
             ordem = ordem

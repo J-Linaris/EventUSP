@@ -1,7 +1,6 @@
 package br.usp.eventUSP
 
-import br.usp.eventUSP.database.tables.UsuarioOrganizadorTable
-import br.usp.eventUSP.database.tables.UsuarioParticipanteTable
+import br.usp.eventUSP.database.tables.*
 import br.usp.eventUSP.model.UsuarioOrganizador
 import br.usp.eventUSP.model.UsuarioParticipante
 import io.ktor.server.testing.*
@@ -22,24 +21,53 @@ import kotlin.test.assertNotNull
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LoginRouteTest {
 
+    // Lista de todas as tabelas na ordem correta para criação/exclusão.
+    private val allTables = arrayOf(
+        UsuarioOrganizadorTable,
+        UsuarioParticipanteTable,
+        EventoTable,
+        ImagemEventoTable,
+        ReviewTable,
+        ParticipantesInteressadosTable
+    )
+
+    // SETUP ÚNICO: Roda apenas uma vez antes de todos os testes da classe.
     @BeforeAll
-    fun prepareDatabase() {
+    fun setupDatabase() {
+        // Conecta ao banco de dados em memória uma única vez.
         Database.connect(
             "jdbc:h2:mem:test-login-signup;DB_CLOSE_DELAY=-1;",
-            driver = "org.h2.Driver"
+            driver = "org.h2.Driver",
+            user = "root",
+            password = ""
         )
+
+        // Cria o schema uma única vez.
         transaction {
-            SchemaUtils.create(UsuarioOrganizadorTable)
-            SchemaUtils.create(UsuarioParticipanteTable)
+            SchemaUtils.create(*allTables)
         }
     }
 
+    // LIMPEZA ANTES DE CADA TESTE: Roda antes de cada @Test.
     @BeforeEach
     fun cleanTables() {
+        // Agora, em vez de apagar e recriar as tabelas (lento),
+        // nós apenas deletamos todos os registros (muito mais rápido).
         transaction {
-            // Limpa as tabelas antes de cada teste
-            UsuarioOrganizadorTable.deleteAll()
-            UsuarioParticipanteTable.deleteAll()
+            // A ordem de exclusão é a inversa da criação para respeitar as chaves estrangeiras.
+            // Ex: Deleta 'Review' antes de 'Evento', que deleta antes de 'Usuario'.
+            allTables.reversedArray().forEach { table ->
+                table.deleteAll()
+            }
+        }
+    }
+
+    // DESMONTAGEM ÚNICA: Roda apenas uma vez depois de todos os testes da classe.
+    @AfterAll
+    fun tearDownDatabase() {
+        // Boa prática para limpar os recursos, embora o H2 em memória seja descartado de qualquer maneira.
+        transaction {
+            SchemaUtils.drop(*allTables.reversedArray())
         }
     }
 

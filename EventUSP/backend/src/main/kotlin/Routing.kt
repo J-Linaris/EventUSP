@@ -311,21 +311,21 @@ fun Application.configureRouting() {
                     call.respond(imagem)
                 }
 
-                get("/evento/{eventoId}") {
-                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
-                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
-
-                    val imagens = imagemRepository.findByEvento(eventoId)
-                    call.respond(imagens)
-                }
-
-                get("/evento/{eventoId}/ordenadas") {
-                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
-                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
-
-                    val imagens = imagemRepository.findByEventoOrdenadas(eventoId)
-                    call.respond(imagens)
-                }
+//                get("/evento/{eventoId}") {
+//                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
+//                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
+//
+//                    val imagens = imagemRepository.findByEvento(eventoId)
+//                    call.respond(imagens)
+//                }
+//
+//                get("/evento/{eventoId}/ordenadas") {
+//                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
+//                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
+//
+//                    val imagens = imagemRepository.findByEventoOrdenadas(eventoId)
+//                    call.respond(imagens)
+//                }
 
                 post {
                     val imagem = call.receive<ImagemEvento>()
@@ -433,7 +433,7 @@ fun Application.configureRouting() {
                             "organizador" -> {
                                 // Verificar se o email já está em uso por outro organizador
                                 if (organizadorRepository.findByEmail(email) != null) {
-                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email já está em uso"))
+                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email ${email} já está em uso"))
                                     return@post
                                 }
                                 
@@ -442,15 +442,7 @@ fun Application.configureRouting() {
                                     call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Foto de perfil é obrigatória para organizadores"))
                                     return@post
                                 }
-                                
-                                // Criar organizador
-//                                val organizador = UsuarioOrganizador(
-//                                    id = null,
-//                                    nome = username,
-//                                    email = email,
-//                                    senha = password, // Na implementação real, a senha deve ser hasheada
-//                                    fotoPerfil = profilePhotoPath
-//                                )
+
                                 // Cria organizador
                                 val organizador = UsuarioOrganizador()
                                 organizador.id = null
@@ -473,7 +465,7 @@ fun Application.configureRouting() {
                             "participante" -> {
                                 // Verificar se o email já está em uso por outro participante
                                 if (participanteRepository.findByEmail(email) != null) {
-                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email já está em uso"))
+                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email ${email} já está em uso"))
                                     return@post
                                 }
                                 
