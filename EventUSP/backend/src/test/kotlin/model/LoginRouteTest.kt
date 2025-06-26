@@ -126,15 +126,16 @@ class LoginRouteTest {
                 append("username", "Organizador Evento")
                 append("password", "orgpass")
                 append("accountType", "organizador")
-                val arquivoFoto = File("src/test/kotlin/bemvindomessi.jpeg")
-                append(
-                    "profilePhoto",
-                    arquivoFoto.readBytes(),
-                    Headers.build {
-                        append(HttpHeaders.ContentType, "image/jpeg")
-                        append(HttpHeaders.ContentDisposition, "filename=\"bemvindomessi.jpg\"")
-                    }
-                )
+//                    val arquivoFoto = File("src/test/kotlin/bemvindomessi.jpeg")
+//                    append(
+//                        "profilePhoto",
+//                        arquivoFoto.readBytes(),
+//                        Headers.build {
+//                            append(HttpHeaders.ContentType, "image/jpeg")
+//                            append(HttpHeaders.ContentDisposition, "filename=\"bemvindomessi.jpg\"")
+//                        }
+//                    )
+                append("profilePhoto","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s")
             }
         )
 
@@ -145,7 +146,7 @@ class LoginRouteTest {
         val organizerResponse = json.decodeFromString<UserResponse<UsuarioOrganizador>>(createResponse.bodyAsText())
         assertEquals("Organizador criado com sucesso", organizerResponse.message)
         assertEquals("Organizador Evento", organizerResponse.user.nome)
-       // assertEquals("https://linkfoto.com/foto.jpg", organizerResponse.user.fotoPerfil)
+        assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", organizerResponse.user.fotoPerfil)
         assertNotNull(organizerResponse.token)
 
         // Login organizador
@@ -160,7 +161,7 @@ class LoginRouteTest {
         assertEquals("Login efetuado com sucesso!", loginResponse.message)
         assertEquals("Organizador Evento", loginResponse.user.nome)
         assertEquals("org123@usp.br", loginResponse.user.email)
-      //  assertEquals("https://linkfoto.com/foto.jpg", loginResponse.user.fotoPerfil)
+        assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", loginResponse.user.fotoPerfil)
     }
 
     @Test

@@ -6,9 +6,11 @@ import br.usp.eventUSP.model.Evento
 import br.usp.eventUSP.repository.EventoRepository
 import br.usp.eventUSP.repository.UsuarioOrganizadorRepository
 import br.usp.eventUSP.EventoRequest
+import br.usp.eventUSP.ImagemRequest
 import br.usp.eventUSP.UserResponse
 import br.usp.eventUSP.model.UsuarioOrganizador
 import br.usp.eventUSP.model.UsuarioParticipante
+import br.usp.eventUSP.repository.ImagemEventoRepository
 import io.ktor.server.testing.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.formData
@@ -96,26 +98,25 @@ class EventoRouteTest {
                     append("username", "Organizador Que Cria Evento")
                     append("password", "orgpass")
                     append("accountType", "organizador")
-                    val arquivoFoto = File("src/test/kotlin/bemvindomessi.jpeg")
-                    append(
-                        "profilePhoto",
-                        arquivoFoto.readBytes(),
-                        Headers.build {
-                            append(HttpHeaders.ContentType, "image/jpeg")
-                            append(HttpHeaders.ContentDisposition, "filename=\"bemvindomessi.jpg\"")
-                        }
-                    )
+//                    val arquivoFoto = File("src/test/kotlin/bemvindomessi.jpeg")
+//                    append(
+//                        "profilePhoto",
+//                        arquivoFoto.readBytes(),
+//                        Headers.build {
+//                            append(HttpHeaders.ContentType, "image/jpeg")
+//                            append(HttpHeaders.ContentDisposition, "filename=\"bemvindomessi.jpg\"")
+//                        }
+//                    )
+                    append("profilePhoto","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s")
                 }
             )
 
-            println(createResponse.status)
-            println(createResponse.bodyAsText())
             assertEquals(HttpStatusCode.Created, createResponse.status)
 
             val organizerResponse = json.decodeFromString<UserResponse<UsuarioOrganizador>>(createResponse.bodyAsText())
             assertEquals("Organizador criado com sucesso", organizerResponse.message)
             assertEquals("Organizador Que Cria Evento", organizerResponse.user.nome)
-            // assertEquals("https://linkfoto.com/foto.jpg", organizerResponse.user.fotoPerfil)
+            assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", organizerResponse.user.fotoPerfil)
             assertNotNull(organizerResponse.token)
 
             val eventoRequest = EventoRequest(
@@ -153,6 +154,101 @@ class EventoRouteTest {
             assertEquals(eventoRequest.titulo, salvo.titulo)
             assertEquals(eventoRequest.organizadorId, salvo.organizador.id)
             //   assertTrue(salvo.imagens.any { it.url == "https://link.com/img.jpg" } ?: false)
+        }
+    }
+
+    @Test
+    @Timeout(10)
+    fun `deve criar um evento e adicionar imagens corretamente`() {
+
+        val json = Json { ignoreUnknownKeys = true }
+
+        testApplication {
+            application { configureRouting() }
+
+            // Cria organizador usando multipart/form-data
+            val createResponse = client.submitFormWithBinaryData(
+                url = "/api/users/register",
+                formData = formData {
+                    append("email", "org4@usp.br")
+                    append("username", "Organizador que cria e bota imagem")
+                    append("password", "orgpass")
+                    append("accountType", "organizador")
+                    append("profilePhoto","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s")
+                }
+            )
+
+            assertEquals(HttpStatusCode.Created, createResponse.status)
+
+            val organizerResponse = json.decodeFromString<UserResponse<UsuarioOrganizador>>(createResponse.bodyAsText())
+            assertEquals("Organizador criado com sucesso", organizerResponse.message)
+            assertEquals("Organizador que cria e bota imagem", organizerResponse.user.nome)
+            assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", organizerResponse.user.fotoPerfil)
+            assertNotNull(organizerResponse.token)
+
+            val eventoRequest = EventoRequest(
+                titulo = "JunIME",
+                descricao = "Festa junina do IME",
+                dataHora = LocalDateTime.now().plusDays(7).toString(), // Formato ISO-8601
+                localizacao = "Estacionamento do bloco B do IME",
+                categoria = "Festa",
+                organizadorId = organizerResponse.user.id!!
+            )
+
+            // Envia requisição para criar evento
+            val eventoResponse = client.post("/api/eventos/criar") {
+                contentType(ContentType.Application.Json)
+                setBody(json.encodeToString(eventoRequest))
+            }
+
+            assertEquals(HttpStatusCode.Companion.Created, eventoResponse.status)
+
+            // Valida se evento foi criado na resposta
+            val createdEvento = json.decodeFromString<Evento>(eventoResponse.bodyAsText())
+            assertEquals(eventoRequest.titulo, createdEvento.titulo)
+            assertEquals(eventoRequest.descricao, createdEvento.descricao)
+            assertEquals(eventoRequest.localizacao, createdEvento.localizacao)
+            assertEquals(eventoRequest.organizadorId, createdEvento.organizador.id)
+
+            // Valida se evento foi salvo no banco (repositório)
+            val eventRepo = EventoRepository()
+            val eventoSalvo = eventRepo.findById(createdEvento.id!!)
+            assertNotNull(eventoSalvo)
+            assertEquals(eventoRequest.titulo, eventoSalvo.titulo)
+            assertEquals(eventoRequest.organizadorId, eventoSalvo.organizador.id)
+
+            // Cria a imagem usando os dados do evento já salvo
+            val imagemRequest = ImagemRequest(
+                url = "https://link.com/img.jpg",
+                descricao = "Imagem do evento JunIME",
+                eventoId = eventoSalvo.id!!
+            )
+
+            val imagemResponse = client.post("/api/imagens/addImagem") {
+                contentType(ContentType.Application.Json)
+                setBody(json.encodeToString(imagemRequest))
+            }
+
+            println(imagemResponse.status)
+
+            assertEquals(HttpStatusCode.Companion.Created, imagemResponse.status)
+
+            val imagemRepo = ImagemEventoRepository()
+            val imagemSalva = imagemRepo.findById(imagemRequest.eventoId)
+           // val imagemSalva = eventRepo.findById(eventoSalvo.id!!)?.imagens?.get(0)
+
+            // Asserts para ver se a imagem foi salva corretamente no banco de dados
+            assertNotNull(imagemSalva)
+            assertEquals(imagemRequest.url, imagemSalva.url)
+            assertEquals(imagemRequest.descricao, imagemSalva.descricao)
+            assertEquals(imagemRequest.eventoId, imagemSalva.eventoId)
+
+            // Asserts para ver se a imagem foi salva corretamente no evento já criado antes
+            val eventoAtualizado = eventRepo.findById(createdEvento.id!!)
+            assertNotNull(eventoAtualizado)
+            assertEquals("https://link.com/img.jpg", eventoAtualizado.imagens[0].url)
+            assertEquals(1, eventoAtualizado.imagens.size)
+
         }
     }
 }

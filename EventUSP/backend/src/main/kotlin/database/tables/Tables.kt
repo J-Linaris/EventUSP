@@ -25,7 +25,6 @@ object UsuarioOrganizadorTable : LongIdTable("usuarios_organizadores") {
     val email = varchar("email", 255).uniqueIndex()
     val senha = varchar("senha", 255)
     val fotoPerfil = varchar("foto_perfil",255).nullable()
-    // Adicione outros campos conforme necessário
 }
 
 /**
@@ -35,7 +34,6 @@ object UsuarioParticipanteTable : LongIdTable("usuarios_participantes") {
     val nome = varchar("nome", 255)
     val email = varchar("email", 255).uniqueIndex()
     val senha = varchar("senha", 255)
-    // Adicione outros campos conforme necessário
 }
 
 /**

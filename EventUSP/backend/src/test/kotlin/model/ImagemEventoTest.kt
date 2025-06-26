@@ -32,7 +32,7 @@ class ImagemEventoTest {
         
         imagemEvento = ImagemEvento(
             id = 1L,
-         //   evento = evento,
+            eventoId = evento.id!!,
             url = "https://exemplo.com/imagem.jpg",
             descricao = "Foto do palestrante",
             ordem = 1
@@ -45,7 +45,7 @@ class ImagemEventoTest {
     @Test
     fun `deve inicializar imagem evento corretamente`() {
         assertEquals(1L, imagemEvento.id)
-     //   assertEquals(evento, imagemEvento.evento)
+        assertEquals(evento.id, imagemEvento.eventoId)
         assertEquals("https://exemplo.com/imagem.jpg", imagemEvento.url)
         assertEquals("Foto do palestrante", imagemEvento.descricao)
         assertEquals(1, imagemEvento.ordem)
@@ -54,12 +54,12 @@ class ImagemEventoTest {
     @Test
     fun `deve inicializar imagem evento com valores padrão`() {
         val imagemSemDescricao = ImagemEvento(
-         //   evento = evento,
+            eventoId = evento.id!!,
             url = "https://exemplo.com/outra-imagem.jpg"
         )
         
         assertNull(imagemSemDescricao.id)
-       // assertEquals(evento, imagemSemDescricao.evento)
+        assertEquals(evento.id, imagemSemDescricao.eventoId)
         assertEquals("https://exemplo.com/outra-imagem.jpg", imagemSemDescricao.url)
         assertNull(imagemSemDescricao.descricao)
         assertEquals(0, imagemSemDescricao.ordem)
@@ -106,7 +106,7 @@ class ImagemEventoTest {
     fun `deve comparar imagens evento corretamente pelo id`() {
         val imagemMesmoId = ImagemEvento(
             id = 1L,
-         //   evento = evento,
+            eventoId = evento.id!!,
             url = "https://exemplo.com/outra-url.jpg",
             descricao = "Outra descrição",
             ordem = 2
@@ -114,7 +114,7 @@ class ImagemEventoTest {
         
         val imagemIdDiferente = ImagemEvento(
             id = 2L,
-         //   evento = evento,
+            eventoId = evento.id!!,
             url = imagemEvento.url,
             descricao = imagemEvento.descricao,
             ordem = imagemEvento.ordem
@@ -127,17 +127,17 @@ class ImagemEventoTest {
     @Test
     fun `deve comparar imagens evento pela url quando id for nulo`() {
         val imagemSemId1 = ImagemEvento(
-        //    evento = evento,
+            eventoId = evento.id!!,
             url = "https://exemplo.com/imagem1.jpg"
         )
         
         val imagemSemId2 = ImagemEvento(
-         //   evento = evento,
+            eventoId = evento.id!!,
             url = "https://exemplo.com/imagem1.jpg"
         )
         
         val imagemSemId3 = ImagemEvento(
-         //   evento = evento,
+            eventoId = evento.id!!,
             url = "https://exemplo.com/imagem2.jpg"
         )
         

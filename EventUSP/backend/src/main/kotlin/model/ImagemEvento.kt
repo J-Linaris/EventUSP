@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ImagemEvento(
     var id: Long? = null,
+    var eventoId: Long,
     var url: String,
     var descricao: String? = null,
     var ordem: Int = 0

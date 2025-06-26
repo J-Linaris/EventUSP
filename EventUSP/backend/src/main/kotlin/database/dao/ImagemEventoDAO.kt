@@ -12,7 +12,8 @@ import org.jetbrains.exposed.dao.id.EntityID
 class ImagemEventoDAO(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<ImagemEventoDAO>(ImagemEventoTable)
     
-//    var evento by EventoDAO referencedOn ImagemEventoTable.eventoId
+   // var evento by EventoDAO referencedOn ImagemEventoTable.eventoId
+    var eventoId by ImagemEventoTable.eventoId
     var url by ImagemEventoTable.url
     var descricao by ImagemEventoTable.descricao
     var ordem by ImagemEventoTable.ordem
@@ -23,7 +24,8 @@ class ImagemEventoDAO(id: EntityID<Long>) : LongEntity(id) {
     fun toModel(): ImagemEvento {
         return ImagemEvento(
             id = id.value,
-//            evento = evento.toModel(),
+            eventoId = eventoId.value,
+          //  eventoId = evento.id.value,
             url = url,
             descricao = descricao,
             ordem = ordem

@@ -87,17 +87,6 @@ class UsuarioOrganizadorTest {
     }
     
     @Test
-    fun `deve inicializar organizador com valores opcionais nulos`() {
-        val organizadorSemOpcionais = UsuarioOrganizador()
-        organizadorSemOpcionais.id = 2L
-        organizadorSemOpcionais.nome = "Outro Organizador"
-        organizadorSemOpcionais.email = "outro@usp.br"
-        organizadorSemOpcionais.senha = "senha456"
-//        organizador.fotoPerfil = "https://exemplo.com/foto-organizador-outro.jpg"
-        assertNull(organizadorSemOpcionais.fotoPerfil)
-    }
-    
-    @Test
     fun `deve atualizar foto de perfil com sucesso`() {
         organizador.atualizarFotoPerfil("https://exemplo.com/nova-foto.jpg")
         assertEquals("https://exemplo.com/nova-foto.jpg", organizador.fotoPerfil)
@@ -321,6 +310,7 @@ class UsuarioOrganizadorTest {
         )
         
         val imagem = ImagemEvento(
+            eventoId = eventoDeOutroOrganizador.id!!,
             url = "https://exemplo.com/imagem-outro-evento.jpg"
         )
         

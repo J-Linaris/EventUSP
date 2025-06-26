@@ -61,8 +61,6 @@ fun Application.configureRouting() {
 
                     val eventoReq = call.receive<EventoRequest>()
 
-                    println("Payload recebido para criação de evento: $eventoReq")
-
                     // Busca o organizador pelo ID recebido
                     val organizador = organizadorRepository.findById(eventoReq.organizadorId)
                     if (organizador == null) {
@@ -71,7 +69,7 @@ fun Application.configureRouting() {
                         return@post
                     }
 
-                    // Criação do evento usando método do organizador
+                    // Criação do evento usando o organizador
                     val evento = organizador.criarEvento(
                         eventoReq.titulo,
                         eventoReq.descricao,
@@ -311,30 +309,52 @@ fun Application.configureRouting() {
                     call.respond(imagem)
                 }
 
-//                get("/evento/{eventoId}") {
-//                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
-//                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
-//
-//                    val imagens = imagemRepository.findByEvento(eventoId)
-//                    call.respond(imagens)
-//                }
-//
-//                get("/evento/{eventoId}/ordenadas") {
-//                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
-//                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
-//
-//                    val imagens = imagemRepository.findByEventoOrdenadas(eventoId)
-//                    call.respond(imagens)
-//                }
+                get("/evento/{eventoId}") {
+                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
+                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
 
-                post {
-                    val imagem = call.receive<ImagemEvento>()
-                    try {
-                        val createdImagem = imagemRepository.create(imagem)
-                        call.respond(HttpStatusCode.Created, createdImagem)
-                    } catch (e: IllegalArgumentException) {
-                        call.respondText(e.message ?: "Erro ao criar imagem", status = HttpStatusCode.BadRequest)
+                    val imagens = imagemRepository.findByEvento(eventoId)
+                    call.respond(imagens)
+                }
+
+                get("/evento/{eventoId}/ordenadas") {
+                    val eventoId = call.parameters["eventoId"]?.toLongOrNull()
+                        ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
+
+                    val imagens = imagemRepository.findByEventoOrdenadas(eventoId)
+                    call.respond(imagens)
+                }
+
+                post("/addImagem") {
+                    val eventoRepositorio = EventoRepository()
+
+                    val imagemReq = call.receive<ImagemRequest>()
+
+                    // Busca o organizador pelo ID recebido
+                    val evento = eventoRepositorio.findById(imagemReq.eventoId)
+                    if (evento == null) {
+                        println("Evento não encontrado")
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Evento não encontrado no repositório"))
+                        return@post
                     }
+
+                    val imagem = evento.adicionarImagem(
+                        imagemReq.url,
+                        imagemReq.descricao,
+                    )
+
+                    // Persiste no banco
+                    val imagemSalva = ImagemEventoRepository().create(imagem)
+
+                    call.respond(HttpStatusCode.Created, imagemSalva)
+
+//                    val imagem = call.receive<ImagemEvento>()
+//                    try {
+//                        val createdImagem = imagemRepository.create(imagem)
+//                        call.respond(HttpStatusCode.Created, createdImagem)
+//                    } catch (e: IllegalArgumentException) {
+//                        call.respondText(e.message ?: "Erro ao criar imagem", status = HttpStatusCode.BadRequest)
+//                    }
                 }
 
                 put("/{id}") {
@@ -391,31 +411,37 @@ fun Application.configureRouting() {
                                     "username" -> username = part.value
                                     "password" -> password = part.value
                                     "accountType" -> accountType = part.value
+                                    // Path lidado aqui
+                                    "profilePhoto" -> profilePhotoPath = part.value
                                 }
                             }
-                            is PartData.FileItem -> {
-                                // Processar arquivo (foto de perfil)
-                                if (part.name == "profilePhoto") {
-                                    // Criar diretório de uploads se não existir
-                                    val uploadsDir = File("uploads")
-                                    if (!uploadsDir.exists()) {
-                                        uploadsDir.mkdirs()
-                                    }
-                                    
-                                    // Gerar nome único para o arquivo
-                                    val fileName = "${UUID.randomUUID()}_${part.originalFileName}"
-                                    val filePath = File(uploadsDir, fileName)
-                                    
-                                    // Salvar arquivo
-                                    part.streamProvider().use { input ->
-                                        filePath.outputStream().buffered().use { output ->
-                                            input.copyTo(output)
-                                        }
-                                    }
-                                    
-                                    profilePhotoPath = "uploads/$fileName"
-                                }
-                            }
+
+                            // O código abaixo lidava com a imagem adicionando ela a pasta de uploads
+                            // Por enquanto vamos usar imagens apenas com urls públicos da internet, sem precisar armazenar aqui
+
+//                            is PartData.FileItem -> {
+//                                // Processar arquivo (foto de perfil)
+//                                if (part.name == "profilePhoto") {
+//                                    // Criar diretório de uploads se não existir
+//                                    val uploadsDir = File("uploads")
+//                                    if (!uploadsDir.exists()) {
+//                                        uploadsDir.mkdirs()
+//                                    }
+//
+//                                    // Gerar nome único para o arquivo
+//                                    val fileName = "${UUID.randomUUID()}_${part.originalFileName}"
+//                                    val filePath = File(uploadsDir, fileName)
+//
+//                                    // Salvar arquivo
+//                                    part.streamProvider().use { input ->
+//                                        filePath.outputStream().buffered().use { output ->
+//                                            input.copyTo(output)
+//                                        }
+//                                    }
+//
+//                                    profilePhotoPath = "uploads/$fileName"
+//                                }
+//                            }
                             else -> {}
                         }
                         part.dispose()
