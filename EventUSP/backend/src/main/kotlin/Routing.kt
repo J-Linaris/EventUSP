@@ -13,14 +13,13 @@ import br.usp.eventUSP.repository.UsuarioParticipanteRepository
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
 import java.util.*
-import br.usp.eventUSP.UserResponse
 import kotlinx.serialization.json.Json
+import java.time.LocalDateTime
 
 fun Application.configureRouting() {
     routing {
@@ -57,14 +56,31 @@ fun Application.configureRouting() {
                     call.respond(eventos)
                 }
 
-                post {
-                    val evento = call.receive<Evento>()
-                    try {
-                        val createdEvento = eventoRepository.create(evento)
-                        call.respond(HttpStatusCode.Created, createdEvento)
-                    } catch (e: IllegalArgumentException) {
-                        call.respondText(e.message ?: "Erro ao criar evento", status = HttpStatusCode.BadRequest)
+                post("/criar") {
+                    val organizadorRepository = UsuarioOrganizadorRepository()
+
+                    val eventoReq = call.receive<EventoRequest>()
+
+                    // Busca o organizador pelo ID recebido
+                    val organizador = organizadorRepository.findById(eventoReq.organizadorId)
+                    if (organizador == null) {
+                        println("Organizador não encontrado")
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Organizador não encontrado no repositório"))
+                        return@post
                     }
+
+                    // Criação do evento usando o organizador
+                    val evento = organizador.criarEvento(
+                        eventoReq.titulo,
+                        eventoReq.descricao,
+                        LocalDateTime.parse(eventoReq.dataHora),
+                        eventoReq.localizacao,
+                        eventoReq.categoria
+                    )
+                    // Persiste no banco
+                    val eventoSalvo = eventoRepository.create(evento)
+
+                    call.respond(HttpStatusCode.Created, eventoSalvo)
                 }
 
                 put("/{id}") {
@@ -309,14 +325,36 @@ fun Application.configureRouting() {
                     call.respond(imagens)
                 }
 
-                post {
-                    val imagem = call.receive<ImagemEvento>()
-                    try {
-                        val createdImagem = imagemRepository.create(imagem)
-                        call.respond(HttpStatusCode.Created, createdImagem)
-                    } catch (e: IllegalArgumentException) {
-                        call.respondText(e.message ?: "Erro ao criar imagem", status = HttpStatusCode.BadRequest)
+                post("/addImagem") {
+                    val eventoRepositorio = EventoRepository()
+
+                    val imagemReq = call.receive<ImagemRequest>()
+
+                    // Busca o organizador pelo ID recebido
+                    val evento = eventoRepositorio.findById(imagemReq.eventoId)
+                    if (evento == null) {
+                        println("Evento não encontrado")
+                        call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Evento não encontrado no repositório"))
+                        return@post
                     }
+
+                    val imagem = evento.adicionarImagem(
+                        imagemReq.url,
+                        imagemReq.descricao,
+                    )
+
+                    // Persiste no banco
+                    val imagemSalva = ImagemEventoRepository().create(imagem)
+
+                    call.respond(HttpStatusCode.Created, imagemSalva)
+
+//                    val imagem = call.receive<ImagemEvento>()
+//                    try {
+//                        val createdImagem = imagemRepository.create(imagem)
+//                        call.respond(HttpStatusCode.Created, createdImagem)
+//                    } catch (e: IllegalArgumentException) {
+//                        call.respondText(e.message ?: "Erro ao criar imagem", status = HttpStatusCode.BadRequest)
+//                    }
                 }
 
                 put("/{id}") {
@@ -373,31 +411,37 @@ fun Application.configureRouting() {
                                     "username" -> username = part.value
                                     "password" -> password = part.value
                                     "accountType" -> accountType = part.value
+                                    // Path lidado aqui
+                                    "profilePhoto" -> profilePhotoPath = part.value
                                 }
                             }
-                            is PartData.FileItem -> {
-                                // Processar arquivo (foto de perfil)
-                                if (part.name == "profilePhoto") {
-                                    // Criar diretório de uploads se não existir
-                                    val uploadsDir = File("uploads")
-                                    if (!uploadsDir.exists()) {
-                                        uploadsDir.mkdirs()
-                                    }
-                                    
-                                    // Gerar nome único para o arquivo
-                                    val fileName = "${UUID.randomUUID()}_${part.originalFileName}"
-                                    val filePath = File(uploadsDir, fileName)
-                                    
-                                    // Salvar arquivo
-                                    part.streamProvider().use { input ->
-                                        filePath.outputStream().buffered().use { output ->
-                                            input.copyTo(output)
-                                        }
-                                    }
-                                    
-                                    profilePhotoPath = "uploads/$fileName"
-                                }
-                            }
+
+                            // O código abaixo lidava com a imagem adicionando ela a pasta de uploads
+                            // Por enquanto vamos usar imagens apenas com urls públicos da internet, sem precisar armazenar aqui
+
+//                            is PartData.FileItem -> {
+//                                // Processar arquivo (foto de perfil)
+//                                if (part.name == "profilePhoto") {
+//                                    // Criar diretório de uploads se não existir
+//                                    val uploadsDir = File("uploads")
+//                                    if (!uploadsDir.exists()) {
+//                                        uploadsDir.mkdirs()
+//                                    }
+//
+//                                    // Gerar nome único para o arquivo
+//                                    val fileName = "${UUID.randomUUID()}_${part.originalFileName}"
+//                                    val filePath = File(uploadsDir, fileName)
+//
+//                                    // Salvar arquivo
+//                                    part.streamProvider().use { input ->
+//                                        filePath.outputStream().buffered().use { output ->
+//                                            input.copyTo(output)
+//                                        }
+//                                    }
+//
+//                                    profilePhotoPath = "uploads/$fileName"
+//                                }
+//                            }
                             else -> {}
                         }
                         part.dispose()
@@ -415,7 +459,7 @@ fun Application.configureRouting() {
                             "organizador" -> {
                                 // Verificar se o email já está em uso por outro organizador
                                 if (organizadorRepository.findByEmail(email) != null) {
-                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email já está em uso"))
+                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email ${email} já está em uso"))
                                     return@post
                                 }
                                 
@@ -424,15 +468,7 @@ fun Application.configureRouting() {
                                     call.respond(HttpStatusCode.BadRequest, mapOf("message" to "Foto de perfil é obrigatória para organizadores"))
                                     return@post
                                 }
-                                
-                                // Criar organizador
-//                                val organizador = UsuarioOrganizador(
-//                                    id = null,
-//                                    nome = username,
-//                                    email = email,
-//                                    senha = password, // Na implementação real, a senha deve ser hasheada
-//                                    fotoPerfil = profilePhotoPath
-//                                )
+
                                 // Cria organizador
                                 val organizador = UsuarioOrganizador()
                                 organizador.id = null
@@ -455,7 +491,7 @@ fun Application.configureRouting() {
                             "participante" -> {
                                 // Verificar se o email já está em uso por outro participante
                                 if (participanteRepository.findByEmail(email) != null) {
-                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email já está em uso"))
+                                    call.respond(HttpStatusCode.Conflict, mapOf("message" to "Email ${email} já está em uso"))
                                     return@post
                                 }
                                 

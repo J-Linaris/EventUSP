@@ -138,7 +138,7 @@ class EventoTest {
         )
         
         assertEquals(1, evento.imagens.size)
-        assertEquals(evento, imagem.evento)
+        assertEquals(evento.id, imagem.eventoId)
         assertEquals("https://exemplo.com/imagem-adicional.jpg", imagem.url)
         assertEquals("Descrição da imagem", imagem.descricao)
         assertEquals(0, imagem.ordem) // Primeira imagem recebe ordem 0
@@ -188,7 +188,7 @@ class EventoTest {
         )
         
         val imagemDeOutroEvento = ImagemEvento(
-            evento = outroEvento,
+            eventoId = outroEvento.id!!,
             url = "https://exemplo.com/imagem-outro-evento.jpg"
         )
         

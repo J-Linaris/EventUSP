@@ -1,7 +1,6 @@
 package br.usp.eventUSP
 
-import br.usp.eventUSP.database.tables.UsuarioOrganizadorTable
-import br.usp.eventUSP.database.tables.UsuarioParticipanteTable
+import br.usp.eventUSP.database.tables.*
 import br.usp.eventUSP.model.UsuarioOrganizador
 import br.usp.eventUSP.model.UsuarioParticipante
 import io.ktor.server.testing.*
@@ -22,24 +21,53 @@ import kotlin.test.assertNotNull
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LoginRouteTest {
 
+    // Lista de todas as tabelas na ordem correta para criação/exclusão.
+    private val allTables = arrayOf(
+        UsuarioOrganizadorTable,
+        UsuarioParticipanteTable,
+        EventoTable,
+        ImagemEventoTable,
+        ReviewTable,
+        ParticipantesInteressadosTable
+    )
+
+    // SETUP ÚNICO: Roda apenas uma vez antes de todos os testes da classe.
     @BeforeAll
-    fun prepareDatabase() {
+    fun setupDatabase() {
+        // Conecta ao banco de dados em memória uma única vez.
         Database.connect(
             "jdbc:h2:mem:test-login-signup;DB_CLOSE_DELAY=-1;",
-            driver = "org.h2.Driver"
+            driver = "org.h2.Driver",
+            user = "root",
+            password = ""
         )
+
+        // Cria o schema uma única vez.
         transaction {
-            SchemaUtils.create(UsuarioOrganizadorTable)
-            SchemaUtils.create(UsuarioParticipanteTable)
+            SchemaUtils.create(*allTables)
         }
     }
 
+    // LIMPEZA ANTES DE CADA TESTE: Roda antes de cada @Test.
     @BeforeEach
     fun cleanTables() {
+        // Agora, em vez de apagar e recriar as tabelas (lento),
+        // nós apenas deletamos todos os registros (muito mais rápido).
         transaction {
-            // Limpa as tabelas antes de cada teste
-            UsuarioOrganizadorTable.deleteAll()
-            UsuarioParticipanteTable.deleteAll()
+            // A ordem de exclusão é a inversa da criação para respeitar as chaves estrangeiras.
+            // Ex: Deleta 'Review' antes de 'Evento', que deleta antes de 'Usuario'.
+            allTables.reversedArray().forEach { table ->
+                table.deleteAll()
+            }
+        }
+    }
+
+    // DESMONTAGEM ÚNICA: Roda apenas uma vez depois de todos os testes da classe.
+    @AfterAll
+    fun tearDownDatabase() {
+        // Boa prática para limpar os recursos, embora o H2 em memória seja descartado de qualquer maneira.
+        transaction {
+            SchemaUtils.drop(*allTables.reversedArray())
         }
     }
 
@@ -98,15 +126,16 @@ class LoginRouteTest {
                 append("username", "Organizador Evento")
                 append("password", "orgpass")
                 append("accountType", "organizador")
-                val arquivoFoto = File("src/test/kotlin/bemvindomessi.jpeg")
-                append(
-                    "profilePhoto",
-                    arquivoFoto.readBytes(),
-                    Headers.build {
-                        append(HttpHeaders.ContentType, "image/jpeg")
-                        append(HttpHeaders.ContentDisposition, "filename=\"bemvindomessi.jpg\"")
-                    }
-                )
+//                    val arquivoFoto = File("src/test/kotlin/bemvindomessi.jpeg")
+//                    append(
+//                        "profilePhoto",
+//                        arquivoFoto.readBytes(),
+//                        Headers.build {
+//                            append(HttpHeaders.ContentType, "image/jpeg")
+//                            append(HttpHeaders.ContentDisposition, "filename=\"bemvindomessi.jpg\"")
+//                        }
+//                    )
+                append("profilePhoto","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s")
             }
         )
 
@@ -117,7 +146,7 @@ class LoginRouteTest {
         val organizerResponse = json.decodeFromString<UserResponse<UsuarioOrganizador>>(createResponse.bodyAsText())
         assertEquals("Organizador criado com sucesso", organizerResponse.message)
         assertEquals("Organizador Evento", organizerResponse.user.nome)
-       // assertEquals("https://linkfoto.com/foto.jpg", organizerResponse.user.fotoPerfil)
+        assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", organizerResponse.user.fotoPerfil)
         assertNotNull(organizerResponse.token)
 
         // Login organizador
@@ -132,7 +161,7 @@ class LoginRouteTest {
         assertEquals("Login efetuado com sucesso!", loginResponse.message)
         assertEquals("Organizador Evento", loginResponse.user.nome)
         assertEquals("org123@usp.br", loginResponse.user.email)
-      //  assertEquals("https://linkfoto.com/foto.jpg", loginResponse.user.fotoPerfil)
+        assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", loginResponse.user.fotoPerfil)
     }
 
     @Test

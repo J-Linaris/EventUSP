@@ -1,7 +1,9 @@
 package br.usp.eventUSP.model
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.UseSerializers
+import br.usp.eventUSP.model.LocalDateTimeSerializer
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -14,7 +16,8 @@ class Evento(
     var id: Long? = null,
     var titulo: String,
     var descricao: String,
-    @Contextual var dataHora: LocalDateTime,
+    @Serializable(with = LocalDateTimeSerializer::class)
+    var dataHora: LocalDateTime,
     var localizacao: String,
     var categoria: String,
     var organizador: UsuarioOrganizador
@@ -121,7 +124,7 @@ class Evento(
      */
     fun adicionarImagem(url: String, descricao: String? = null, ordem: Int = imagens.size): ImagemEvento {
         val imagem = ImagemEvento(
-            evento = this,
+            eventoId = this.id!!,
             url = url,
             descricao = descricao,
             ordem = ordem

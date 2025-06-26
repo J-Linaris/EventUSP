@@ -21,3 +21,20 @@ data class LoginResponse<T>(
     val token: String,
     val user: T
 )
+
+@Serializable
+data class EventoRequest(
+    val titulo: String,
+    val descricao: String,
+    val dataHora: String, // Recebe como string (ISO-8601)
+    val localizacao: String,
+    val categoria: String,
+    val organizadorId: Long
+)
+
+@Serializable
+data class ImagemRequest(
+    val url: String,
+    val descricao: String? = null,
+    val eventoId: Long
+)

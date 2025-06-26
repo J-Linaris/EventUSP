@@ -27,7 +27,7 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
     val participantesInteressados by UsuarioParticipanteDAO via ParticipantesInteressadosTable
     val reviews by ReviewDAO referrersOn ReviewTable.eventoId
     val imagens by ImagemEventoDAO referrersOn ImagemEventoTable.eventoId
-    
+
     /**
      * Converte o DAO para o modelo
      */

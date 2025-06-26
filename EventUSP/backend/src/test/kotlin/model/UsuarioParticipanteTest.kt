@@ -78,7 +78,17 @@ class UsuarioParticipanteTest {
             organizador = organizador
         )
     }
-    
+
+    @AfterAll
+    fun tearDownDb() {
+        transaction {
+            SchemaUtils.drop(
+                UsuarioParticipanteTable,
+                UsuarioOrganizadorTable
+            )
+        }
+    }
+
     @Test
     fun `deve inicializar participante com foto de perfil corretamente`() {
         assertEquals(2L, participante.id)

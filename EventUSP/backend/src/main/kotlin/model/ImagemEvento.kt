@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ImagemEvento(
     var id: Long? = null,
-    var evento: Evento,
+    var eventoId: Long,
     var url: String,
     var descricao: String? = null,
     var ordem: Int = 0
@@ -19,15 +19,11 @@ class ImagemEvento(
             return id == other.id
         }
         
-        return evento == other.evento && url == other.url
+        return url == other.url
     }
     
     override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
-        if (result == 0) {
-            result = 31 * result + evento.hashCode()
-            result = 31 * result + url.hashCode()
-        }
+        val result = id?.hashCode() ?: 0
         return result
     }
 }

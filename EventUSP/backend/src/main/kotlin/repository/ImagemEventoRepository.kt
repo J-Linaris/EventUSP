@@ -16,11 +16,11 @@ class ImagemEventoRepository {
      * @return A imagem de evento criada com o ID gerado
      */
     fun create(imagem: ImagemEvento): ImagemEvento = transaction {
-        val eventoDAO = EventoDAO.findById(imagem.evento.id!!)
+        val eventoNoDAO = EventoDAO.findById(imagem.eventoId)
             ?: throw IllegalArgumentException("Evento não encontrado")
 
         val imagemDAO = ImagemEventoDAO.new {
-            evento = eventoDAO
+            eventoId = eventoNoDAO.id
             url = imagem.url
             descricao = imagem.descricao
             ordem = imagem.ordem
