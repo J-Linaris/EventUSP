@@ -1,5 +1,9 @@
 package br.usp.eventUSP.model
 
+import br.usp.eventUSP.database.tables.EventoTable
+import br.usp.eventUSP.database.tables.ImagemEventoTable
+import br.usp.eventUSP.database.tables.ParticipantesInteressadosTable
+import br.usp.eventUSP.database.tables.ReviewTable
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
@@ -24,6 +28,16 @@ class UsuarioParticipanteTest {
 
     private lateinit var repository: UsuarioParticipanteRepository
 
+    // Lista de todas as tabelas na ordem correta para criação/exclusão.
+    private val allTables = arrayOf(
+        UsuarioOrganizadorTable,
+        UsuarioParticipanteTable,
+        EventoTable,
+        ImagemEventoTable,
+        ReviewTable,
+        ParticipantesInteressadosTable
+    )
+
     @BeforeAll
     fun setUpDatabase() {
         // Use um banco de dados em memória para testes!
@@ -32,7 +46,7 @@ class UsuarioParticipanteTest {
             driver = "org.h2.Driver"
         )
         transaction {
-            SchemaUtils.create(UsuarioParticipanteTable)
+            SchemaUtils.create(*allTables)
         }
         repository = UsuarioParticipanteRepository() // ou como for sua inicialização
     }
@@ -40,7 +54,9 @@ class UsuarioParticipanteTest {
     @BeforeEach
     fun cleanDatabase() {
         transaction {
-            UsuarioParticipanteTable.deleteAll()
+            allTables.reversedArray().forEach { table ->
+                table.deleteAll()
+            }
         }
     }
 
@@ -79,13 +95,12 @@ class UsuarioParticipanteTest {
         )
     }
 
+    // DESMONTAGEM ÚNICA: Roda apenas uma vez depois de todos os testes da classe.
     @AfterAll
-    fun tearDownDb() {
+    fun tearDownDatabase() {
+        // Boa prática para limpar os recursos, embora o H2 em memória seja descartado de qualquer maneira.
         transaction {
-            SchemaUtils.drop(
-                UsuarioParticipanteTable,
-                UsuarioOrganizadorTable
-            )
+            SchemaUtils.drop(*allTables.reversedArray())
         }
     }
 

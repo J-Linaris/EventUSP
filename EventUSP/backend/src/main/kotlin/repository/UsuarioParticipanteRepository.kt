@@ -3,6 +3,16 @@ package br.usp.eventUSP.repository
 import br.usp.eventUSP.database.dao.UsuarioParticipanteDAO
 import br.usp.eventUSP.model.UsuarioParticipante
 import org.jetbrains.exposed.sql.transactions.transaction
+import br.usp.eventUSP.database.dao.EventoDAO
+import br.usp.eventUSP.database.tables.EventoTable
+import br.usp.eventUSP.database.tables.ParticipantesInteressadosTable
+import org.jetbrains.exposed.sql.SqlExpressionBuilder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 /**
  * Repositório para operações relacionadas a Usuários Participantes
@@ -49,7 +59,50 @@ class UsuarioParticipanteRepository {
     fun findAll(): List<UsuarioParticipante> = transaction {
         UsuarioParticipanteDAO.all().map { it.toModel() }
     }
-    
+
+    // --- Adicionar Interesse (Dar Like) ---
+    /**
+     * Cria um registro de interesse (like) de um participante em um evento.
+     * @param participanteId O ID do participante.
+     * @param eventoId O ID do evento.
+     */
+    fun addInteresse(participanteId: Long, eventoId: Long) = transaction {
+        // 1. Insere a nova relação na tabela de junção
+        ParticipantesInteressadosTable.insert {
+            it[this.participanteId] = participanteId
+            it[this.eventoId] = eventoId
+        }
+
+        // 2. Atualiza o contador de likes na tabela de eventos (essencial para consistência)
+        EventoTable.update({ EventoTable.id eq eventoId }) {
+            with(SqlExpressionBuilder) {
+                it.update(numeroLikes, numeroLikes + 1)
+            }
+        }
+    }
+
+    // --- Remover Interesse (Tirar Like) ---
+    /**
+     * Remove um registro de interesse (like) de um participante em um evento.
+     * @param participanteId O ID do participante.
+     * @param eventoId O ID do evento.
+     */
+    fun removeInteresse(participanteId: Long, eventoId: Long) = transaction {
+        // 1. Remove a relação da tabela de junção
+        val deletedRows = ParticipantesInteressadosTable.deleteWhere {
+            (this.participanteId eq participanteId) and (this.eventoId eq eventoId)
+        }
+
+        // 2. Se uma linha foi realmente deletada, atualiza o contador de likes
+        if (deletedRows > 0) {
+            EventoTable.update({ EventoTable.id eq eventoId }) {
+                with(SqlExpressionBuilder) {
+                    it.update(numeroLikes, numeroLikes - 1)
+                }
+            }
+        }
+    }
+
     /**
      * Atualiza um usuário participante existente
      * @param usuario O usuário participante com as informações atualizadas
