@@ -24,8 +24,8 @@ class UsuarioParticipanteDAO(id: EntityID<Long>) : LongEntity(id) {
     var senha by UsuarioParticipanteTable.senha
     
     // Relacionamentos
-    val eventosInteressados by EventoDAO via ParticipantesInteressadosTable
-    val reviews by ReviewDAO referrersOn ReviewTable.participanteId
+ //   val eventosInteressados by EventoDAO via ParticipantesInteressadosTable
+ //   val reviews by ReviewDAO referrersOn ReviewTable.participanteId
     
     /**
      * Converte o DAO para o modelo

@@ -14,7 +14,7 @@ open class UsuarioParticipante(
     var fotoPerfil: String? = null
 ) {
     var eventosComLike: MutableList<Evento> = mutableListOf()
-    var eventosInteressado: MutableList<Evento> = mutableListOf()
+    var eventosInteressado: MutableList<Long> = mutableListOf()
     var reviewsFeitas: MutableList<Review> = mutableListOf()
     
     /**
@@ -47,8 +47,8 @@ open class UsuarioParticipante(
      * @return true se o interesse foi registrado com sucesso, false caso já tenha demonstrado interesse
      */
     fun demonstrarInteresse(evento: Evento): Boolean {
-        if (eventosInteressado.contains(evento)) return false
-        eventosInteressado.add(evento)
+        if (eventosInteressado.contains(evento.id)) return false
+        eventosInteressado.add(evento.id!!)
         evento.adicionarParticipanteInteressado(this)
         return true
     }
@@ -59,8 +59,8 @@ open class UsuarioParticipante(
      * @return true se o interesse foi removido com sucesso, false caso não tenha demonstrado interesse
      */
     fun removerInteresse(evento: Evento): Boolean {
-        if (!eventosInteressado.contains(evento)) return false
-        eventosInteressado.remove(evento)
+        if (!eventosInteressado.contains(evento.id)) return false
+        eventosInteressado.remove(evento.id)
         evento.removerParticipanteInteressado(this)
         return true
     }
@@ -86,7 +86,7 @@ open class UsuarioParticipante(
      * @return true se já fez review, false caso contrário
      */
     fun jaFezReviewParaEvento(evento: Evento): Boolean {
-        return reviewsFeitas.any { it.evento == evento }
+        return reviewsFeitas.any { it.eventoId == evento.id }
     }
     
     /**

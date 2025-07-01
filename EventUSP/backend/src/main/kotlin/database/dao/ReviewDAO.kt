@@ -12,8 +12,8 @@ import org.jetbrains.exposed.dao.id.EntityID
 class ReviewDAO(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<ReviewDAO>(ReviewTable)
     
-    var evento by EventoDAO referencedOn ReviewTable.eventoId
-    var participante by UsuarioParticipanteDAO referencedOn ReviewTable.participanteId
+    var eventoId by ReviewTable.eventoId
+    var participanteId by ReviewTable.eventoId
     var nota by ReviewTable.nota
     var comentario by ReviewTable.comentario
     
@@ -23,8 +23,8 @@ class ReviewDAO(id: EntityID<Long>) : LongEntity(id) {
     fun toModel(): Review {
         return Review(
             id = id.value,
-            evento = evento.toModel(),
-            participante = participante.toModel(),
+            eventoId = eventoId.value,
+            participanteId = participanteId.value,
             nota = nota,
             comentario = comentario
         )

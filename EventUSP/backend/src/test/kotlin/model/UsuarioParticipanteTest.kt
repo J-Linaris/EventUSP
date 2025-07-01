@@ -153,7 +153,7 @@ class UsuarioParticipanteTest {
     fun `deve demonstrar interesse em evento com sucesso`() {
         assertTrue(participante.demonstrarInteresse(evento))
         assertEquals(1, participante.eventosInteressado.size)
-        assertTrue(participante.eventosInteressado.contains(evento))
+        assertTrue(participante.eventosInteressado.contains(evento.id))
         assertEquals(1, evento.participantesInteressados.size)
         assertTrue(evento.participantesInteressados.contains(participante))
     }

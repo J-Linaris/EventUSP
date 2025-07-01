@@ -91,13 +91,10 @@ class Evento(
         
         // Verifica se já se passaram 48 horas desde o fim do evento
         if (!passaram48HorasDesdeOFim()) return null
-        
-        // Verifica se o participante já fez uma review
-        if (reviews.any { it.participante == participante }) return null
-        
+
         val review = Review(
-            evento = this,
-            participante = participante,
+            eventoId = this.id!!,
+            participanteId = participante.id!!,
             nota = nota,
             comentario = comentario
         )

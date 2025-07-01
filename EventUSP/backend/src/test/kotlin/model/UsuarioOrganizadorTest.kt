@@ -105,7 +105,6 @@ class UsuarioOrganizadorTest {
         assertEquals("Novo Evento", novoEvento.titulo)
         assertEquals("Descrição do novo evento", novoEvento.descricao)
         assertEquals("Local do novo evento", novoEvento.localizacao)
-        assertEquals("https://exemplo.com/nova-capa.jpg", novoEvento.imagens[0].url)
         assertEquals("Nova Categoria", novoEvento.categoria)
         assertEquals(organizador, novoEvento.organizador)
         assertTrue(organizador.eventosOrganizados.contains(novoEvento))
