@@ -98,15 +98,6 @@ class EventoRouteTest {
                     append("username", "Organizador Que Cria Evento")
                     append("password", "orgpass")
                     append("accountType", "organizador")
-//                    val arquivoFoto = File("src/test/kotlin/bemvindomessi.jpeg")
-//                    append(
-//                        "profilePhoto",
-//                        arquivoFoto.readBytes(),
-//                        Headers.build {
-//                            append(HttpHeaders.ContentType, "image/jpeg")
-//                            append(HttpHeaders.ContentDisposition, "filename=\"bemvindomessi.jpg\"")
-//                        }
-//                    )
                     append("profilePhoto","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s")
                 }
             )
@@ -129,7 +120,7 @@ class EventoRouteTest {
             )
 
             // Envia requisição para criar evento
-            val response = client.post("/api/eventos/criar") {
+            val response = client.post("/api/eventos") {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(eventoRequest))
             }
@@ -196,7 +187,7 @@ class EventoRouteTest {
             )
 
             // Envia requisição para criar evento
-            val eventoResponse = client.post("/api/eventos/criar") {
+            val eventoResponse = client.post("/api/eventos") {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(eventoRequest))
             }
@@ -217,14 +208,16 @@ class EventoRouteTest {
             assertEquals(eventoRequest.titulo, eventoSalvo.titulo)
             assertEquals(eventoRequest.organizadorId, eventoSalvo.organizador.id)
 
+            val eventoId = eventoSalvo.id!!
+
             // Cria a imagem usando os dados do evento já salvo
             val imagemRequest = ImagemRequest(
                 url = "https://link.com/img.jpg",
                 descricao = "Imagem do evento JunIME",
-                eventoId = eventoSalvo.id!!
+                eventoId = eventoId
             )
 
-            val imagemResponse = client.post("/api/imagens/addImagem") {
+            val imagemResponse = client.post("/api/eventos/$eventoId/imagens") {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(imagemRequest))
             }

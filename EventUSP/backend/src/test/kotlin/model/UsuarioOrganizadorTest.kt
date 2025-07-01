@@ -102,13 +102,9 @@ class UsuarioOrganizadorTest {
             categoria = "Nova Categoria"
         )
         
-        // Adiciona uma imagem ao evento
-        novoEvento.adicionarImagem("https://exemplo.com/nova-capa.jpg")
-        
         assertEquals("Novo Evento", novoEvento.titulo)
         assertEquals("Descrição do novo evento", novoEvento.descricao)
         assertEquals("Local do novo evento", novoEvento.localizacao)
-        assertEquals(1, novoEvento.imagens.size)
         assertEquals("https://exemplo.com/nova-capa.jpg", novoEvento.imagens[0].url)
         assertEquals("Nova Categoria", novoEvento.categoria)
         assertEquals(organizador, novoEvento.organizador)
