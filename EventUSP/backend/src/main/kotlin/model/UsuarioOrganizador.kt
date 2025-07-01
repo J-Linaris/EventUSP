@@ -27,13 +27,7 @@ class UsuarioOrganizador(
      * @param categoria Categoria do evento
      * @return O evento criado
      */
-    fun criarEvento(
-        titulo: String,
-        descricao: String,
-        dataHora: LocalDateTime,
-        localizacao: String,
-        categoria: String
-            ): Evento {
+    fun criarEvento(titulo: String, descricao: String, dataHora: LocalDateTime, localizacao: String, categoria: String): Evento {
         val evento = Evento(
             titulo = titulo,
             descricao = descricao,
