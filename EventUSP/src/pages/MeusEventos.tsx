@@ -29,7 +29,7 @@ function MeusEventos() {
                     <div>
                         <div className="texto-inicial-meus-eventos">
                             {/* Mostra apenas o primeiro nome */}
-                            <span>Meus Eventos</span>
+                            <h1>Meus Eventos</h1>
                         </div>
                         <div className="meus-eventos-container">
 

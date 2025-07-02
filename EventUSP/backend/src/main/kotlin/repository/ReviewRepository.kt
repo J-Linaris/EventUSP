@@ -16,15 +16,15 @@ class ReviewRepository {
      * @return A review criada com o ID gerado
      */
     fun create(review: Review): Review = transaction {
-        val eventoDAO = EventoDAO.findById(review.evento.id!!)
+        val eventoDAO = EventoDAO.findById(review.eventoId)
             ?: throw IllegalArgumentException("Evento não encontrado")
             
-        val participanteDAO = UsuarioParticipanteDAO.findById(review.participante.id!!)
+        val participanteDAO = UsuarioParticipanteDAO.findById(review.participanteId)
             ?: throw IllegalArgumentException("Participante não encontrado")
             
         val reviewDAO = ReviewDAO.new {
-            evento = eventoDAO
-            participante = participanteDAO
+            eventoId = eventoDAO.id
+            participanteId = participanteDAO.id
             nota = review.nota
             comentario = review.comentario
         }

@@ -31,11 +31,14 @@ class UsuarioParticipanteDAO(id: EntityID<Long>) : LongEntity(id) {
      * Converte o DAO para o modelo
      */
     fun toModel(): UsuarioParticipante {
-        return UsuarioParticipante(
+        val usuario = UsuarioParticipante(
             id = id.value,
             nome = nome,
             email = email,
             senha = senha
         )
+        usuario.eventosInteressado = eventosInteressados.map { it.id.value }.toMutableList()
+        usuario.reviewsFeitas = reviews.map { it.toModel() }.toMutableList()
+        return usuario
     }
 }

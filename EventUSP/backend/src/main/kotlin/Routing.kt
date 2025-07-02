@@ -13,6 +13,7 @@ import br.usp.eventUSP.repository.UsuarioParticipanteRepository
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
+import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.*
@@ -100,8 +101,10 @@ fun Application.configureRouting() {
                         }
                     }
 
-                    route("/like"){
-                        val participanteRepository = UsuarioParticipanteRepository()
+                    // Por enquanto a autenticação vai ficar somente aqui, mas o correto mesmo seria envolver toda a rota de eventos.
+                    authenticate {
+                        route("/interesse") {
+                            val participanteRepository = UsuarioParticipanteRepository()
 
                         post {
                             val eventoId = call.parameters["id"]?.toLongOrNull()
@@ -110,19 +113,21 @@ fun Application.configureRouting() {
                             val evento = eventoRepository.findById(eventoId)
                                 ?: return@post call.respondText("Evento não encontrado", status = HttpStatusCode.NotFound)
 
-                            // Extrair o ID do usuário do seu token de autenticação (JWTPrincipal, etc.)
-                            val participanteId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
-                                ?: return@post call.respondText("ID de usuário inválido", status = HttpStatusCode.BadRequest)
+                                // Extrair o ID do usuário do seu token de autenticação (JWTPrincipal, etc.)
+                                val participanteId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
+                                    ?: return@post call.respondText("ID de usuário inválido", status = HttpStatusCode.BadRequest)
 
-                            val participante = participanteRepository.findById(participanteId)
-                                ?: return@post call.respondText("Usuário não encontrado", status = HttpStatusCode.NotFound)
+                                val participante = participanteRepository.findById(participanteId)
+                                    ?: return@post call.respondText(
+                                        "Usuário não encontrado",
+                                        status = HttpStatusCode.NotFound
+                                    )
 
-                            participante.demonstrarInteresse(evento)
+                                participante.demonstrarInteresse(evento)
 
-                            val updatedParticipante = participanteRepository.update(participante)
-                           // call.respond(updatedParticipante)
-                            call.respond(HttpStatusCode.Created, mapOf("message" to "Interesse registrado"))
-
+                                val updatedParticipante = participanteRepository.addInteresse(participanteId, eventoId)
+                                call.respond(HttpStatusCode.Created, mapOf("message" to "Interesse registrado"))
+                            }
                         }
                     }
 
@@ -419,7 +424,7 @@ fun Application.configureRouting() {
                                 val createdOrganizador = organizadorRepository.create(organizador)
                                 
                                 // Gerar token JWT
-                                val token = generateToken(createdOrganizador.id.toString(), "organizador")
+                                val token = generateToken(createdOrganizador.id!!, "organizador")
                                 
                                 call.respond(HttpStatusCode.Created, UserResponse<UsuarioOrganizador>(
                                     message = "Organizador criado com sucesso",
@@ -445,7 +450,7 @@ fun Application.configureRouting() {
                                 val createdParticipante = participanteRepository.create(participante)
 
                                 // Gerar token JWT
-                                val token = generateToken(createdParticipante.id.toString(), "participante")
+                                val token = generateToken(createdParticipante.id!!, "participante")
                                 
                                 call.respond(HttpStatusCode.Created,
                                     UserResponse<UsuarioParticipante>(
@@ -479,7 +484,7 @@ fun Application.configureRouting() {
 //                        if (organizador != null && organizador.senha == body.senha) {
 
                             // Gera Token do Organizador logado
-                            val token = generateToken(organizador.id.toString(), "organizador")
+                            val token = generateToken(organizador.id!!, "organizador")
 
                             call.respond(
                                 LoginResponse<UsuarioOrganizador>(
@@ -497,7 +502,7 @@ fun Application.configureRouting() {
                         if (participante != null && participante.senha == loginRequest.password) {
 
                             // Gera Token do Participante logado
-                            val token = generateToken(participante.id.toString(), "participante")
+                            val token = generateToken(participante.id!!, "participante")
 
                             call.respond(
                                 LoginResponse<UsuarioParticipante>(

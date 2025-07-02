@@ -10,8 +10,8 @@ import java.time.LocalDateTime
 @Serializable
 class Review(
     var id: Long? = null,
-    val evento: Evento,
-    val participante: UsuarioParticipante,
+    val eventoId: Long,
+    val participanteId: Long,
     var nota: Int, // valor de 0 a 5
     var comentario: String,
     @Contextual val dataHora: LocalDateTime = LocalDateTime.now()
@@ -28,15 +28,11 @@ class Review(
             return id == other.id
         }
         
-        return evento == other.evento && participante == other.participante
+        return eventoId == other.eventoId && participanteId == other.participanteId
     }
     
     override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
-        if (result == 0) {
-            result = 31 * result + evento.hashCode()
-            result = 31 * result + participante.hashCode()
-        }
+        val result = id?.hashCode() ?: 0
         return result
     }
 }
