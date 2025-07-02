@@ -44,7 +44,7 @@ class LikeRouteTest {
     fun setupDatabase() {
         // Conecta ao banco de dados em memória uma única vez.
         Database.connect(
-            "jdbc:h2:mem:test-event;DB_CLOSE_DELAY=-1;",
+            "jdbc:h2:mem:test-like;DB_CLOSE_DELAY=-1;",
             driver = "org.h2.Driver",
             user = "root",
             password = ""

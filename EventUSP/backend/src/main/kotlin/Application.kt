@@ -1,6 +1,7 @@
 package br.usp.eventUSP
 
 import br.usp.eventUSP.config.DatabaseConfig
+import br.usp.eventUSP.database.DatabaseSeeder
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
@@ -25,6 +26,8 @@ fun Application.module() {
 
     // Inicializa o banco de dados
     DatabaseConfig.init()
+
+    DatabaseSeeder.init()
 
     configureSecurity()
     configureRouting()
