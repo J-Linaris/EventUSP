@@ -45,8 +45,8 @@ class ReviewTest {
         
         review = Review(
             id = 1L,
-            evento = evento,
-            participante = participante,
+            eventoId = evento.id!!,
+            participanteId = participante.id!!,
             nota = 4,
             comentario = "Evento muito bom, recomendo!"
         )
@@ -55,8 +55,8 @@ class ReviewTest {
     @Test
     fun `deve inicializar review corretamente`() {
         assertEquals(1L, review.id)
-        assertEquals(evento, review.evento)
-        assertEquals(participante, review.participante)
+        assertEquals(evento.id, review.eventoId)
+        assertEquals(participante.id, review.participanteId)
         assertEquals(4, review.nota)
         assertEquals("Evento muito bom, recomendo!", review.comentario)
         assertNotNull(review.dataHora)
@@ -66,8 +66,8 @@ class ReviewTest {
     fun `deve lançar exceção para nota fora do intervalo válido`() {
         assertThrows<IllegalArgumentException> {
             Review(
-                evento = evento,
-                participante = participante,
+                eventoId = evento.id!!,
+                participanteId = participante.id!!,
                 nota = 6, // Nota inválida, maior que 5
                 comentario = "Comentário"
             )
@@ -75,8 +75,8 @@ class ReviewTest {
         
         assertThrows<IllegalArgumentException> {
             Review(
-                evento = evento,
-                participante = participante,
+                eventoId = evento.id!!,
+                participanteId = participante.id!!,
                 nota = -1, // Nota inválida, menor que 0
                 comentario = "Comentário"
             )
@@ -87,8 +87,8 @@ class ReviewTest {
     fun `deve aceitar todas as notas no intervalo válido`() {
         for (nota in 0..5) {
             val r = Review(
-                evento = evento,
-                participante = participante,
+                eventoId = evento.id!!,
+                participanteId = participante.id!!,
                 nota = nota,
                 comentario = "Comentário"
             )
@@ -100,15 +100,15 @@ class ReviewTest {
     fun `deve comparar reviews corretamente`() {
         val reviewMesmoId = Review(
             id = 1L,
-            evento = evento,
-            participante = participante,
+            eventoId = evento.id!!,
+            participanteId = participante.id!!,
             nota = 5, // Nota diferente
             comentario = "Outro comentário" // Comentário diferente
         )
         
         val reviewMesmoEventoParticipante = Review(
-            evento = evento,
-            participante = participante,
+            eventoId = evento.id!!,
+            participanteId = participante.id!!,
             nota = 3,
             comentario = "Outro comentário"
         )
@@ -121,8 +121,8 @@ class ReviewTest {
         )
         
         val reviewOutroParticipante = Review(
-            evento = evento,
-            participante = outroParticipante,
+            eventoId = evento.id!!,
+            participanteId = outroParticipante.id!!,
             nota = 4,
             comentario = "Comentário"
         )

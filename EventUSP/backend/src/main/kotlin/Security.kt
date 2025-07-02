@@ -20,7 +20,7 @@ private val JWT_EXPIRATION = TimeUnit.DAYS.toMillis(7) // Token válido por 7 di
 
 fun Application.configureSecurity() {
     install(Authentication) {
-        jwt("auth-jwt") {
+        jwt {
             realm = "EventUSP Server"
             verifier(
                 JWT.require(Algorithm.HMAC256(JWT_SECRET))
@@ -29,12 +29,19 @@ fun Application.configureSecurity() {
                     .build()
             )
             validate { credential ->
-                // Validar claims e retornar JWTPrincipal se válido
-                if (credential.payload.audience.contains(AUDIENCE)) {
+                // Verifique se a claim "userId" existe no token.
+                if (credential.payload.getClaim("userId").asString() != "") {
                     JWTPrincipal(credential.payload)
-                } else null
+                } else {
+                    null // Se a validação falhar, o principal será null
+                }
+            // Validar claims e retornar JWTPrincipal se válido
+//                if (credential.payload.audience.contains(AUDIENCE)) {
+//                    JWTPrincipal(credential.payload)
+//                } else null
             }
-            challenge { _, _ ->
+
+            challenge { defaultScheme, realm ->
                 call.respond(HttpStatusCode.Unauthorized, "Token de autenticação inválido ou expirado")
             }
         }
@@ -48,7 +55,7 @@ fun Application.configureSecurity() {
  * @param role Papel do usuário (organizador ou participante)
  * @return Token JWT gerado
  */
-fun generateToken(userId: String, role: String): String {
+fun generateToken(userId: Long, role: String): String {
     return JWT.create()
         .withAudience(AUDIENCE)
         .withIssuer(ISSUER)
