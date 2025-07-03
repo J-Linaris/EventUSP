@@ -19,7 +19,8 @@ data class LoginRequest(
 data class LoginResponse<T>(
     val message: String,
     val token: String,
-    val user: T
+    val user: T,
+    val role: String
 )
 
 @Serializable

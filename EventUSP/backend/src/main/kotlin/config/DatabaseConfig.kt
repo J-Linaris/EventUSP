@@ -24,7 +24,7 @@ object DatabaseConfig {
             driverClassName = "com.mysql.cj.jdbc.Driver"
             jdbcUrl = "jdbc:mysql://localhost:3306/eventusp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
             username = "root" // Altere para o seu usuário do MySQL
-            password = "Root1234!" // Altere para a sua senha do MySQL
+            password = "root" // Altere para a sua senha do MySQL
             maximumPoolSize = 10
             connectionTestQuery = "SELECT 1"
             validationTimeout = 3000
