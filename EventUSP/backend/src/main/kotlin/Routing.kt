@@ -490,7 +490,8 @@ fun Application.configureRouting() {
                                 LoginResponse<UsuarioOrganizador>(
                                     message = "Login efetuado com sucesso!",
                                     token = token,
-                                    user = organizador
+                                    user = organizador,
+                                    role = "organizador"
                                 )
                             )
                             return@post
@@ -508,7 +509,8 @@ fun Application.configureRouting() {
                                 LoginResponse<UsuarioParticipante>(
                                     message = "Login efetuado com sucesso!",
                                     token = token,
-                                    user = participante
+                                    user = participante,
+                                    role = "participante"
                                 )
                             )
                             return@post

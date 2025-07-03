@@ -30,14 +30,14 @@ object DatabaseSeeder {
                 organizador1.nome = "Centro Cultural USP"
                 organizador1.email = "ccusp@usp.br"
                 organizador1.senha = "senha123"
-                organizador1.fotoPerfil = "https://jc.usp.br/wp-content/uploads/2023/10/20231005_fachada_ccusp.jpg"
+                organizador1.fotoPerfil = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s"
                 organizador1 = organizadorRepo.create(organizador1)
 
                 var organizador2 = UsuarioOrganizador()
                 organizador2.nome = "IME Eventos"
                 organizador2.email = "eventos@ime.usp.br"
                 organizador2.senha = "senha123"
-                organizador2.fotoPerfil = "https://www.ime.usp.br/templates/ime/images/logo-imew.png"
+                organizador2.fotoPerfil = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s"
                 organizador2 = organizadorRepo.create(organizador2)
 
 
@@ -87,7 +87,7 @@ object DatabaseSeeder {
                 imagemRepo.create(
                     ImagemEvento(
                         eventoId = eventoShow.id!!,
-                        url = "https://www.prceu.usp.br/wp-content/uploads/2023/04/Show-de-Talentos-do-CUASO-imagem-de-divulgacao-com-informacoes-do-evento.jpeg",
+                        url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s",
                         descricao = "Palco principal do evento",
                         ordem = 1
                     )
@@ -95,7 +95,7 @@ object DatabaseSeeder {
                 imagemRepo.create(
                     ImagemEvento(
                         eventoId = eventoHackathon.id!!,
-                        url = "https://www.ime.usp.br/eventos/semanacomp/22/assets/images/logo.png",
+                        url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s",
                         descricao = "Equipas a trabalhar durante o evento",
                         ordem = 1
                     )

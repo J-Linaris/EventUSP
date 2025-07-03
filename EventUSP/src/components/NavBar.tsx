@@ -3,25 +3,16 @@ import { Link, useNavigate } from 'react-router-dom'; // Importar useNavigate
 import eventUSPLogo from "/src/imgs/EventUSPLogoSemFundo.png";
 import './NavBar.css';
 import genericProfileIcon from '/src/imgs/icon_profile_pic.png'; // Crie ou use um ícone de perfil genérico
+import { useAuth } from '../context/AuthContext'; // 1. Importe o hook useAuth
 
 function Navbar() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState<string | null>(null);
+    const { user, logout } = useAuth()
     const [showDropdown, setShowDropdown] = useState(false); // Estado para controlar a visibilidade do dropdown
     const navigate = useNavigate(); // Hook para navegação programática
     const dropdownRef = useRef<HTMLDivElement>(null); // Ref para fechar o dropdown ao clicar fora
 
     // Efeito para verificar o estado de login ao montar o componente
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const storedUsername = localStorage.getItem('username');
-        if (token && storedUsername) {
-            setIsLoggedIn(true);
-            setUsername(storedUsername);
-        } else {
-            setIsLoggedIn(false);
-            setUsername(null);
-        }
 
         // Adicionar listener de clique para fechar o dropdown ao clicar fora
         const handleClickOutside = (event: MouseEvent) => {
@@ -40,12 +31,7 @@ function Navbar() {
 
     // Função para fazer logout
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('email');
-        localStorage.removeItem('accountType');
-        setIsLoggedIn(false); // Atualiza o estado de login
-        setUsername(null); // Limpa o nome de usuário
+        logout();
         setShowDropdown(false); // Fecha o dropdown
         navigate('/'); // Redireciona para a página inicial ou login
     };
@@ -97,11 +83,11 @@ function Navbar() {
                 </Link>
 
                 {/* Renderização condicional do botão de Login ou Perfil */}
-                {isLoggedIn ? (
+                {user ? (
                     <div className="profile-dropdown-container" ref={dropdownRef}>
                         <button className="navbarButton profile-button" onClick={toggleDropdown}>
                             <img src={genericProfileIcon} alt="Perfil" className="profile-icon" />
-                            {username && <span className="profile-username">{username.split(' ')[0]}</span>} {/* Mostra apenas o primeiro nome */}
+                            <span className="profile-username">{user.nome.split(' ')[0]}</span> {/* Mostra apenas o primeiro nome */}
                         </button>
                         {showDropdown && (
                             <div className="dropdown-menu">

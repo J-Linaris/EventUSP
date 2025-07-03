@@ -1,0 +1,73 @@
+.evento-page {
+    display: flex; /* Ativa o Flexbox */
+    flex-direction: column; /* Empilha os itens verticalmente (Navbar em cima, card embaixo) */
+    align-items: center; /* Centraliza os itens horizontalmente */
+    justify-content: flex-start; /* Alinha o conteúdo ao topo */
+    /*padding: 2rem; !* Adiciona um espaçamento nas laterais e no topo/fundo *!*/
+    min-height: 100vh; /* Garante que a página ocupe pelo menos toda a altura da tela */
+    width: 100%;
+}
+
+.card-evento-detalhe {
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    background-color: #171717;
+    overflow: hidden;
+    width: 100%; /* O card ocupará 100% do seu contêiner pai, que é limitado pelo max-width */
+    max-width: 900px; /* Largura máxima do card */
+    padding: 1rem;
+    /*border-radius: 8px; !* Adiciona bordas arredondadas para um visual melhor *!*/
+}
+
+/* Ajustes no carrossel */
+.imgsEventoDetalhes {
+    max-height: 400px; /* Aumentei um pouco a altura para melhor visualização */
+    width: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.card-evento-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 25%;
+    padding: 16px;
+    margin: 1vw;
+}
+
+/* Estilos para o corpo do card para melhor legibilidade */
+.card-evento-body {
+    padding: 1rem;
+    text-align: left;
+    justify-content: start;
+    align-items: start;
+}
+
+.card-evento-body h1 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.card-evento-body p {
+    width: 50%;
+}
+.infosOrganizadorEvento{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    background-color: #0e0e0e;
+    width: 50%;
+    border-radius: 50px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.fotoPerfilOrganizador{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}

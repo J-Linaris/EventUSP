@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import * as React from "react";
 import "./Login.css";
+import { useAuth } from "../context/AuthContext.tsx";
 
 
 function Login() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
     const [erro, setErro] = useState("");
+    const auth = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,10 +35,12 @@ function Login() {
 
             const data = await response.json();
 
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("username", data.user.nome);
-            localStorage.setItem("email", data.user.email);
-            localStorage.setItem("accountType", data.user.accountType); // opcional, se vier
+            // A própria função login de auth cuidaŕa de armazenar no LocalStorage
+            auth.login(data);
+            // localStorage.setItem("token", data.token);
+            // localStorage.setItem("username", data.user.nome);
+            // localStorage.setItem("email", data.user.email);
+            // localStorage.setItem("accountType", data.user.accountType); // opcional, se vier
 
             window.location.href = "/";
         } catch (err: unknown) {
