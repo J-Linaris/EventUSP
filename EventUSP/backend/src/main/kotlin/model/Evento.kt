@@ -75,7 +75,7 @@ class Evento(
     fun passaram48HorasDesdeOFim(): Boolean {
         if (!jaOcorreu()) return false
         val horasPassadas = ChronoUnit.HOURS.between(dataHora, LocalDateTime.now())
-        return horasPassadas >= 48
+        return 0 <= horasPassadas && horasPassadas <= 48
     }
     
     /**
@@ -88,7 +88,7 @@ class Evento(
     fun adicionarReview(participante: UsuarioParticipante, nota: Int, comentario: String): Review? {
         // Verifica se o participante está na lista de interessados
         if (!participantesInteressados.contains(participante)) return null
-        
+
         // Verifica se já se passaram 48 horas desde o fim do evento
         if (!passaram48HorasDesdeOFim()) return null
 

@@ -13,7 +13,7 @@ class ReviewDAO(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<ReviewDAO>(ReviewTable)
     
     var eventoId by ReviewTable.eventoId
-    var participanteId by ReviewTable.eventoId
+    var participanteId by ReviewTable.participanteId
     var nota by ReviewTable.nota
     var comentario by ReviewTable.comentario
     
