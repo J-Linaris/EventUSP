@@ -7,6 +7,8 @@ import br.usp.eventUSP.repository.EventoRepository
 import br.usp.eventUSP.repository.UsuarioOrganizadorRepository
 import br.usp.eventUSP.EventoRequest
 import br.usp.eventUSP.ImagemRequest
+import br.usp.eventUSP.LoginRequest
+import br.usp.eventUSP.LoginResponse
 import br.usp.eventUSP.UserResponse
 import br.usp.eventUSP.model.UsuarioOrganizador
 import br.usp.eventUSP.model.UsuarioParticipante
@@ -61,11 +63,8 @@ class EventoRouteTest {
     // LIMPEZA ANTES DE CADA TESTE: Roda antes de cada @Test.
     @BeforeEach
     fun cleanTables() {
-        // Agora, em vez de apagar e recriar as tabelas (lento),
-        // nós apenas deletamos todos os registros (muito mais rápido).
         transaction {
             // A ordem de exclusão é a inversa da criação para respeitar as chaves estrangeiras.
-            // Ex: Deleta 'Review' antes de 'Evento', que deleta antes de 'Usuario'.
             allTables.reversedArray().forEach { table ->
                 table.deleteAll()
             }
@@ -110,19 +109,33 @@ class EventoRouteTest {
             assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", organizerResponse.user.fotoPerfil)
             assertNotNull(organizerResponse.token)
 
+            val organizadorId = organizerResponse.user.id!!
+
+            // Faz login com o organizador para criar o evento
+            val loginRequest1 = LoginRequest("org3@usp.br", "orgpass")
+            val loginResponse1 = client.post("/api/users/login") {
+                contentType(ContentType.Application.Json)
+                setBody(json.encodeToString(loginRequest1))
+            }
+            assertEquals(HttpStatusCode.OK, loginResponse1.status, "O login do organizador falhou")
+
+            val loginData1 = Json.decodeFromString<LoginResponse<UsuarioOrganizador>>(loginResponse1.bodyAsText())
+            val tokenOrganizador = loginData1.token
+            assertNotNull(tokenOrganizador)
+
             val eventoRequest = EventoRequest(
                 titulo = "Festa de Integração",
                 descricao = "Evento para integração dos alunos",
                 dataHora = LocalDateTime.now().plusDays(3).toString(), // Formato ISO-8601
                 localizacao = "USP Butantã",
                 categoria = "Festa",
-                organizadorId = organizerResponse.user.id!!
             )
 
             // Envia requisição para criar evento
             val response = client.post("/api/eventos") {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(eventoRequest))
+                header(HttpHeaders.Authorization, "Bearer $tokenOrganizador")
             }
 
             println(response.status)
@@ -134,7 +147,7 @@ class EventoRouteTest {
             assertEquals(eventoRequest.titulo, createdEvento.titulo)
             assertEquals(eventoRequest.descricao, createdEvento.descricao)
             assertEquals(eventoRequest.localizacao, createdEvento.localizacao)
-            assertEquals(eventoRequest.organizadorId, createdEvento.organizador.id)
+            assertEquals(organizadorId, createdEvento.organizador.id)
             // assertEquals(1, createdEvento.imagens.size)
             // assertEquals("https://link.com/img.jpg", createdEvento.imagens[0].url)
 
@@ -143,7 +156,7 @@ class EventoRouteTest {
             val salvo = eventRepo.findById(createdEvento.id!!)
             assertNotNull(salvo)
             assertEquals(eventoRequest.titulo, salvo.titulo)
-            assertEquals(eventoRequest.organizadorId, salvo.organizador.id)
+            assertEquals(organizadorId, salvo.organizador.id)
             //   assertTrue(salvo.imagens.any { it.url == "https://link.com/img.jpg" } ?: false)
         }
     }
@@ -177,19 +190,33 @@ class EventoRouteTest {
             assertEquals("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s", organizerResponse.user.fotoPerfil)
             assertNotNull(organizerResponse.token)
 
+            val organizadorId = organizerResponse.user.id!!
+
+            // Faz login com o organizador para criar o evento
+            val loginRequest1 = LoginRequest("org4@usp.br", "orgpass")
+            val loginResponse1 = client.post("/api/users/login") {
+                contentType(ContentType.Application.Json)
+                setBody(json.encodeToString(loginRequest1))
+            }
+            assertEquals(HttpStatusCode.OK, loginResponse1.status, "O login do organizador falhou")
+
+            val loginData1 = Json.decodeFromString<LoginResponse<UsuarioOrganizador>>(loginResponse1.bodyAsText())
+            val tokenOrganizador = loginData1.token
+            assertNotNull(tokenOrganizador)
+
             val eventoRequest = EventoRequest(
                 titulo = "JunIME",
                 descricao = "Festa junina do IME",
                 dataHora = LocalDateTime.now().plusDays(7).toString(), // Formato ISO-8601
                 localizacao = "Estacionamento do bloco B do IME",
                 categoria = "Festa",
-                organizadorId = organizerResponse.user.id!!
             )
 
             // Envia requisição para criar evento
             val eventoResponse = client.post("/api/eventos") {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(eventoRequest))
+                header(HttpHeaders.Authorization, "Bearer $tokenOrganizador")
             }
 
             assertEquals(HttpStatusCode.Companion.Created, eventoResponse.status)
@@ -199,14 +226,14 @@ class EventoRouteTest {
             assertEquals(eventoRequest.titulo, createdEvento.titulo)
             assertEquals(eventoRequest.descricao, createdEvento.descricao)
             assertEquals(eventoRequest.localizacao, createdEvento.localizacao)
-            assertEquals(eventoRequest.organizadorId, createdEvento.organizador.id)
+            assertEquals(organizadorId, createdEvento.organizador.id)
 
             // Valida se evento foi salvo no banco (repositório)
             val eventRepo = EventoRepository()
             val eventoSalvo = eventRepo.findById(createdEvento.id!!)
             assertNotNull(eventoSalvo)
             assertEquals(eventoRequest.titulo, eventoSalvo.titulo)
-            assertEquals(eventoRequest.organizadorId, eventoSalvo.organizador.id)
+            assertEquals(organizadorId, eventoSalvo.organizador.id)
 
             val eventoId = eventoSalvo.id!!
 
@@ -220,6 +247,7 @@ class EventoRouteTest {
             val imagemResponse = client.post("/api/eventos/$eventoId/imagens") {
                 contentType(ContentType.Application.Json)
                 setBody(json.encodeToString(imagemRequest))
+                header(HttpHeaders.Authorization, "Bearer $tokenOrganizador")
             }
 
             println(imagemResponse.status)
