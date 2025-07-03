@@ -23,7 +23,7 @@ O site terá como features:
 
 ### Frontend
 - **HTML/CSS**
-- **React**
+- **React + Vite**
 - **TypeScript**
 
 ## Como Rodar o Projeto
