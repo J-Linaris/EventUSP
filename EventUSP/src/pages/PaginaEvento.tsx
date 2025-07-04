@@ -113,11 +113,11 @@ function PaginaEvento() {
                         <p><strong>Data:</strong> <br/>{new Date(evento.dataHora).toLocaleString()}</p>
                         <p><strong>Local:</strong> <br/>{evento.localizacao}</p>
                         <p><strong>Categoria:</strong> <br/>{evento.categoria}</p>
-                        <p><strong>Organizador:</strong> <br/>
+                        <div><strong>Organizador:</strong> <br/>
                             <div className="infosOrganizadorEvento">
                                 <img src={evento.organizador.fotoPerfil} alt={`Foto de perfil de ${evento.organizador.nome}`} className="fotoPerfilOrganizador"/><span>{evento.organizador.nome}</span>
                             </div>
-                        </p>
+                        </div>
                         <p><strong>Likes:</strong> {evento.numeroLikes}</p>
                     </div>
                 </div>

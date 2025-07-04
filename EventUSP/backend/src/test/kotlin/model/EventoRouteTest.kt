@@ -214,7 +214,6 @@ class EventoRouteTest {
             val imagemRequest = ImagemRequest(
                 url = "https://link.com/img.jpg",
                 descricao = "Imagem do evento JunIME",
-                eventoId = eventoId
             )
 
             val imagemResponse = client.post("/api/eventos/$eventoId/imagens") {
@@ -227,14 +226,14 @@ class EventoRouteTest {
             assertEquals(HttpStatusCode.Companion.Created, imagemResponse.status)
 
             val imagemRepo = ImagemEventoRepository()
-            val imagemSalva = imagemRepo.findById(imagemRequest.eventoId)
-           // val imagemSalva = eventRepo.findById(eventoSalvo.id!!)?.imagens?.get(0)
+//            val imagemSalva = imagemRepo.findById(imagemRequest.eventoId)
+            val imagemSalva = eventRepo.findById(eventoSalvo.id!!)?.imagens?.get(0)
 
             // Asserts para ver se a imagem foi salva corretamente no banco de dados
             assertNotNull(imagemSalva)
             assertEquals(imagemRequest.url, imagemSalva.url)
             assertEquals(imagemRequest.descricao, imagemSalva.descricao)
-            assertEquals(imagemRequest.eventoId, imagemSalva.eventoId)
+//            assertEquals(imagemRequest.eventoId, imagemSalva.eventoId)
 
             // Asserts para ver se a imagem foi salva corretamente no evento já criado antes
             val eventoAtualizado = eventRepo.findById(createdEvento.id!!)

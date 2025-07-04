@@ -36,6 +36,6 @@ data class EventoRequest(
 @Serializable
 data class ImagemRequest(
     val url: String,
-    val descricao: String? = null,
-    val eventoId: Long
+    val descricao: String? = null
+//    val eventoId: Long
 )

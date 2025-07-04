@@ -73,17 +73,16 @@ function CriarEvento() {
             const eventoId = eventoCriado.id;
 
             // 2. Adicionar as imagens uma a uma
-            if (imagens.length > 0) {
-                // Promise.all para enviar todas as requisições de imagem em paralelo
-                await Promise.all(
-                    imagens.map(url =>
-                        fetch(`/proxy/api/eventos/${eventoId}/imagens`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ url, descricao: "Imagem do evento" }),
-                        })
-                    )
-                );
+            if (imagens.length > 0) { //
+                for (const url of imagens) {
+                    // 'await' aqui garante que o laço vai esperar a conclusão de cada fetch
+                    // antes de prosseguir para a próxima iteração.
+                    await fetch(`/proxy/api/eventos/${eventoId}/imagens`, { //
+                        method: "POST", //
+                        headers: { "Content-Type": "application/json" }, //
+                        body: JSON.stringify({ url: url, descricao: "Imagem do evento" }), //
+                    });
+                }
             }
 
             // 3. Redirecionar para a página do evento recém-criado
