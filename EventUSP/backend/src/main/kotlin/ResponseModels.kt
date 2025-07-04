@@ -30,13 +30,15 @@ data class EventoRequest(
     val dataHora: String, // Recebe como string (ISO-8601)
     val localizacao: String,
     val categoria: String,
+    val organizadorId: Long
 )
 
 @Serializable
 data class ImagemRequest(
     val url: String,
-    val descricao: String? = null,
-    val eventoId: Long
+    val descricao: String? = null
+//    val eventoId: Long
+)
 )
 
 @Serializable

@@ -164,12 +164,34 @@ fun Application.configureRouting() {
                             val evento = eventoRepository.findById(eventoId)
                                 ?: return@post call.respond(HttpStatusCode.NotFound, "Evento não encontrado")
 
-                            val novaImagem = evento.adicionarImagem(
+
+                            // O ID do evento da imagem é o da URL, não do corpo da requisição
+//                            val novaImagem = evento.adicionarImagem(
+//                                url = imagemReq.url,
+//                                descricao = imagemReq.descricao,
+//                            )
+                            val contagemImagensAtuais = imagemRepository.findByEvento(eventoId).size
+
+                            val novaImagem = ImagemEvento(
+                                eventoId = eventoId,
                                 url = imagemReq.url,
-                                descricao = imagemReq.descricao,
+                                descricao = imagemReq.descricao, // Você pode querer pegar isso do request também
+                                ordem = contagemImagensAtuais // Usa a contagem real do BD
                             )
 
                             val imagemSalva = imagemRepository.create(novaImagem)
+
+                            // 1. Busca a lista completa e atualizada de imagens para o evento no banco
+                            val imagensNoBanco = imagemRepository.findByEvento(eventoId) //
+
+                            // 2. Imprime o log no console do servidor
+                            println("--- LOG DE IMAGENS ---")
+                            println("Sucesso! Imagem adicionada ao Evento ID: $eventoId.")
+                            println("Total de imagens para este evento no banco: ${imagensNoBanco.size}")
+                            println("Lista de Imagens: $imagensNoBanco")
+                            println("----------------------")
+
+
                             call.respond(HttpStatusCode.Created, imagemSalva)
                         }
                     }

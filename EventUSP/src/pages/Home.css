@@ -11,9 +11,6 @@
     color: inherit;
     display: block;
     width: 25%;
-    padding: 16px;
-    margin: 1vw;
-
     /* --- ADICIONE ESTAS LINHAS --- */
     transition: transform 0.3s ease-in-out; /* Define a animação de transição */
 }
@@ -22,17 +19,19 @@
     color: inherit;
     transform: scale(1.05); /* Aumenta o tamanho do card em 5% */
     z-index: 10; /* Garante que o card fique acima dos outros ao ser aumentado */
+    border-color: #D40000;
+    box-shadow: 0.1rem 0.1rem 1rem #D40000;
 }
 
 .card-evento {
     display: flex;
     flex-direction: column;
-    border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     background-color: #151515;
     overflow: hidden; /* Garante que o carrossel não ultrapasse as bordas arredondadas */
     width: 100%;
+    min-height: 75vh;
 }
 
 /* Adicionando um padding ao corpo do card para separar o texto do carrossel */
@@ -42,7 +41,7 @@
 
 /* Ajustes no carrossel */
 .carousel .slide img {
-    max-height: 200px; /* Define uma altura máxima para as imagens do carrossel */
+    height: 200px; /* Define uma altura fixa para as imagens do carrossel */
     width: 100%;
     object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
 }
@@ -52,8 +51,6 @@
     color: inherit; /* Faz o texto herdar a cor do elemento pai */
     display: block; /* Garante que o link ocupe todo o espaço do card */
     width: 25%;
-    padding: 16px;
-    margin: 1vw;
 }
 /*--------------ESTILIZAÇÃO DO BOTÃO DE ADD EVENTO---------------------------*/
 .fab-container {
