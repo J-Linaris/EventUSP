@@ -40,14 +40,14 @@
     flex-direction: column;
 }
 
-.form-fields {
+.form-fields-evento {
     display: flex;
     flex-direction: column;
     gap: 1.2rem; /* Espaçamento entre os campos */
 }
 
-.form-fields input,
-.form-fields textarea {
+.form-fields-evento input,
+.form-fields-evento textarea {
     width: 100%;
     padding: 12px;
     border-radius: 5px;
@@ -57,15 +57,15 @@
     font-size: 1rem;
 }
 
-.form-fields input:focus,
-.form-fields textarea:focus {
+.form-fields-evento input:focus,
+.form-fields-evento textarea:focus {
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     border-color: #D40000;
     box-shadow: 0 0 8px #D40000;
 }
 
-.form-fields textarea {
+.form-fields-evento textarea {
     min-height: 120px;
     resize: vertical;
 }
@@ -136,14 +136,14 @@
     font-weight: bold;
 }
 
-.form-footer {
+.form-footer-evento {
     margin-top: auto; /* Empurra o botão para o final */
     padding-top: 2rem;
     display: flex;
     justify-content: center;
 }
 
-.form-footer-button {
+.form-footer-button-evento {
     padding: 12px 30px;
     font-size: 1.1rem;
     font-weight: bold;
@@ -155,16 +155,16 @@
     transition: background-color 0.2s;
 }
 
-.form-footer-button:hover:not(:disabled) {
+.form-footer-button-evento:hover:not(:disabled) {
     background-color: #a00000;
 }
 
-.form-footer-button:disabled {
+.form-footer-button-evento:disabled {
     background-color: #555;
     cursor: not-allowed;
 }
 
-.erro-form {
+.erro-form-evento {
     color: #ff4d4d;
     text-align: center;
     margin-top: 1rem;

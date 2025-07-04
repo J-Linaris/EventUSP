@@ -38,15 +38,16 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
             descricao = descricao,
             dataHora = dataHora,
             localizacao = localizacao,
+            numeroLikes = this.numeroLikes,
             categoria = categoria,
-            organizador = organizador.toModel()
+            organizador = organizador.toModel(),
+            // Carrega os relacionamentos
+            participantesInteressados = this.participantesInteressados.map { it.toModel() }.toMutableList(),
+            reviews = this.reviews.map { it.toModel() }.toMutableList(),
+            imagens = this.imagens.map { it.toModel() }.toMutableList()
         )
         
-        // Carrega os relacionamentos
-        evento.numeroLikes = numeroLikes
-        evento.participantesInteressados = participantesInteressados.map { it.toModel() }.toMutableList()
-        evento.reviews = reviews.map { it.toModel() }.toMutableList()
-        evento.imagens = imagens.map { it.toModel() }.toMutableList()
+
         
         return evento
     }

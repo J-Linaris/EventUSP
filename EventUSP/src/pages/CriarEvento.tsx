@@ -108,7 +108,7 @@ function CriarEvento() {
                     </span>
                 </div>
                 <form onSubmit={handleSubmit} className="criar-evento-form">
-                    <div className="form-fields">
+                    <div className="form-fields-evento">
                         <input type="text" placeholder="Título do Evento" value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
                         <textarea placeholder="Descrição detalhada do evento" value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
                         <input type="datetime-local" value={dataHora} onChange={(e) => setDataHora(e.target.value)} required />
@@ -132,12 +132,12 @@ function CriarEvento() {
                             ))}
                         </div>
                     </div>
-                    <div className="form-footer">
-                        <button className="form-footer-button" type="submit" disabled={loading}>
+                    <div className="form-footer-evento">
+                        <button className="form-footer-button-evento" type="submit" disabled={loading}>
                             {loading ? "Criando..." : "Criar Evento"}
                         </button>
                     </div>
-                    {erro && <div className="erro-form">{erro}</div>}
+                    {erro && <div className="erro-form-evento">{erro}</div>}
                 </form>
             </div>
         </div>

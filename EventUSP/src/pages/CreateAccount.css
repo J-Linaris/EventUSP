@@ -44,8 +44,8 @@
 }
 
 .form-fields input{
-    width: 20vw;
-    height: 25px;
+    width: 25vw;
+    height: 3em;
     margin: 8px;
 }
 .form-fields input:focus{

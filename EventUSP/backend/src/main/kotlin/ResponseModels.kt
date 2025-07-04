@@ -39,7 +39,6 @@ data class ImagemRequest(
     val descricao: String? = null
 //    val eventoId: Long
 )
-)
 
 @Serializable
 data class ReviewRequest(

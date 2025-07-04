@@ -119,6 +119,7 @@ class LikeRouteTest {
                 dataHora = LocalDateTime.now().plusDays(3).toString(), // Formato ISO-8601
                 localizacao = "USP Butantã",
                 categoria = "Festa",
+                organizadorId = organizerResponse.user.id!!
             )
 
             // Envia requisição para criar evento

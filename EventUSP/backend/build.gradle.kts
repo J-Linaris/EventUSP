@@ -1,7 +1,7 @@
 val ktorVersion = "2.3.7"
 val kotlinVersion = "1.9.21"
 val logbackVersion = "1.4.11"
-val exposedVersion = "0.44.1"
+val exposedVersion = "0.51.1"
 val h2Version = "2.2.224"
 val hikariVersion = "5.0.1"
 val mysqlVersion = "8.0.33"
@@ -49,8 +49,10 @@ dependencies {
     implementation("io.ktor:ktor-server-default-headers-jvm:$ktorVersion")
 
     // Database - Exposed
+    implementation(platform("org.jetbrains.exposed:exposed-bom:$exposedVersion"))
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+//    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
 

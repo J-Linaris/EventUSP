@@ -20,12 +20,12 @@ class Evento(
     var dataHora: LocalDateTime,
     var localizacao: String,
     var categoria: String,
-    var organizador: UsuarioOrganizador
-) {
-    var participantesInteressados: MutableList<UsuarioParticipante> = mutableListOf()
-    var numeroLikes: Int = 0
-    var reviews: MutableList<Review> = mutableListOf()
+    var organizador: UsuarioOrganizador,
+    var participantesInteressados: MutableList<UsuarioParticipante> = mutableListOf(),
+    var numeroLikes: Int = 0,
+    var reviews: MutableList<Review> = mutableListOf(),
     var imagens: MutableList<ImagemEvento> = mutableListOf()
+) {
     
     /**
      * Adiciona um participante interessado no evento

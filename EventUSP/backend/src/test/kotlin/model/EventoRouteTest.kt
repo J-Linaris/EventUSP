@@ -129,6 +129,7 @@ class EventoRouteTest {
                 dataHora = LocalDateTime.now().plusDays(3).toString(), // Formato ISO-8601
                 localizacao = "USP Butantã",
                 categoria = "Festa",
+                organizadorId = organizadorId
             )
 
             // Envia requisição para criar evento
@@ -210,6 +211,7 @@ class EventoRouteTest {
                 dataHora = LocalDateTime.now().plusDays(7).toString(), // Formato ISO-8601
                 localizacao = "Estacionamento do bloco B do IME",
                 categoria = "Festa",
+                organizadorId = organizadorId
             )
 
             // Envia requisição para criar evento

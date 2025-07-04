@@ -29,41 +29,76 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    margin-top: 10vh;
+    justify-content: center ;
+    margin-top: 7vh;
 }
 
-.form-fields{
+.form-fields-login{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 80px;
+    /*justify-content: space-between;*/
+    height: 100px;
+    gap: 20px;
 }
 
-.form-fields input{
-    width: 20vw;
-    height: 2em;
+.form-fields-login input{
+    width: 25vw;
+    height: 3em;
 }
-.form-fields input:focus{
+.form-fields-login input:focus{
     outline: none;
     transition: border-color 0.05s, box-shadow 0.05s;
     border-color: #D40000;
     box-shadow: 0.1rem 0.1rem 1rem #D40000;
 }
-
-.form-footer-button:hover{
-    background-color: #D40000;
-    border: none;
+.form-footer-button-wrapper-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: 10vh;
 }
-.form-footer-button{
+
+.form-footer-button-wrapper-login button{
+    margin: 0;
+}
+
+.form-footer-button-login:hover{
+    background-color: #D40000;
+    border-color: #D40000;
+    color: white;
+    box-shadow: 0.1rem 0.1rem 1rem #D40000;
+}
+.form-footer-button-login{
+    background-color: #333;
     transition: background-color 0.04s;
     margin: 0 8vw;
+    border: 2px solid transparent;
+    padding: 10px 20px;
+    height: 60px;
+    /*font-size: 1rem;*/
+    /*display: inline-block; !* Garante que o link aceite margens e paddings corretamente *!*/
+    /*text-decoration: none;  !* Remove o sublinhado do link *!*/
+    /*color: inherit;         !* Faz o texto herdar a cor (se necessário) *!*/
+    /*text-align: center;     !* Centraliza o texto se houver padding *!*/
+    /*border-radius: 10px;*/
+    /*background-color: #1a1a1a;*/
+    /*font-size: 1em;*/
+    /*font-weight: 500;*/
+    /*font-family: sans-serif;*/
 }
 
-.form-footer{
+.link-button-wrapper{
+    width: 100%;
+}
+
+.form-footer-login{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    width: 75%;
+    margin-bottom: 7vh;
+    margin-top: 10vh;
 }
 
 #texto-bem-vindo{

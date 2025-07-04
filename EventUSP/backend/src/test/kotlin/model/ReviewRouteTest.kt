@@ -120,6 +120,7 @@ class ReviewRouteTest {
                 dataHora = LocalDateTime.now().minusDays(1).toString(), // Formato ISO-8601
                 localizacao = "Engenhão (Estádio Nilton Santos)",
                 categoria = "Festa",
+                organizadorId = organizerResponse.user.id!!
             )
 
             // Envia requisição para criar evento

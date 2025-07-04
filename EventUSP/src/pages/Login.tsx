@@ -61,7 +61,7 @@ function Login() {
                     </span>
                 </div>
                 <form onSubmit={handleSubmit} className="login-form">
-                    <div className="form-fields">
+                    <div className="form-fields-login">
                         <input
                             type="email"
                             placeholder="Email"
@@ -77,15 +77,19 @@ function Login() {
                             required
                         />
                     </div>
-                    <div className="form-footer">
-                        <Link to="/create-account">
-                            <button className="form-footer-button" type="button">
-                                Criar conta
+                    <div className="form-footer-login">
+                        <div className="form-footer-button-wrapper-login">
+                            <Link to="/create-account" className="link-button-wrapper" >
+                                <button  type="button" className="form-footer-button-login">
+                                    Criar conta
+                                </button>
+                            </Link>
+                        </div>
+                        <div className="form-footer-button-wrapper-login">
+                            <button className="form-footer-button-login" type="submit">
+                                Entrar
                             </button>
-                        </Link>
-                        <button className="form-footer-button" type="submit">
-                            Entrar
-                        </button>
+                        </div>
                     </div>
                     {erro && <div className="erro-login">{erro}</div>}
                 </form>
