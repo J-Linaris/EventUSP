@@ -73,7 +73,6 @@ open class UsuarioParticipante(
      * @return A review criada ou null se não foi possível criar
      */
     fun adicionarReview(evento: Evento, nota: Int, comentario: String): Review? {
-        // A verificação se o participante está interessado e se passaram 48h é feita no Evento
         val review = evento.adicionarReview(this, nota, comentario) ?: return null
         
         reviewsFeitas.add(review)

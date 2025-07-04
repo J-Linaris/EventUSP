@@ -45,7 +45,6 @@ class EventoRepository {
             }
         }
 
-
         // Adiciona as imagens do evento
         evento.imagens.forEach { imagem ->
             ImagemEventoDAO.new {

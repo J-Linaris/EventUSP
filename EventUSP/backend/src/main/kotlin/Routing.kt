@@ -28,6 +28,7 @@ fun Application.configureRouting() {
     routing {
         route("/api") {
             // Rotas para Eventos
+            authenticate {
             route("/eventos") {
                 val eventoRepository = EventoRepository()
 
@@ -47,9 +48,14 @@ fun Application.configureRouting() {
                     val organizadorRepository = UsuarioOrganizadorRepository()
                     val eventoReq = call.receive<EventoRequest>()
 
+                    val organizadorId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
+                        ?: return@post call.respond("ID de organizador inválido")
                     // Busca o organizador pelo ID recebido
-                    val organizador = organizadorRepository.findById(eventoReq.organizadorId)
-                        ?: return@post call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Organizador não encontrado no repositório"))
+                    val organizador = organizadorRepository.findById(organizadorId)
+                        ?: return@post call.respond(
+                            HttpStatusCode.BadRequest,
+                            mapOf("error" to "Organizador não encontrado no repositório")
+                        )
 
                     // Criação do evento usando o organizador
                     val evento = organizador.criarEvento(
@@ -65,7 +71,7 @@ fun Application.configureRouting() {
                     call.respond(HttpStatusCode.Created, eventoSalvo)
                 }
 
-                route("/{id}"){
+                route("/{id}") {
                     get {
                         val id = call.parameters["id"]?.toLongOrNull()
                             ?: return@get call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
@@ -100,42 +106,48 @@ fun Application.configureRouting() {
                             call.respondText("Evento não encontrado", status = HttpStatusCode.NotFound)
                         }
                     }
-
-                    // Por enquanto a autenticação vai ficar somente aqui, mas o correto mesmo seria envolver toda a rota de eventos.
-                    authenticate {
-                        route("/interesse") {
-                            val participanteRepository = UsuarioParticipanteRepository()
+                    route("/interesse") {
+                        val participanteRepository = UsuarioParticipanteRepository()
 
                         post {
                             val eventoId = call.parameters["id"]?.toLongOrNull()
-                                ?: return@post call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
+                                ?: return@post call.respondText(
+                                    "ID de evento inválido",
+                                    status = HttpStatusCode.BadRequest
+                                )
 
                             val evento = eventoRepository.findById(eventoId)
-                                ?: return@post call.respondText("Evento não encontrado", status = HttpStatusCode.NotFound)
+                                ?: return@post call.respondText(
+                                    "Evento não encontrado",
+                                    status = HttpStatusCode.NotFound
+                                )
 
-                                // Extrair o ID do usuário do seu token de autenticação (JWTPrincipal, etc.)
-                                val participanteId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
-                                    ?: return@post call.respondText("ID de usuário inválido", status = HttpStatusCode.BadRequest)
+                            // Extrair o ID do usuário do seu token de autenticação (JWTPrincipal)
+                            val participanteId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
+                                ?: return@post call.respondText(
+                                    "ID de usuário inválido",
+                                    status = HttpStatusCode.BadRequest
+                                )
 
-                                val participante = participanteRepository.findById(participanteId)
-                                    ?: return@post call.respondText(
-                                        "Usuário não encontrado",
-                                        status = HttpStatusCode.NotFound
-                                    )
+                            val participante = participanteRepository.findById(participanteId)
+                                ?: return@post call.respondText(
+                                    "Usuário não encontrado",
+                                    status = HttpStatusCode.NotFound
+                                )
 
-                                participante.demonstrarInteresse(evento)
+                            participante.demonstrarInteresse(evento)
 
-                                val updatedParticipante = participanteRepository.addInteresse(participanteId, eventoId)
-                                call.respond(HttpStatusCode.Created, mapOf("message" to "Interesse registrado"))
-                            }
+                            val updatedParticipante = participanteRepository.addInteresse(participanteId, eventoId)
+                            call.respond(HttpStatusCode.Created, mapOf("message" to "Interesse registrado"))
+
                         }
                     }
 
-                    route("/imagens"){
+                    route("/imagens") {
                         val imagemRepository = ImagemEventoRepository()
 
                         // GET /eventos/{id}/imagens -> Lista imagens de um evento
-                        get{
+                        get {
                             val eventoId = call.parameters["id"]?.toLongOrNull()
                                 ?: return@get call.respond(HttpStatusCode.BadRequest, "ID de evento inválido")
                             val imagens = imagemRepository.findByEvento(eventoId)
@@ -144,13 +156,14 @@ fun Application.configureRouting() {
 
                         // POST /eventos/{id}/imagens -> Adiciona uma nova imagem a um evento
                         post {
-                            // MUDANÇA: Adicionar imagem é um POST no sub-recurso /imagens.
+                            // Adicionar imagem é um POST no sub-recurso /imagens.
                             val eventoId = call.parameters["id"]?.toLongOrNull()
                                 ?: return@post call.respond(HttpStatusCode.BadRequest, "ID de evento inválido")
                             val imagemReq = call.receive<ImagemRequest>()
 
                             val evento = eventoRepository.findById(eventoId)
                                 ?: return@post call.respond(HttpStatusCode.NotFound, "Evento não encontrado")
+
 
                             // O ID do evento da imagem é o da URL, não do corpo da requisição
 //                            val novaImagem = evento.adicionarImagem(
@@ -185,6 +198,7 @@ fun Application.configureRouting() {
 
                     route("/reviews") {
                         val reviewRepository = ReviewRepository()
+                        val participanteRepository = UsuarioParticipanteRepository()
 
                         get {
                             val reviews = reviewRepository.findAll()
@@ -193,35 +207,81 @@ fun Application.configureRouting() {
 
                         get("/{id}") {
                             val id = call.parameters["id"]?.toLongOrNull()
-                                ?: return@get call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
+                                ?: return@get call.respondText(
+                                    "ID inválido",
+                                    status = HttpStatusCode.BadRequest
+                                )
 
                             val review = reviewRepository.findById(id)
-                                ?: return@get call.respondText("Review não encontrada", status = HttpStatusCode.NotFound)
+                                ?: return@get call.respondText(
+                                    "Review não encontrada",
+                                    status = HttpStatusCode.NotFound
+                                )
 
                             call.respond(review)
                         }
 
                         get("/participante/{participanteId}") {
                             val participanteId = call.parameters["participanteId"]?.toLongOrNull()
-                                ?: return@get call.respondText("ID de participante inválido", status = HttpStatusCode.BadRequest)
+                                ?: return@get call.respondText(
+                                    "ID de participante inválido",
+                                    status = HttpStatusCode.BadRequest
+                                )
 
                             val reviews = reviewRepository.findByParticipante(participanteId)
                             call.respond(reviews)
                         }
 
                         post {
-                            val review = call.receive<Review>()
-                            try {
-                                val createdReview = reviewRepository.create(review)
-                                call.respond(HttpStatusCode.Created, createdReview)
-                            } catch (e: IllegalArgumentException) {
-                                call.respondText(e.message ?: "Erro ao criar review", status = HttpStatusCode.BadRequest)
-                            }
+                            val eventoId = call.parameters["id"]?.toLongOrNull()
+                                ?: return@post call.respondText(
+                                    "ID de evento inválido",
+                                    status = HttpStatusCode.BadRequest
+                                )
+
+                            val evento = eventoRepository.findById(eventoId)
+                                ?: return@post call.respondText(
+                                    "Evento não encontrado",
+                                    status = HttpStatusCode.NotFound
+                                )
+
+                            // Extrair o ID do usuário do seu token de autenticação (JWTPrincipal)
+                            val participanteId =
+                                call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
+                                    ?: return@post call.respondText(
+                                        "ID de usuário inválido",
+                                        status = HttpStatusCode.BadRequest
+                                    )
+
+                            val participante = participanteRepository.findById(participanteId)
+                                ?: return@post call.respondText(
+                                    "Usuário não encontrado",
+                                    status = HttpStatusCode.NotFound
+                                )
+
+                            val reviewReq = call.receive<ReviewRequest>()
+
+                            val novaReview = participante.adicionarReview(
+                                evento = evento,
+                                nota = reviewReq.nota,
+                                comentario = reviewReq.comentario,
+                            ) ?: return@post call.respondText(
+                                "Erro ao criar review",
+                                status = HttpStatusCode.InternalServerError
+                            )
+
+                            val reviewSalva = reviewRepository.create(novaReview)
+
+                            call.respond(HttpStatusCode.Created, mapOf("message" to "Review criada"))
+
                         }
 
                         put("/{id}") {
                             val id = call.parameters["id"]?.toLongOrNull()
-                                ?: return@put call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
+                                ?: return@put call.respondText(
+                                    "ID inválido",
+                                    status = HttpStatusCode.BadRequest
+                                )
 
                             val review = call.receive<Review>()
                             review.id = id
@@ -230,13 +290,19 @@ fun Application.configureRouting() {
                                 val updatedReview = reviewRepository.update(review)
                                 call.respond(updatedReview)
                             } catch (e: IllegalArgumentException) {
-                                call.respondText(e.message ?: "Review não encontrada", status = HttpStatusCode.NotFound)
+                                call.respondText(
+                                    e.message ?: "Review não encontrada",
+                                    status = HttpStatusCode.NotFound
+                                )
                             }
                         }
 
                         delete("/{id}") {
                             val id = call.parameters["id"]?.toLongOrNull()
-                                ?: return@delete call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
+                                ?: return@delete call.respondText(
+                                    "ID inválido",
+                                    status = HttpStatusCode.BadRequest
+                                )
 
                             val deleted = reviewRepository.delete(id)
                             if (deleted) {
@@ -247,6 +313,7 @@ fun Application.configureRouting() {
                         }
                     }
                 }
+            }
             }
 
             // Rotas para Usuários Organizadores

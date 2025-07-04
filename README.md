@@ -15,15 +15,37 @@ O site terá como features:
 
 ## Tecnologias Usadas
 
-- **Kotlin**
-- **Ktor**
+### Backend
+- **Kotlin + Ktor framework** 
+- **JWT** 
+- **MySQL** 
+- **Gradlew** 
+
+### Frontend
 - **HTML/CSS**
-- **React**
+- **React + Vite**
 - **TypeScript**
 
 ## Como Rodar o Projeto
 
-...
+No diretório backend execute:
+
+```./gradlew build```
+
+Para inicializar o projeto, compilando todos os arquivos e baixando as dependências necessárias, além de rodar os testes automatizados.
+Para rodar apenas os tests:
+
+```./gradlew test```
+
+Depois do build, para que o back fique de fato funcionando execute:
+
+```./gradlew run```
+
+Com o back corretamente em execução. Podemos ativar o front:
+
+```npm run dev```
+
+Que então irá indicar em qual endereço o site está disponível para ser visualizado (ex: http://localhost:5173/)
 
 ## Licença
 

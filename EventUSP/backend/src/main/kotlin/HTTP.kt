@@ -13,7 +13,7 @@ fun Application.configureHTTP() {
     }
     install(CORS) {
         allowHost("localhost:5173", schemes = listOf("http")) // Permite requisições de localhost:5173
-        allowMethod(HttpMethod.Post) // Permite o método POST
+        allowMethod(HttpMethod.Post) // Permite o POST
         allowMethod(HttpMethod.Get)
         allowMethod(HttpMethod.Options)
         allowMethod(HttpMethod.Put)
@@ -22,6 +22,6 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")
-        anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+        anyHost() // Don't do this in production if possible. Try to limit it.
     }
 }
