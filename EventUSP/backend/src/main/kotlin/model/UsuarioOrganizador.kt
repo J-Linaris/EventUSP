@@ -34,7 +34,8 @@ class UsuarioOrganizador(
             dataHora = dataHora,
             localizacao = localizacao,
             categoria = categoria,
-            organizador = this
+            organizador = this,
+            numeroLikes = 0
         )
         eventosOrganizados.add(evento)
         return evento
