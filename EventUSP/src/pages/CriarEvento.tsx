@@ -60,7 +60,7 @@ function CriarEvento() {
                     dataHora, // O backend espera um formato ISO 8601 (YYYY-MM-DDTHH:MM)
                     localizacao,
                     categoria,
-                    organizadorId: user.id, // ID do organizador logado
+                    organizadorId: user.id // ID do organizador logado
                 }),
             });
 

@@ -68,7 +68,8 @@ object DatabaseSeeder {
                         dataHora = LocalDateTime.now().plusDays(10).withHour(19).withMinute(0),
                         localizacao = "Centro Cultural USP - R. do Anfiteatro, 109",
                         categoria = "Música",
-                        organizador = organizador1
+                        organizador = organizador1,
+                        numeroLikes = 0
                     )
                 )
 
@@ -79,7 +80,8 @@ object DatabaseSeeder {
                         dataHora = LocalDateTime.now().plusDays(25).withHour(9).withMinute(0),
                         localizacao = "Auditório Jacy Monteiro - Bloco B do IME-USP",
                         categoria = "Tecnologia",
-                        organizador = organizador2
+                        organizador = organizador2,
+                        numeroLikes = 0
                     )
                 )
 

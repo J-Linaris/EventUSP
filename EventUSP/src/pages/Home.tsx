@@ -124,7 +124,10 @@ function Home() {
                                         {/*<p><strong>Local:</strong> {evento.localizacao}</p>*/}
                                         {/*<p><strong>Categoria:</strong> {evento.categoria}</p>*/}
                                         {/*<p><strong>Organizador:</strong> {evento.organizador.nome}</p>*/}
-                                        <p><strong>Likes:</strong> {evento.numeroLikes}</p>
+                                        <p><strong>Likes:</strong> {evento.numeroLikes ? (
+                                            <span className="likesEvento">{evento.numeroLikes}</span>
+                                        ): (<span className="likesEvento">0</span>)}
+                                        </p>
                                     </div>
                                 </div>
                                 </Link>
