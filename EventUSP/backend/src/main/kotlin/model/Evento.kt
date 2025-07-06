@@ -21,7 +21,7 @@ class Evento(
     var localizacao: String,
     var categoria: String,
     var organizador: UsuarioOrganizador,
-    var participantesInteressados: MutableList<UsuarioParticipante> = mutableListOf(),
+    var participantesInteressados: MutableList<ParticipanteDTO> = mutableListOf(),
     var numeroLikes: Int = 0,
     var reviews: MutableList<Review> = mutableListOf(),
     var imagens: MutableList<ImagemEvento> = mutableListOf()
@@ -33,8 +33,15 @@ class Evento(
      * @return true se o participante foi adicionado com sucesso, false caso contrário
      */
     fun adicionarParticipanteInteressado(participante: UsuarioParticipante): Boolean {
-        if (participantesInteressados.contains(participante)) return false
-        return participantesInteressados.add(participante)
+        if (participantesInteressados.any { it.id == participante.id }) return false
+
+        // Cria o DTO a partir do objeto completo
+        val participanteDTO = ParticipanteDTO(
+            id = participante.id!!,
+            nome = participante.nome,
+//            fotoPerfil = participante.fotoPerfil
+        )
+        return participantesInteressados.add(participanteDTO)
     }
     
     /**
@@ -43,7 +50,8 @@ class Evento(
      * @return true se o participante foi removido com sucesso, false caso contrário
      */
     fun removerParticipanteInteressado(participante: UsuarioParticipante): Boolean {
-        return participantesInteressados.remove(participante)
+        // Remove o item da lista cujo ID corresponde ao ID do participante fornecido
+        return participantesInteressados.removeIf { it.id == participante.id }
     }
     
     /**
@@ -86,11 +94,11 @@ class Evento(
      * @return A review criada ou null se não foi possível criar
      */
     fun adicionarReview(participante: UsuarioParticipante, nota: Int, comentario: String): Review? {
-        // Verifica se o participante está na lista de interessados
-        if (!participantesInteressados.contains(participante)) return null
+        // Verifica se existe algum participante na lista com o mesmo ID
+        if (participantesInteressados.none { it.id == participante.id }) return null
 
         // Verifica se já se passaram 48 horas desde o fim do evento
-        if (!passaram48HorasDesdeOFim()) return null
+//        if (!passaram48HorasDesdeOFim()) return null
 
         val review = Review(
             eventoId = this.id!!,
@@ -98,7 +106,7 @@ class Evento(
             nota = nota,
             comentario = comentario
         )
-        
+
         reviews.add(review)
         return review
     }

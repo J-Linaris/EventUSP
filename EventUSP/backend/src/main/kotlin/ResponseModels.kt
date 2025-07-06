@@ -32,7 +32,14 @@ data class EventoRequest(
     val categoria: String,
     val organizadorId: Long
 )
-
+@Serializable
+data class RegisterRequest(
+    val email: String,
+    val username: String,
+    val password: String,
+    val accountType: String,
+    val profilePhoto: String? // Nullable, pois só é obrigatório para organizadores
+)
 @Serializable
 data class ImagemRequest(
     val url: String,

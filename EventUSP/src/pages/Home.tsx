@@ -100,8 +100,8 @@ function Home() {
                     <div className="lista-eventos">
                         {eventos.length > 0 ? (
                             eventos.map((evento) => (
-                                <Link to={`/evento/${evento.id}`} key={evento.id} className="card-evento-link">
-                                <div key={evento.id} className="card-evento">
+                                <Link to={`/evento/${evento.id}`} key={evento.id} className="card-evento-link-home">
+                                <div key={evento.id} className="card-evento-home">
                                     {/* Adiciona o carrossel de imagens se houver imagens */}
                                     {evento.imagens && evento.imagens.length > 0 ? (
                                         <Carousel showThumbs={false} infiniteLoop useKeyboardArrows autoPlay showStatus={false}>
@@ -117,7 +117,7 @@ function Home() {
                                             <span>Sem imagem para este evento</span>
                                         </div>
                                     )}
-                                    <div className="card-evento-body">
+                                    <div className="card-evento-body-home">
                                         <h2>{evento.titulo}</h2>
                                         {/*<p><strong>Descrição:</strong> {evento.descricao}</p>*/}
                                         <p><strong>Data:</strong> {new Date(evento.dataHora).toLocaleString()}</p>

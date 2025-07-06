@@ -82,8 +82,8 @@ class UsuarioOrganizadorTest {
         assertEquals("senha123", organizador.senha)
         assertEquals("https://exemplo.com/foto-organizador.jpg", organizador.fotoPerfil)
         assertEquals(1, organizador.eventosOrganizados.size)
-        assertTrue(organizador.eventosComLike.isEmpty())
-        assertTrue(organizador.eventosInteressado.isEmpty())
+        assertTrue(organizador.eventosInteressados.isEmpty())
+        assertTrue(organizador.eventosInteressadosIds.isEmpty())
     }
     
     @Test

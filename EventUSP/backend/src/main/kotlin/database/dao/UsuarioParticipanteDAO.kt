@@ -3,6 +3,7 @@ package br.usp.eventUSP.database.dao
 import br.usp.eventUSP.database.tables.ParticipantesInteressadosTable
 import br.usp.eventUSP.database.tables.ReviewTable
 import br.usp.eventUSP.database.tables.UsuarioParticipanteTable
+import br.usp.eventUSP.model.EventoDTO
 import br.usp.eventUSP.model.UsuarioParticipante
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
@@ -22,6 +23,7 @@ class UsuarioParticipanteDAO(id: EntityID<Long>) : LongEntity(id) {
     var nome by UsuarioParticipanteTable.nome
     var email by UsuarioParticipanteTable.email
     var senha by UsuarioParticipanteTable.senha
+//    var fotoPerfil by UsuarioParticipanteTable.fotoPerfil
     
     // Relacionamentos
     val eventosInteressados by EventoDAO via ParticipantesInteressadosTable
@@ -37,7 +39,15 @@ class UsuarioParticipanteDAO(id: EntityID<Long>) : LongEntity(id) {
             email = email,
             senha = senha
         )
-        usuario.eventosInteressado = eventosInteressados.map { it.id.value }.toMutableList()
+        usuario.eventosInteressados = this.eventosInteressados.map { eventoDAO ->
+            EventoDTO(
+                id = eventoDAO.id.value,
+                titulo = eventoDAO.titulo,
+                dataHora = eventoDAO.dataHora.toString(),
+                localizacao = eventoDAO.localizacao
+            )
+        }.toMutableList()
+        usuario.eventosInteressadosIds = this.eventosInteressados.map { it.id.value }.toMutableList()
         usuario.reviewsFeitas = reviews.map { it.toModel() }.toMutableList()
         return usuario
     }

@@ -13,8 +13,11 @@ open class UsuarioParticipante(
     var senha: String = "",
     var fotoPerfil: String? = null
 ) {
-    var eventosComLike: MutableList<Evento> = mutableListOf()
-    var eventosInteressado: MutableList<Long> = mutableListOf()
+    // ALTERADO: Esta será a lista principal que conterá os objetos de evento completos.
+    var eventosInteressados: MutableList<EventoDTO> = mutableListOf()
+
+    // MANTIDO: Esta lista de IDs pode ser útil para lógicas internas rápidas.
+    var eventosInteressadosIds: MutableList<Long> = mutableListOf()
     var reviewsFeitas: MutableList<Review> = mutableListOf()
     
     /**
@@ -23,8 +26,14 @@ open class UsuarioParticipante(
      * @return true se o like foi adicionado com sucesso, false caso já tenha dado like no evento
      */
     fun darLike(evento: Evento): Boolean {
-        if (eventosComLike.contains(evento)) return false
-        eventosComLike.add(evento)
+        if (eventosInteressados.any{ it.id == evento.id }) return false
+        val eventoDTO = EventoDTO(
+            id = evento.id!!,
+            titulo = evento.titulo,
+            dataHora = evento.dataHora.toString(),
+            localizacao = evento.localizacao
+        )
+        eventosInteressados.add(eventoDTO)
         evento.adicionarLike()
         return true
     }
@@ -35,8 +44,8 @@ open class UsuarioParticipante(
      * @return true se o like foi removido com sucesso, false caso não tenha dado like no evento
      */
     fun removerLike(evento: Evento): Boolean {
-        if (!eventosComLike.contains(evento)) return false
-        eventosComLike.remove(evento)
+        if (!eventosInteressados.any{ it.id == evento.id }) return false
+        eventosInteressados.removeIf{it.id == evento.id}
         evento.removerLike()
         return true
     }
@@ -47,8 +56,15 @@ open class UsuarioParticipante(
      * @return true se o interesse foi registrado com sucesso, false caso já tenha demonstrado interesse
      */
     fun demonstrarInteresse(evento: Evento): Boolean {
-        if (eventosInteressado.contains(evento.id)) return false
-        eventosInteressado.add(evento.id!!)
+        if (eventosInteressadosIds.contains(evento.id)) return false
+        eventosInteressadosIds.add(evento.id!!)
+        val eventoDTO = EventoDTO(
+            id = evento.id!!,
+            titulo = evento.titulo,
+            dataHora = evento.dataHora.toString(),
+            localizacao = evento.localizacao
+        )
+        eventosInteressados.add(eventoDTO) // Adiciona o objeto completo também
         evento.adicionarParticipanteInteressado(this)
         return true
     }
@@ -59,8 +75,8 @@ open class UsuarioParticipante(
      * @return true se o interesse foi removido com sucesso, false caso não tenha demonstrado interesse
      */
     fun removerInteresse(evento: Evento): Boolean {
-        if (!eventosInteressado.contains(evento.id)) return false
-        eventosInteressado.remove(evento.id)
+        if (!eventosInteressadosIds.contains(evento.id)) return false
+        eventosInteressadosIds.remove(evento.id)
         evento.removerParticipanteInteressado(this)
         return true
     }

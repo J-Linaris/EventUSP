@@ -111,8 +111,8 @@ class UsuarioParticipanteTest {
         assertEquals("participante@usp.br", participante.email)
         assertEquals("senha456", participante.senha)
         assertEquals("https://exemplo.com/foto-perfil.jpg", participante.fotoPerfil)
-        assertTrue(participante.eventosComLike.isEmpty())
-        assertTrue(participante.eventosInteressado.isEmpty())
+        assertTrue(participante.eventosInteressados.isEmpty())
+        assertTrue(participante.eventosInteressadosIds.isEmpty())
         assertTrue(participante.reviewsFeitas.isEmpty())
     }
     
@@ -133,12 +133,19 @@ class UsuarioParticipanteTest {
         participanteSemFoto.atualizarFotoPerfil("https://exemplo.com/primeira-foto.jpg")
         assertEquals("https://exemplo.com/primeira-foto.jpg", participanteSemFoto.fotoPerfil)
     }
-    
+
     @Test
     fun `deve dar like em evento com sucesso`() {
+        // A lógica de negócio no modelo ainda pode usar o objeto completo
         assertTrue(participante.darLike(evento))
-        assertEquals(1, participante.eventosComLike.size)
-        assertTrue(participante.eventosComLike.contains(evento))
+
+        // A asserção do tamanho continua válida
+        assertEquals(1, participante.eventosInteressados.size)
+
+        // A asserção de conteúdo é ajustada para verificar o ID
+        assertTrue(participante.eventosInteressados.any { it.id == evento.id }, "A lista de eventos de interesse deve conter o evento com o ID correto.")
+
+        // A asserção do número de likes continua válida
         assertEquals(1, evento.numeroLikes)
     }
     
@@ -146,7 +153,7 @@ class UsuarioParticipanteTest {
     fun `não deve dar like duplicado no mesmo evento`() {
         participante.darLike(evento)
         assertFalse(participante.darLike(evento))
-        assertEquals(1, participante.eventosComLike.size)
+        assertEquals(1, participante.eventosInteressados.size)
         assertEquals(1, evento.numeroLikes)
     }
     
@@ -154,7 +161,7 @@ class UsuarioParticipanteTest {
     fun `deve remover like de evento com sucesso`() {
         participante.darLike(evento)
         assertTrue(participante.removerLike(evento))
-        assertEquals(0, participante.eventosComLike.size)
+        assertEquals(0, participante.eventosInteressados.size)
         assertEquals(0, evento.numeroLikes)
     }
     
@@ -167,17 +174,17 @@ class UsuarioParticipanteTest {
     @Test
     fun `deve demonstrar interesse em evento com sucesso`() {
         assertTrue(participante.demonstrarInteresse(evento))
-        assertEquals(1, participante.eventosInteressado.size)
-        assertTrue(participante.eventosInteressado.contains(evento.id))
+        assertEquals(1, participante.eventosInteressadosIds.size)
+        assertTrue(participante.eventosInteressadosIds.contains(evento.id))
         assertEquals(1, evento.participantesInteressados.size)
-        assertTrue(evento.participantesInteressados.contains(participante))
+        assertTrue(evento.participantesInteressados.any{ it.id == participante.id })
     }
     
     @Test
     fun `não deve demonstrar interesse duplicado no mesmo evento`() {
         participante.demonstrarInteresse(evento)
         assertFalse(participante.demonstrarInteresse(evento))
-        assertEquals(1, participante.eventosInteressado.size)
+        assertEquals(1, participante.eventosInteressadosIds.size)
         assertEquals(1, evento.participantesInteressados.size)
     }
     
@@ -185,7 +192,7 @@ class UsuarioParticipanteTest {
     fun `deve remover interesse em evento com sucesso`() {
         participante.demonstrarInteresse(evento)
         assertTrue(participante.removerInteresse(evento))
-        assertEquals(0, participante.eventosInteressado.size)
+        assertEquals(0, participante.eventosInteressadosIds.size)
         assertEquals(0, evento.participantesInteressados.size)
     }
     
