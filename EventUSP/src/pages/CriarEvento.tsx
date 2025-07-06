@@ -19,7 +19,7 @@ function CriarEvento() {
     const [erro, setErro] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const { user } = useAuth();
+    const { user, token, authFetch } = useAuth();
     const navigate = useNavigate();
 
     // Função para adicionar uma URL de imagem à lista
@@ -45,47 +45,48 @@ function CriarEvento() {
             return;
         }
 
+        // A validação agora usa o 'token' do estado do contexto
+        if (!token) {
+            setErro("Sua sessão é inválida. Por favor, faça login novamente.");
+            return;
+        }
+
         setLoading(true);
 
         try {
-            // 1. Criar o evento principal
-            const eventoResponse = await fetch("/proxy/api/eventos", {
+            // --- MODIFICADO: Usa authFetch em vez de fetch ---
+            const eventoResponse = await authFetch("/proxy/api/eventos", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                // O header de autorização é adicionado automaticamente pelo authFetch
                 body: JSON.stringify({
                     titulo,
                     descricao,
-                    dataHora, // O backend espera um formato ISO 8601 (YYYY-MM-DDTHH:MM)
+                    dataHora,
                     localizacao,
                     categoria,
-                    organizadorId: user.id // ID do organizador logado
+                    organizadorId: user.id
                 }),
             });
 
             if (!eventoResponse.ok) {
-                const errorData = await eventoResponse.json().catch(() => null);
-                throw new Error(errorData?.error || "Falha ao criar o evento.");
+                if (eventoResponse.status === 401) throw new Error("Credenciais inválidas.");
+                const errorData = await eventoResponse.json().catch(() => ({}));
+                throw new Error(errorData.message || "Falha ao criar o evento.");
             }
 
             const eventoCriado = await eventoResponse.json();
             const eventoId = eventoCriado.id;
 
-            // 2. Adicionar as imagens uma a uma
-            if (imagens.length > 0) { //
+            if (imagens.length > 0) {
                 for (const url of imagens) {
-                    // 'await' aqui garante que o laço vai esperar a conclusão de cada fetch
-                    // antes de prosseguir para a próxima iteração.
-                    await fetch(`/proxy/api/eventos/${eventoId}/imagens`, { //
-                        method: "POST", //
-                        headers: { "Content-Type": "application/json" }, //
-                        body: JSON.stringify({ url: url, descricao: "Imagem do evento" }), //
+                    // --- MODIFICADO: Usa authFetch aqui também ---
+                    await authFetch(`/proxy/api/eventos/${eventoId}/imagens`, {
+                        method: "POST",
+                        body: JSON.stringify({ url: url, descricao: "Imagem do evento" }),
                     });
                 }
             }
 
-            // 3. Redirecionar para a página do evento recém-criado
             navigate(`/evento/${eventoId}`);
 
         } catch (err: unknown) {

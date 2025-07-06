@@ -3,6 +3,7 @@ package br.usp.eventUSP.database.dao
 import br.usp.eventUSP.database.tables.*
 import br.usp.eventUSP.model.Evento
 import br.usp.eventUSP.model.ImagemEvento
+import br.usp.eventUSP.model.ParticipanteDTO
 import br.usp.eventUSP.model.Review
 import br.usp.eventUSP.model.UsuarioParticipante
 import org.jetbrains.exposed.dao.LongEntity
@@ -38,14 +39,27 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
             descricao = descricao,
             dataHora = dataHora,
             localizacao = localizacao,
-            numeroLikes = this.numeroLikes,
+//            numeroLikes = this.numeroLikes,
             categoria = categoria,
             organizador = organizador.toModel(),
             // Carrega os relacionamentos
-            participantesInteressados = this.participantesInteressados.map { it.toModel() }.toMutableList(),
-            reviews = this.reviews.map { it.toModel() }.toMutableList(),
-            imagens = this.imagens.map { it.toModel() }.toMutableList()
+//            participantesInteressados = this.participantesInteressados.map { it.toModel() }.toMutableList(),
+//            reviews = this.reviews.map { it.toModel() }.toMutableList(),
+//            imagens = this.imagens.map { it.toModel() }.toMutableList()
         )
+
+        // ALTERADO: Agora mapeamos para o DTO simplificado, que não tem recursão.
+        evento.participantesInteressados = participantesInteressados.map { participanteDAO ->
+            ParticipanteDTO(
+                id = participanteDAO.id.value,
+                nome = participanteDAO.nome
+//                fotoPerfil = participanteDAO.fotoPerfil // Adicione a foto de perfil se não tiver no DAO
+            )
+        }.toMutableList()
+
+        evento.reviews = reviews.map { it.toModel() }.toMutableList()
+        evento.imagens = imagens.map { it.toModel() }.toMutableList()
+        evento.numeroLikes = this.numeroLikes
         
 
         

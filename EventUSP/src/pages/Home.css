@@ -23,7 +23,7 @@
     box-shadow: 0.1rem 0.1rem 1rem #D40000;
 }
 
-.card-evento {
+.card-evento-home {
     display: flex;
     flex-direction: column;
     border-radius: 8px;
@@ -35,7 +35,7 @@
 }
 
 /* Adicionando um padding ao corpo do card para separar o texto do carrossel */
-.card-evento-body {
+.card-evento-body-home {
     padding-top: 16px;
 }
 
@@ -46,11 +46,13 @@
     object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
 }
 
-.card-evento-link {
+.card-evento-link-home {
     text-decoration: none; /* Remove o sublinhado do link */
     color: inherit; /* Faz o texto herdar a cor do elemento pai */
     display: block; /* Garante que o link ocupe todo o espaço do card */
-    width: 25%;
+    margin: 0 3.5vw;
+    /*height: 20%;*/
+    /*width: 50%;*/
 }
 /*--------------ESTILIZAÇÃO DO BOTÃO DE ADD EVENTO---------------------------*/
 .fab-container {

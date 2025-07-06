@@ -87,21 +87,30 @@ class UsuarioParticipanteRepository {
      * @param participanteId O ID do participante.
      * @param eventoId O ID do evento.
      */
-    fun removeInteresse(participanteId: Long, eventoId: Long) = transaction {
-        // 1. Remove a relação da tabela de junção
+//    fun removeInteresse(participanteId: Long, eventoId: Long) = transaction {
+//        // 1. Remove a relação da tabela de junção
+//        val deletedRows = ParticipantesInteressadosTable.deleteWhere {
+//            (this.participanteId eq participanteId) and (this.eventoId eq eventoId)
+//        }
+//
+//        // 2. Se uma linha foi realmente deletada, atualiza o contador de likes
+//        if (deletedRows > 0) {
+//            EventoTable.update({ EventoTable.id eq eventoId }) {
+//                with(SqlExpressionBuilder) {
+//                    it.update(numeroLikes, numeroLikes - 1)
+//                }
+//            }
+//        }
+//    }
+    fun removeInteresse(participanteId: Long, eventoId: Long): Boolean = transaction {
+        // A tabela de junção entre participantes e eventos
         val deletedRows = ParticipantesInteressadosTable.deleteWhere {
-            (this.participanteId eq participanteId) and (this.eventoId eq eventoId)
+            (ParticipantesInteressadosTable.participanteId eq participanteId) and
+                    (ParticipantesInteressadosTable.eventoId eq eventoId)
         }
-
-        // 2. Se uma linha foi realmente deletada, atualiza o contador de likes
-        if (deletedRows > 0) {
-            EventoTable.update({ EventoTable.id eq eventoId }) {
-                with(SqlExpressionBuilder) {
-                    it.update(numeroLikes, numeroLikes - 1)
-                }
-            }
-        }
+        deletedRows > 0 // Retorna true se alguma linha foi de fato deletada
     }
+
 
     /**
      * Atualiza um usuário participante existente

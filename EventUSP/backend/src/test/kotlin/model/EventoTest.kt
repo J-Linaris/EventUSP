@@ -65,7 +65,7 @@ class EventoTest {
     fun `deve adicionar participante interessado com sucesso`() {
         assertTrue(evento.adicionarParticipanteInteressado(participante1))
         assertEquals(1, evento.participantesInteressados.size)
-        assertTrue(evento.participantesInteressados.contains(participante1))
+        assertTrue(evento.participantesInteressados.any{it.id == participante1.id})
     }
     
     @Test
