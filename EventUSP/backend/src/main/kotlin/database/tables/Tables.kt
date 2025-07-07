@@ -24,7 +24,7 @@ object UsuarioOrganizadorTable : LongIdTable("usuarios_organizadores") {
     val nome = varchar("nome", 255)
     val email = varchar("email", 255).uniqueIndex()
     val senha = varchar("senha", 255)
-    val fotoPerfil = varchar("foto_perfil",255).nullable()
+    val fotoPerfil = varchar("foto_perfil",1024).nullable()
 }
 
 /**
@@ -51,7 +51,7 @@ object ReviewTable : LongIdTable("reviews") {
  */
 object ImagemEventoTable : LongIdTable("imagens_evento") {
     val eventoId = reference("evento_id", EventoTable)
-    val url = varchar("url", 255)
+    val url = varchar("url", 1024)
     val descricao = varchar("descricao", 255).nullable()
     val ordem = integer("ordem")
 }

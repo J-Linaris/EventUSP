@@ -49,7 +49,7 @@ object DatabaseSeeder {
             println("Limpeza concluída. Repovoando a base de dados...")
             println("Limpeza concluída. Repovoando a base de dados...")
 
-                // --- 1. Criar Utilizadores ---
+                // --- Criar Organizadores ---
                 val organizadorRepo = UsuarioOrganizadorRepository()
                 val participanteRepo = UsuarioParticipanteRepository()
 
@@ -60,31 +60,43 @@ object DatabaseSeeder {
                 organizador1.fotoPerfil = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s"
                 organizador1 = organizadorRepo.create(organizador1)
 
-                var organizador2 = UsuarioOrganizador()
-                organizador2.nome = "IME Eventos"
-                organizador2.email = "eventos@ime.usp.br"
-                organizador2.senha = "senha123"
-                organizador2.fotoPerfil = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s"
-                organizador2 = organizadorRepo.create(organizador2)
+                var organizadorFAU = UsuarioOrganizador()
+                organizadorFAU.email = "atleticafau@usp.br"
+                organizadorFAU.nome = "Atlética FAUUSP"
+                organizadorFAU.senha = "senha123"
+                organizadorFAU.fotoPerfil = "https://d106p58duwuiz5.cloudfront.net/agency/6dbe8332a1e41d45fdbb9e30c7f56b14.png"
+                organizadorFAU = organizadorRepo.create(organizadorFAU)
 
+                var organizadorAAAMAT = UsuarioOrganizador()
+                organizadorAAAMAT.nome = "AAAMAT"
+                organizadorAAAMAT.email = "aaamat@gmail.com"
+                organizadorAAAMAT.senha = "imeuspatemorrer"
+                organizadorAAAMAT.fotoPerfil = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSKvG87Uzy9fvNMYWR7dN2g95Jwr33tTcYm7Q&s"
+                organizadorAAAMAT = organizadorRepo.create(organizadorAAAMAT)
 
-                participanteRepo.create(
-                    UsuarioParticipante(
-                        nome = "Ana Silva",
-                        email = "ana.silva@usp.br",
-                        senha = "senha123"
-                    )
+                // --- Criar Participantes ---
+                var participanteMessi = UsuarioParticipante(
+                    nome = "Lionel Messi",
+                    email = "messinho@yahoo.com",
+                    senha = "leo123"
                 )
+                participanteMessi = participanteRepo.create(participanteMessi)
 
-                participanteRepo.create(
-                    UsuarioParticipante(
-                        nome = "Bruno Costa",
-                        email = "bruno.costa@usp.br",
-                        senha = "senha123"
-                    )
+                var participanteCristiano = UsuarioParticipante(
+                    nome = "Cristiano Ronaldo",
+                    email = "cr7@gmail.com",
+                    senha = "cr777"
                 )
+                participanteCristiano = participanteRepo.create(participanteCristiano)
 
-                // --- 2. Criar Eventos ---
+                var participanteNeymar = UsuarioParticipante(
+                    nome = "Neymar Jr",
+                    email = "meninoney@gmail.com",
+                    senha = "ney10"
+                )
+                participanteNeymar = participanteRepo.create(participanteNeymar)
+
+                // --- Criar Eventos ---
                 val eventoRepo = EventoRepository()
                 val imagemRepo = ImagemEventoRepository()
 
@@ -156,12 +168,57 @@ object DatabaseSeeder {
                         dataHora = LocalDateTime.now().plusDays(25).withHour(9).withMinute(0),
                         localizacao = "Auditório Jacy Monteiro - Bloco B do IME-USP",
                         categoria = "Tecnologia",
-                        organizador = organizador2,
+                        organizador = organizador1,
                         numeroLikes = 0
                     )
                 )
 
-                // --- 3. Adicionar Imagens aos Eventos ---
+                val eventoJunIME = eventoRepo.create(
+                    Evento(
+                        titulo = "JunIME",
+                        descricao = "VEM AI! ✨ Dia 13/06 das 18h às 23h no estacionamento do bloco B do IME teremos a nossa tradicional festa junina, a JUNIME!!\n" +
+                                "Nossos amados times e entidades imeanas se juntarão à aaamat para fazermos uma linda festa junina com muitas comidinhas, brincadeira e\n" +
+                                "diversão! ❤\uFE0F\uD83E\uDD0D❤\uFE0F\uD83E\uDD0D\n" +
+                                "Aguardamos vocês todes a caráter e muito alegres para curtimos muito! \uD83E\uDD29\uD83E\uDD20",
+                        // Coloca para o dia anterior para permitir que as reviews sejam cadastradas
+                        dataHora = LocalDateTime.now().minusDays(1),
+                        localizacao = "Estacionamento do bloco B do IME",
+                        categoria = "Festa",
+                        organizador = organizadorAAAMAT,
+                        numeroLikes = 0
+                    )
+                )
+
+                val eventoFEAFU = eventoRepo.create(
+                    Evento(
+                        titulo = "FEAFU",
+                        descricao = "FEAFAU: onde dois mundos se misturam e tudo pode acontecer\n" +
+                                "\n" +
+                                "\uD83D\uDCC6dia:08/08\n" +
+                                "⏰horário: 23h00 - 6h00\n" +
+                                "\uD83E\uDD42open bar\n" +
+                                "\n" +
+                                "_se prepare para a união do ano _\n" +
+                                "abertura das vendas 06/07 pela blacktag ou com um de nossos vendedores \uD83D\uDC99\uD83D\uDC9C\n" +
+                                "\n" +
+                                "FEA:\n" +
+                                "Helena: 11 99366-9089\n" +
+                                "Bia: 11 96068-9807\n" +
+                                "Marco: \u202A11 98154‑9523\u202C\n" +
+                                "\n" +
+                                "FAU:\n" +
+                                "ju carvalho: \u202A+55 11 97121‑9977\u202C\n" +
+                                "ju pellici:\u202A+55 71 98436‑0550\u202C\n" +
+                                "mel:\u202A+55 13 99700‑5306",
+                        dataHora = LocalDateTime.parse("2025-08-08T23:00:00"),
+                        localizacao = "Hey Hey Club - Rua Marquês de Itu, 284",
+                        categoria = "Festa",
+                        organizador = organizadorFAU,
+                        numeroLikes = 119
+                    )
+                )
+
+                // --- Adicionar Imagens aos Eventos ---
                 imagemRepo.create(
                     ImagemEvento(
                         eventoId = eventoShow.id!!,
@@ -193,6 +250,14 @@ object DatabaseSeeder {
                         url = "https://live.staticflickr.com/3815/9048306470_6f48265335_b.jpg",
                         descricao = "Equipas a trabalhar durante o evento",
                         ordem = 1
+                      )
+                )
+                imagemRepo.create(
+                    ImagemEvento(
+                        eventoId = eventoJunIME.id!!,
+                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.29350-15/504369286_633822496347450_4271396892581817284_n.heic?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjE0NDB4MTgwMC5zZHIuZjI5MzUwLmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=106&_nc_oc=Q6cZ2QFt3f5OlH39_tbbCuymbapNGFujL2hqeh4t1cCAm7vXOVo4-qtKN7icPoYfuh9MeUEpW9u4L3nozXHy3BcqSXA9&_nc_ohc=oayRe3dqmDIQ7kNvwFKxGR1&_nc_gid=cumNK1dlmrfXtVTYjc89uw&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzY0OTI2NTE1OTQ5Mjg5NDc2Mg%3D%3D.3-ccb7-5&oh=00_AfR3Bxu-wy7Fm9boKF97bKFIiWShux5ypM-Wud5YZeI9fA&oe=6870BDF4&_nc_sid=7a9f4b",
+                        descricao = "Capa",
+                        ordem = 1
                     )
                 )
 
@@ -210,8 +275,62 @@ object DatabaseSeeder {
                         url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsOExShlNUBm-J_-wnG-GhzCPbxNT-rowNaQ&s",
                         descricao = "Equipas a trabalhar durante o evento",
                         ordem = 1
+                  )
+                )
+                imagemRepo.create(
+                    ImagemEvento(
+                        eventoId = eventoJunIME.id!!,
+                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.2885-15/504103862_17980172231833932_601677786975488720_n.jpg?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0uaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjc1NzYxLmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2QFt3f5OlH39_tbbCuymbapNGFujL2hqeh4t1cCAm7vXOVo4-qtKN7icPoYfuh9MeUEpW9u4L3nozXHy3BcqSXA9&_nc_ohc=c47PbAak97UQ7kNvwFFFjbT&_nc_gid=cumNK1dlmrfXtVTYjc89uw&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzY1MjkyMTQzMDY1NTc3NDE4Mw%3D%3D.3-ccb7-5&oh=00_AfSNAthb7GoKYjprBSU7kerIzxnKu2GlCXgmySmGOW_38g&oe=6870DDC5&_nc_sid=7a9f4b",
+                        descricao = "Mapa",
+                        ordem = 2
                     )
                 )
+
+                imagemRepo.create(
+                    ImagemEvento(
+                        eventoId = eventoJunIME.id!!,
+                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.2885-15/504436141_17980172240833932_6546190095323171467_n.jpg?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0uaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjc1NzYxLmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2QFt3f5OlH39_tbbCuymbapNGFujL2hqeh4t1cCAm7vXOVo4-qtKN7icPoYfuh9MeUEpW9u4L3nozXHy3BcqSXA9&_nc_ohc=mkucgYkuKLMQ7kNvwGTrMbS&_nc_gid=cumNK1dlmrfXtVTYjc89uw&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzY1MjkyMTQzMDY3MjU4NDY0Mg%3D%3D.3-ccb7-5&oh=00_AfQP9uoLYRlSnxKemOW3oN4T-fUR7csuQV56ZdM7_6RhVg&oe=6870BE84&_nc_sid=7a9f4b",
+                        descricao = "Preços parte 1",
+                        ordem = 3
+                    )
+                )
+
+                imagemRepo.create(
+                    ImagemEvento(
+                        eventoId = eventoFEAFU.id!!,
+                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.2885-15/515867790_18471973543077572_6786818823752811255_n.jpg?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEzNTB4MTY4OC5zZHIuZjgyNzg3LmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2QEznxjvvLNvry6Dv1i5p_q5P5j86ebKBOqVkNAaNb1rNtkT0RW00D1O-lWWukORG6e-WJVkKQlfg5pxoqEkB9um&_nc_ohc=TStV55a2TJAQ7kNvwFILmmm&_nc_gid=PQWijq955Y1pd0LlC4QQ8A&edm=AA5fTDYBAAAA&ccb=7-5&ig_cache_key=MzY3MTAyNzA0ODA3MjE0MDk3MA%3D%3D.3-ccb7-5&oh=00_AfSFryy_V_XKVkdZOEqZVAF5U8j-g-FVOKl_k-fr94isWQ&oe=6870C430&_nc_sid=7edfe2",
+                        descricao = "Capa",
+                        ordem = 1
+                    )
+                )
+
+
+                // --- Adicionar reviews ---
+
+                participanteMessi.demonstrarInteresse(eventoJunIME)
+                participanteMessi.adicionarReview(
+                    evento = eventoJunIME,
+                    nota = 5,
+                    comentario = "Muito bom, a palha italiana da batimeduca estava uma delícia!"
+                )
+
+                participanteCristiano.demonstrarInteresse(eventoJunIME)
+                participanteCristiano.adicionarReview(
+                    evento = eventoJunIME,
+                    nota = 0,
+                    comentario = "Um lixo, sem música e com a quadrilha mais triste que eu já vi"
+                )
+
+                participanteNeymar.demonstrarInteresse(eventoJunIME)
+                participanteNeymar.adicionarReview(
+                    evento = eventoJunIME,
+                    nota = 3,
+                    comentario = "O ime é o ime do ime"
+                )
+
+                // Volta para a data real
+                eventoJunIME.dataHora = LocalDateTime.parse("2025-06-13T18:00:00")
+                eventoRepo.update(eventoJunIME)
 
                 println("Povoamento da base de dados concluído.")
 //            } else {
