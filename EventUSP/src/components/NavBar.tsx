@@ -73,7 +73,11 @@ function Navbar() {
                 {user ? (
                     <div className="profile-dropdown-container" ref={dropdownRef}>
                         <button className="navbarButton profile-button" onClick={toggleDropdown}>
-                            <img src={genericProfileIcon} alt="Perfil" className="profile-icon" />
+                            {user.accountType === 'organizador' ? (
+                                <img src={user.fotoPerfil} alt="Perfil" className="profile-icon" />
+                            ) : (
+                                <img src={genericProfileIcon} alt="Perfil" className="profile-icon" />
+                            )}
                             <span className="profile-username">{user.nome.split(' ')[0]}</span> {/* Mostra apenas o primeiro nome */}
                         </button>
                         {showDropdown && (
