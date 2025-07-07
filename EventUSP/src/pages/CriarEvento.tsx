@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { CATEGORIAS_EVENTOS } from "../constants/Categorias.tsx"; // Importa as categorias
 import "./CriarEvento.css"; // Usaremos um CSS dedicado
 
 function CriarEvento() {
@@ -21,6 +22,13 @@ function CriarEvento() {
 
     const { user, token, authFetch } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Define uma categoria padrão ao carregar o componente
+        if (CATEGORIAS_EVENTOS.length > 0) {
+            setCategoria(CATEGORIAS_EVENTOS[0]);
+        }
+    }, []);
 
     // Função para adicionar uma URL de imagem à lista
     const handleAddImagem = () => {
@@ -114,7 +122,12 @@ function CriarEvento() {
                         <textarea placeholder="Descrição detalhada do evento" value={descricao} onChange={(e) => setDescricao(e.target.value)} required />
                         <input type="datetime-local" value={dataHora} onChange={(e) => setDataHora(e.target.value)} required />
                         <input type="text" placeholder="Localização (ex: Auditório da Reitoria)" value={localizacao} onChange={(e) => setLocalizacao(e.target.value)} required />
-                        <input type="text" placeholder="Categoria (ex: Palestra, Show, Esportivo)" value={categoria} onChange={(e) => setCategoria(e.target.value)} required />
+                        <select value={categoria} onChange={(e) => setCategoria(e.target.value)} required className="categoria-select">
+                            <option value="" disabled>Selecione uma categoria</option>
+                            {CATEGORIAS_EVENTOS.map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                        </select>
 
                         {/* Seção para adicionar imagens */}
                         <div className="image-input-section">

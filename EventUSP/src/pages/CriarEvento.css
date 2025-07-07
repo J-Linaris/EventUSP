@@ -130,10 +130,14 @@
     color: white;
     border: none;
     border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
     font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    transition: background-color 0.2s;
 }
 
 .form-footer-evento {

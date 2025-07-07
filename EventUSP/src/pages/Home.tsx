@@ -6,6 +6,7 @@ import "./Home.css";
 import Navbar from "../components/NavBar.tsx";
 import {Link} from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; // Importe o hook useAuth
+import { CATEGORIAS_EVENTOS } from "../constants/Categorias.tsx"; // Importa as categorias
 
 // Definindo a interface para o objeto de Imagem
 interface ImagemEvento {
@@ -39,6 +40,7 @@ function Home() {
     const [eventos, setEventos] = useState<Evento[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [categoriaFiltro, setCategoriaFiltro] = useState<string>("Todos"); // Estado para o filtro
     const { user } = useAuth(); // Pega o usuário logado do contexto
 
     useEffect(() => {
@@ -89,17 +91,40 @@ function Home() {
         fetchEventos();
     }, []); // O array vazio como segundo argumento garante que o useEffect será executado apenas uma vez
 
+    // Filtra os eventos com base na categoria selecionada
+    const eventosFiltrados = eventos.filter(evento => {
+        if (categoriaFiltro === "Todos") {
+            return true;
+        }
+        return evento.categoria === categoriaFiltro;
+    });
+
     return (
         <>
             <div className="home-page">
                 <Navbar />
                 <h1>Próximos Eventos</h1>
+                {/* DROPDOWN DE FILTRO DE CATEGORIA */}
+                <div className="filtro-categoria-container">
+                    <label htmlFor="categoria-filtro">Filtrar por Categoria:</label>
+                    <select
+                        id="categoria-filtro"
+                        value={categoriaFiltro}
+                        onChange={(e) => setCategoriaFiltro(e.target.value)}
+                        className="categoria-select-filtro"
+                    >
+                        <option value="Todos">Todos</option>
+                        {CATEGORIAS_EVENTOS.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+                </div>
                 {loading && <p>Carregando eventos...</p>}
                 {error && <p>Erro ao carregar eventos: {error}</p>}
                 {!loading && !error && (
                     <div className="lista-eventos">
-                        {eventos.length > 0 ? (
-                            eventos.map((evento) => (
+                        {eventosFiltrados.length > 0 ? (
+                            eventosFiltrados.map((evento) => (
                                 <Link to={`/evento/${evento.id}`} key={evento.id} className="card-evento-link-home">
                                 <div key={evento.id} className="card-evento-home">
                                     {/* Adiciona o carrossel de imagens se houver imagens */}
@@ -133,7 +158,7 @@ function Home() {
                                 </Link>
                             ))
                         ) : (
-                            <p>Nenhum evento futuro encontrado :(</p>
+                            <p>Nenhum evento futuro encontrado para o filtro aplicado :(</p>
                         )}
                     </div>
                 )}

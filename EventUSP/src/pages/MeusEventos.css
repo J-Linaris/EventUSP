@@ -3,3 +3,92 @@
 /*    margin-top: 3vh;*/
 /*    font-size: 2.5rem;*/
 /*}*/
+
+#categoria-filtro-meus{
+ margin-left: 15px;
+    width: 10vw;
+    min-width: 100px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    background-color: #151515;
+    color: #f0f0f0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: filter 0.2s ease-in-out;
+    will-change: filter;
+}
+#categoria-filtro-meus:hover {
+    filter: drop-shadow(0 0 0.7rem #B60101);
+}
+
+.filtro-categoria-container-meus-eventos{
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+
+/* Container principal que envolve todos os cartões de evento */
+.meus-eventos-container {
+    /* Limita a largura máxima e centraliza na página */
+    max-width: 1200px;
+    margin: 40px auto; /* Adiciona espaçamento vertical e centraliza horizontalmente */
+    padding: 0 20px; /* Garante um respiro nas laterais em telas menores */
+
+    /* Usa Flexbox para criar uma grade responsiva */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centraliza os cartões */
+    gap: 25px; /* Define o espaçamento entre os cartões */
+}
+
+/* Estilo para cada cartão de evento individual */
+.evento-card {
+    /* 1. Cor de fundo igual à do dropdown */
+    background-color: #151515;
+
+    /* 2. Bordas bem arredondadas */
+    border-radius: 10px;
+
+    /* Preenchimento interno para o conteúdo não colar nas bordas */
+    padding: 25px;
+
+    /* 3. Define o tamanho para evitar que ocupe a largura toda */
+    flex: 1 1 320px; /* Permite que o cartão cresça e encolha, com uma base de 320px */
+    max-width: 450px; /* Define uma largura máxima para cada cartão */
+
+    /* Estilos de link e transição */
+    text-decoration: none;
+    color: #f0f0f0;
+    border: 1px solid #2a2a2a; /* Borda sutil para definir o cartão */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efeito ao passar o mouse por cima do cartão */
+.evento-card:hover {
+    transform: translateY(-5px); /* Eleva o cartão sutilmente */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); /* Adiciona uma sombra para profundidade */
+}
+
+/* Estilos para o texto dentro do cartão para melhor legibilidade */
+.evento-card h3 {
+    margin-top: 0;
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.evento-card p {
+    font-size: 1rem;
+    opacity: 0.8; /* Deixa os detalhes um pouco mais sutis */
+}
+
+.evento-card:hover{
+    color: red;
+    h3{
+         color: #B60101;
+     }
+    filter: drop-shadow(0 0 0.7rem #B60101);
+
+}
+

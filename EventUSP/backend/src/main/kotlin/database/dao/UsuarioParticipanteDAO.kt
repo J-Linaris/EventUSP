@@ -44,7 +44,8 @@ class UsuarioParticipanteDAO(id: EntityID<Long>) : LongEntity(id) {
                 id = eventoDAO.id.value,
                 titulo = eventoDAO.titulo,
                 dataHora = eventoDAO.dataHora.toString(),
-                localizacao = eventoDAO.localizacao
+                localizacao = eventoDAO.localizacao,
+                categoria = eventoDAO.categoria
             )
         }.toMutableList()
         usuario.eventosInteressadosIds = this.eventosInteressados.map { it.id.value }.toMutableList()

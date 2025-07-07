@@ -19,19 +19,6 @@
     background-color: #151515;
 }
 
-.searchBar{
-    background-color: #151515;
-    border-radius: 10px;
-    width: 12rem;
-    height:  1.3rem;
-    border-color: #303030;
-    border-style: solid;
-}
-
-.searchBar:focus {
-    outline: none;
-}
-
 #logo {
     height: 2.7em;
     will-change: filter;
