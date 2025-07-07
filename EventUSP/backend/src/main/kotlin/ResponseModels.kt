@@ -20,7 +20,7 @@ data class LoginResponse<T>(
     val message: String,
     val token: String,
     val user: T,
-    val role: String
+    val role: String,
 )
 
 @Serializable

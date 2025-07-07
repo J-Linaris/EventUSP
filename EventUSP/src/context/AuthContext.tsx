@@ -6,6 +6,7 @@ interface User {
     nome: string;
     email: string;
     accountType: 'organizador' | 'participante'; // Adicionamos a propriedade 'role'
+    fotoPerfil: string | undefined;
 }
 
 // Interface para a resposta da API de login
@@ -14,6 +15,7 @@ interface LoginResponseData {
         id: number;
         nome: string;
         email: string;
+        fotoPerfil: string | undefined;
     };
     token: string;
     role: 'organizador' | 'participante'; // O tipo de conta vem diretamente da API
@@ -52,7 +54,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             id: data.user.id,
             nome: data.user.nome,
             email: data.user.email,
-            accountType: data.role // Usa diretamente o 'role' retornado pela API
+            accountType: data.role, // Usa diretamente o 'role' retornado pela API
+            fotoPerfil: data.user.fotoPerfil
         };
 
         setUser(authenticatedUser);
