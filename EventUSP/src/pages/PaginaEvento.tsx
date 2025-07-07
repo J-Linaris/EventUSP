@@ -29,6 +29,10 @@ interface Review {
     comentario: string;
     dataHora?: string;
 }
+interface Participante { // Interface simplificada para a lista de interessados
+    id: number;
+    nome: string;
+}
 interface Evento {
     id: number;
     titulo: string;
@@ -40,7 +44,7 @@ interface Evento {
     numeroLikes: number;
     imagens: ImagemEvento[];
     reviews?: Review[];
-    participantesInteressados?: any[]; // Adicionado para a lógica de verificação
+    participantesInteressados?: Participante[]; // Usando a interface Participante
 }
 
 // --- Novo Componente para um Item de Review Individual ---
@@ -88,12 +92,11 @@ function PaginaEvento() {
     const [comentario, setComentario] = useState("");
     const [reviewError, setReviewError] = useState<string | null>(null);
     const [isLiking, setIsLiking] = useState(false);
-    const [jaTemInteresse, setJaTemInteresse] = useState(false); // Novo estado para controlar o botão
-
-    // const [timeLeft, setTimeLeft] = useState<string>('');
-    // const [showLikeSection, setShowLikeSection] = useState<boolean>(false);
-
+    const [isHovering, setIsHovering] = useState(false);
     const { user, authFetch } = useAuth();
+
+    // Deriva o estado de interesse diretamente do objeto 'evento'. Esta é a única fonte de verdade.
+    const jaTemInteresse = evento?.participantesInteressados?.some(p => p.id === user?.id) || false;
 
     useEffect(() => {
         if (!id) return; // Se não houver ID, não faz nada
@@ -134,6 +137,9 @@ function PaginaEvento() {
                 if (!eventoCompleto.numeroLikes) {
                     eventoCompleto.numeroLikes = 0;
                 }
+                // Garante que a lista de participantes exista
+                if (!eventoCompleto.participantesInteressados) eventoCompleto.participantesInteressados = [];
+
                 setEvento(eventoCompleto);
 
             } catch (err) {
@@ -150,16 +156,16 @@ function PaginaEvento() {
         fetchEventoData();
     }, [id]); // Executa o efeito sempre que o ID na URL mudar
 
-    // Efeito separado para verificar o status de interesse do usuário logado
-    useEffect(() => {
-        // Se o usuário está logado e já temos os dados do evento
-        if (user && evento) {
-            const userJaTemInteresse = evento.participantesInteressados?.some(
-                (p: any) => p.id === user.id
-            ) || false;
-            setJaTemInteresse(userJaTemInteresse);
-        }
-    }, [user, evento]);
+    // // Efeito separado para verificar o status de interesse do usuário logado
+    // useEffect(() => {
+    //     // Se o usuário está logado e já temos os dados do evento
+    //     if (user && evento) {
+    //         const userJaTemInteresse = evento.participantesInteressados?.some(
+    //             (p: any) => p.id === user.id
+    //         ) || false;
+    //         setJaTemInteresse(userJaTemInteresse);
+    //     }
+    // }, [user, evento]);
 
     // --- Função para submeter a nova review ---
     // --- Função para submeter a nova review ---
@@ -197,61 +203,6 @@ function PaginaEvento() {
             setReviewError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");
         }
     };
-        // const handleReviewSubmit = async (e: React.FormEvent) => {
-        //     e.preventDefault();
-        //     setReviewError(null);
-        //
-        //     const token = localStorage.getItem('authToken'); // Pega o token do usuário logado
-        //     if (!token) {
-        //         setReviewError("Você precisa estar logado para deixar uma review.");
-        //         return;
-        //     }
-        //
-        //     if (nota === 0 || comentario.trim() === "") {
-        //         setReviewError("Por favor, dê uma nota e escreva um comentário.");
-        //         return;
-        //     }
-        //
-        //     try {
-        //         const response = await fetch(`/proxy/api/eventos/${id}/reviews`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'Authorization': `Bearer ${token}`
-        //             },
-        //             body: JSON.stringify({
-        //                 nota: nota,
-        //                 comentario: comentario
-        //             })
-        //         });
-        //
-        //         if (!response.ok) {
-        //             const errorData = await response.json();
-        //             throw new Error(errorData.message || "Não foi possível enviar a review.");
-        //         }
-        //
-        //         // Sucesso! Fecha o modal e atualiza a UI.
-        //         setReviewModalOpen(false);
-        //         setNota(0);
-        //         setComentario("");
-        //
-        //         // Para uma melhor UX, podemos adicionar a review diretamente ao estado
-        //         // ou simplesmente recarregar os dados do evento.
-        //         // Recarregar é mais simples:
-        //         const updatedEventoResponse = await fetch(`/proxy/api/eventos/${id}`);
-        //         const updatedEventoData = await updatedEventoResponse.json();
-        //         setEvento(prev => ({...prev, ...updatedEventoData}));
-        //
-        //         alert("Review enviada com sucesso!");
-        //
-        //     } catch (err) {
-        //         if (err instanceof Error) {
-        //             setReviewError(err.message);
-        //         } else {
-        //             setReviewError("Ocorreu um erro desconhecido ao enviar a review.");
-        //         }
-        //     }
-        // };
 
     const handleInteresse = async () => {
         if (!user) { // Verifica se o usuário está logado usando o contexto
@@ -264,93 +215,45 @@ function PaginaEvento() {
         setIsLiking(true);
 
         // Define o método e a mudança de likes com base no estado atual
+        const originalEvento = evento; // Salva o estado original para rollback em caso de erro
         const method = jaTemInteresse ? 'DELETE' : 'POST';
-        const likesChange = jaTemInteresse ? -1 : 1;
+
+        // 1. Atualização Otimista do número de likes mudando o evento em si: Mude a UI imediatamente.
+        if (jaTemInteresse) {
+            // Se já tem interesse, remove o usuário da lista e decrementa o like
+            setEvento(prev => prev ? {
+                ...prev,
+                numeroLikes: prev.numeroLikes - 1,
+                participantesInteressados: prev.participantesInteressados?.filter(p => p.id !== user.id)
+            } : null);
+        } else {
+            // Se não tem interesse, adiciona o usuário à lista e incrementa o like
+            setEvento(prev => prev ? {
+                ...prev,
+                numeroLikes: prev.numeroLikes + 1,
+                participantesInteressados: [...(prev.participantesInteressados || []), { id: user.id, nome: user.nome }]
+            } : null);
+        }
 
         try {
-            // USA authFetch: não é mais necessário pegar token do localStorage ou montar headers
+            // 2. Chama a API
             const response = await authFetch(`/proxy/api/eventos/${id}/interesse`, {
-                method: method, // Usa o método dinâmico (POST ou DELETE)
+                method: method,
             });
 
-            if (!response.ok) throw new Error("Não foi possível ${jaTemInteresse ? 'remover' : 'registrar'} o interesse.");
-
-            // Atualiza a UI para refletir a mudança
-            // Atualiza a UI de forma otimista
-            setEvento(prev => prev ? { ...prev, numeroLikes: prev.numeroLikes + likesChange } : null);
-            setJaTemInteresse(prev => !prev); // Inverte o estado de interesse
-
+            if (!response.ok) {
+                // Se a API falhar, lança um erro para o bloco catch
+                throw new Error("A operação falhou no servidor. Tente novamente.");
+            }
+            // Se a API for bem-sucedida, a atualização otimista se torna o estado final.
         } catch (err) {
+            // 3. Rollback: Se a API falhar, reverta a UI para o estado original
             alert(err instanceof Error ? err.message : "Ocorreu um erro.");
+            setEvento(originalEvento);
         } finally {
             setIsLiking(false);
         }
     };
-
-    // const handleLike = async () => {
-    //     if (!evento || isLiking) return; // Não faz nada se não houver evento ou já estiver processando um like
-    //
-    //     const token = localStorage.getItem('authToken');
-    //     if (!token) {
-    //         alert("Você precisa estar logado para curtir um evento.");
-    //         return;
-    //     }
-    //
-    //     setIsLiking(true); // Desabilita o botão para evitar cliques duplos
-    //     const payload = {
-    //         id: evento.id,
-    //         titulo: evento.titulo,
-    //         descricao: evento.descricao,
-    //         dataHora: evento.dataHora,
-    //         localizacao: evento.localizacao,
-    //         categoria: evento.categoria,
-    //         organizador: evento.organizador,
-    //         // O campo 'participantesInteressados' pode ser necessário pelo backend,
-    //         // mesmo que vazio. Se ele não for enviado, também pode causar um erro 400.
-    //         // participantesInteressados: evento.participantesInteressados || [],
-    //         numeroLikes: evento.numeroLikes + 1,
-    //     };
-    //
-    //     // 1. Cria uma cópia do objeto evento e incrementa o número de likes
-    //     // const updatedEvento = {
-    //     //     ...evento,
-    //     //     numeroLikes: evento.numeroLikes + 1,
-    //     // };
-    //
-    //     try {
-    //         // 2. Envia o payload limpo para o endpoint PUT
-    //         const response = await fetch(`/proxy/api/eventos/${id}`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': `Bearer ${token}`,
-    //             },
-    //             body: JSON.stringify(payload), // Envia o objeto limpo
-    //         });
-    //
-    //         if (!response.ok) {
-    //             // Para depurar, você pode tentar ver o corpo da resposta de erro
-    //             const errorBody = await response.text();
-    //             console.error("Erro do servidor:", errorBody);
-    //             throw new Error("Não foi possível registrar o like. Verifique o console para mais detalhes.");
-    //         }
-    //
-    //         // 3. Atualiza o estado com a resposta do servidor
-    //         const responseData = await response.json();
-    //
-    //         // Atualiza o estado preservando as imagens e reviews que já estavam carregadas
-    //         setEvento(prevEvento => ({
-    //             ...prevEvento,
-    //             ...responseData,
-    //         }));
-    //
-    //     } catch (err) {
-    //         console.error(err);
-    //         alert(err instanceof Error ? err.message : "Ocorreu um erro.");
-    //     } finally {
-    //         setIsLiking(false);
-    //     }
-    // };
 
     if (loading) return <p>Carregando evento...</p>;
     if (error) return <p>Erro ao carregar evento: {error}</p>;
@@ -396,11 +299,16 @@ function PaginaEvento() {
                                     <button
                                         onClick={handleInteresse}
                                         disabled={isLiking}
-                                        // Adiciona uma classe diferente se o usuário já tem interesse
                                         className={`btn-like ${jaTemInteresse ? 'liked' : ''}`}
+                                        // --- NOVOS EVENTOS DE MOUSE ---
+                                        onMouseEnter={() => setIsHovering(true)}
+                                        onMouseLeave={() => setIsHovering(false)}
                                     >
-                                        {/* Muda o texto do botão com base no estado */}
-                                        {jaTemInteresse ? '❤️ Remover Interesse' : '👍 Tenho Interesse'}
+                                        {/* --- NOVA LÓGICA PARA O TEXTO DO BOTÃO --- */}
+                                        {jaTemInteresse
+                                            ? (isHovering ? '❌ Remover Interesse' : '❤️ Interesse Demonstrado')
+                                            : '👍 Tenho Interesse'
+                                        }
                                     </button>
                                 )}
                             </span>

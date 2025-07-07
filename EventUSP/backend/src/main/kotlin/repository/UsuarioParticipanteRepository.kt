@@ -87,28 +87,25 @@ class UsuarioParticipanteRepository {
      * @param participanteId O ID do participante.
      * @param eventoId O ID do evento.
      */
-//    fun removeInteresse(participanteId: Long, eventoId: Long) = transaction {
-//        // 1. Remove a relação da tabela de junção
-//        val deletedRows = ParticipantesInteressadosTable.deleteWhere {
-//            (this.participanteId eq participanteId) and (this.eventoId eq eventoId)
-//        }
-//
-//        // 2. Se uma linha foi realmente deletada, atualiza o contador de likes
-//        if (deletedRows > 0) {
-//            EventoTable.update({ EventoTable.id eq eventoId }) {
-//                with(SqlExpressionBuilder) {
-//                    it.update(numeroLikes, numeroLikes - 1)
-//                }
-//            }
-//        }
-//    }
+
     fun removeInteresse(participanteId: Long, eventoId: Long): Boolean = transaction {
-        // A tabela de junção entre participantes e eventos
+        // 1. Tenta remover a relação da tabela de junção
         val deletedRows = ParticipantesInteressadosTable.deleteWhere {
-            (ParticipantesInteressadosTable.participanteId eq participanteId) and
-                    (ParticipantesInteressadosTable.eventoId eq eventoId)
+            (this.participanteId eq participanteId) and (this.eventoId eq eventoId)
         }
-        deletedRows > 0 // Retorna true se alguma linha foi de fato deletada
+
+        // 2. Se uma linha foi de fato deletada, decrementa o contador de likes no evento
+        if (deletedRows > 0) {
+            EventoTable.update({ EventoTable.id eq eventoId }) {
+                with(SqlExpressionBuilder) {
+                    // Garante que o número de likes não fique negativo
+                    it.update(numeroLikes, numeroLikes - 1)
+                }
+            }
+        }
+
+        // 3. Retorna true se a operação de remoção foi bem-sucedida
+        return@transaction deletedRows > 0
     }
 
 

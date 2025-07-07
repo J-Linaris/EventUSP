@@ -33,36 +33,59 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
      * Converte o DAO para o modelo
      */
     fun toModel(): Evento {
+
+        // Carrega a lista de participantes e converte para DTO
+        val listaParticipantesDTO = participantesInteressados.map { participanteDAO ->
+            ParticipanteDTO(
+                id = participanteDAO.id.value,
+                nome = participanteDAO.nome
+            )
+        }.toMutableList()
+        // Cria o objeto do modelo
         val evento = Evento(
             id = id.value,
             titulo = titulo,
             descricao = descricao,
             dataHora = dataHora,
             localizacao = localizacao,
-//            numeroLikes = this.numeroLikes,
             categoria = categoria,
             organizador = organizador.toModel(),
-            // Carrega os relacionamentos
-//            participantesInteressados = this.participantesInteressados.map { it.toModel() }.toMutableList(),
-//            reviews = this.reviews.map { it.toModel() }.toMutableList(),
-//            imagens = this.imagens.map { it.toModel() }.toMutableList()
+            participantesInteressados = listaParticipantesDTO,
+            // **MELHORIA**: Garante que o número de likes é sempre consistente
+            numeroLikes = listaParticipantesDTO.size,
+            reviews = reviews.map { it.toModel() }.toMutableList(),
+            imagens = imagens.map { it.toModel() }.toMutableList()
         )
 
-        // ALTERADO: Agora mapeamos para o DTO simplificado, que não tem recursão.
-        evento.participantesInteressados = participantesInteressados.map { participanteDAO ->
-            ParticipanteDTO(
-                id = participanteDAO.id.value,
-                nome = participanteDAO.nome
-//                fotoPerfil = participanteDAO.fotoPerfil // Adicione a foto de perfil se não tiver no DAO
-            )
-        }.toMutableList()
-
-        evento.reviews = reviews.map { it.toModel() }.toMutableList()
-        evento.imagens = imagens.map { it.toModel() }.toMutableList()
-        evento.numeroLikes = this.numeroLikes
-        
-
-        
         return evento
+
+//        val evento = Evento(
+//            id = id.value,
+//            titulo = titulo,
+//            descricao = descricao,
+//            dataHora = dataHora,
+//            localizacao = localizacao,
+////            numeroLikes = this.numeroLikes,
+//            categoria = categoria,
+//            organizador = organizador.toModel(),
+//            // Carrega os relacionamentos
+////            participantesInteressados = this.participantesInteressados.map { it.toModel() }.toMutableList(),
+////            reviews = this.reviews.map { it.toModel() }.toMutableList(),
+////            imagens = this.imagens.map { it.toModel() }.toMutableList()
+//        )
+//
+//        // ALTERADO: Agora mapeamos para o DTO simplificado, que não tem recursão.
+//        evento.participantesInteressados = participantesInteressados.map { participanteDAO ->
+//            ParticipanteDTO(
+//                id = participanteDAO.id.value,
+//                nome = participanteDAO.nome
+//            )
+//        }.toMutableList() //
+//
+//        evento.reviews = reviews.map { it.toModel() }.toMutableList()
+//        evento.imagens = imagens.map { it.toModel() }.toMutableList()
+//        evento.numeroLikes = this.numeroLikes
+        
+//        return evento
     }
 }
