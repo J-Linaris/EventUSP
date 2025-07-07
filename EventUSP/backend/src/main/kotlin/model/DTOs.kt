@@ -12,7 +12,8 @@ data class EventoDTO(
     val id: Long,
     val titulo: String,
     val dataHora: String, // Usando String para simplicidade na serialização
-    val localizacao: String
+    val localizacao: String,
+    val categoria: String
 )
 
 /**

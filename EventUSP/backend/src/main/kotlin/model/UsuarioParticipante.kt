@@ -31,7 +31,8 @@ open class UsuarioParticipante(
             id = evento.id!!,
             titulo = evento.titulo,
             dataHora = evento.dataHora.toString(),
-            localizacao = evento.localizacao
+            localizacao = evento.localizacao,
+            categoria = evento.categoria
         )
         eventosInteressados.add(eventoDTO)
         evento.adicionarLike()
@@ -62,7 +63,8 @@ open class UsuarioParticipante(
             id = evento.id!!,
             titulo = evento.titulo,
             dataHora = evento.dataHora.toString(),
-            localizacao = evento.localizacao
+            localizacao = evento.localizacao,
+            categoria = evento.categoria
         )
         eventosInteressados.add(eventoDTO) // Adiciona o objeto completo também
         evento.adicionarParticipanteInteressado(this)

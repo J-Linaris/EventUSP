@@ -50,14 +50,6 @@ function Navbar() {
                 </Link>
             </div>
 
-            {/* Barra de pesquisa central */}
-            <div className="flex">
-                <input
-                    type="text"
-                    placeholder="Pesquisar evento"
-                    className="searchBar"
-                />
-            </div>
 
             {/* Botões alinhados da direita para a esquerda */}
             <div className="navbarButtonsComponent">
@@ -69,11 +61,6 @@ function Navbar() {
                 <Link to="/meusEventos">
                     <button className="navbarButton">
                         Meus Eventos
-                    </button>
-                </Link>
-                <Link to="/calendario">
-                    <button className="navbarButton">
-                        Calendário
                     </button>
                 </Link>
                 <Link to="/about">

@@ -50,7 +50,7 @@
     text-decoration: none; /* Remove o sublinhado do link */
     color: inherit; /* Faz o texto herdar a cor do elemento pai */
     display: block; /* Garante que o link ocupe todo o espaço do card */
-    margin: 0 3.5vw;
+    margin: 0 3vw;
     /*height: 20%;*/
     /*width: 50%;*/
 }
@@ -87,3 +87,27 @@
     /*background-color: #7c4dff;*/
     color: white;
 }
+
+#categoria-filtro{
+    margin-left: 15px;
+    width: 10vw;
+    min-width: 100px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    background-color: #151515;
+    color: #f0f0f0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: filter 0.2s ease-in-out;
+    will-change: filter;
+}
+#categoria-filtro:hover {
+    filter: drop-shadow(0 0 0.7rem #B60101);
+}
+
+.filtro-categoria-container{
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
