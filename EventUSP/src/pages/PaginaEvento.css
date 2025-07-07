@@ -139,12 +139,19 @@
     background-color: #0056b3;
 }
 
+.review-header-item{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .reviews-list .review-item {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
     padding: 15px;
     margin-bottom: 10px;
+    background-color: #151515; /* Substitua pela cor do seu NavBar */
+    border-radius: 10px;
+    border: 1px solid #B60101; /* Uma borda sutil para separação */
 }
 
 .review-item .review-nota {
@@ -154,7 +161,7 @@
 
 .review-item .review-comentario {
     font-style: italic;
-    color: #333;
+    color: white;
     margin: 0;
 }
 
@@ -162,7 +169,7 @@
     display: block;
     text-align: right;
     font-size: 0.9em;
-    color: #777;
+    color: white;
     margin-top: 5px;
 }
 
@@ -182,7 +189,7 @@
 }
 
 .modal-content {
-    background-color: white;
+    background-color: #151515;
     padding: 25px;
     border-radius: 8px;
     width: 90%;
@@ -213,16 +220,24 @@
     border: 1px solid #ccc;
     box-sizing: border-box; /* Garante que o padding não aumente a largura */
 }
-
-.star-rating .star-empty, .star-rating .star-filled {
+/* Estilos para as estrelas */
+.star-rating {
+    display: inline-block;
+    font-size: 24px;
     cursor: pointer;
-    font-size: 2em;
+}
+
+.star-filled {
+    color: gold;
+}
+
+.star-empty {
     color: #ccc;
 }
-.star-rating .star-filled {
-    color: #ffc107;
-}
 
+.star-hover {
+    color: orange; /* Cor para o hover, pode ajustar */
+}
 
 .modal-actions {
     display: flex;
