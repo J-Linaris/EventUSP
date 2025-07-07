@@ -242,7 +242,13 @@ fun Application.configureRouting() {
                         val participanteRepository = UsuarioParticipanteRepository()
 
                         get {
-                            val reviews = reviewRepository.findAll()
+                            // 1. Pega o ID do evento da URL.
+                            val eventoId = call.parameters["id"]?.toLongOrNull()
+                                ?: return@get call.respondText("ID de evento inválido", status = HttpStatusCode.BadRequest)
+
+                            // 2. Usa o método findByEvento, que já existe no seu repositório.
+                            val reviews = reviewRepository.findByEvento(eventoId)
+
                             call.respond(reviews)
                         }
 

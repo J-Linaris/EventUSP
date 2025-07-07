@@ -58,6 +58,11 @@ function Navbar() {
                         Página Inicial
                     </button>
                 </Link>
+                <Link to="/todosEventos">
+                    <button className="navbarButton">
+                        Todos Eventos
+                    </button>
+                </Link>
                 <Link to="/meusEventos">
                     <button className="navbarButton">
                         Meus Eventos

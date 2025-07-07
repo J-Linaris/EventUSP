@@ -106,6 +106,7 @@ class EventoRepository {
 
         eventoDAO.titulo = evento.titulo
         eventoDAO.descricao = evento.descricao
+        // COMENTA-SE A LINHA ABAIXO APENAS PARA UM TESTE
         eventoDAO.dataHora = evento.dataHora
         eventoDAO.localizacao = evento.localizacao
         eventoDAO.categoria = evento.categoria

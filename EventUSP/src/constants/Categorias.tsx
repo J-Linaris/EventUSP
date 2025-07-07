@@ -1,6 +1,6 @@
 export const CATEGORIAS_EVENTOS = [
     "Tecnologia",
-    "Música",
+    "Festa",
     "Esportivo",
     "Palestra",
     "Acadêmico",
