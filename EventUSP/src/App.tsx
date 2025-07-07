@@ -11,7 +11,8 @@ import './App.css';
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Login from "./pages/Login.tsx";
-import MeusEventos from "./pages/MeusEventos.jsx";
+import MeusEventos from "./pages/MeusEventos.tsx";
+import TodosEventos from "./pages/TodosEventos.tsx";
 import CreateAccount from "./pages/CreateAccount.tsx";
 import PaginaEvento from './pages/PaginaEvento.tsx'; // Criaremos este componente a seguir
 import { AuthProvider } from './context/AuthContext'; // Importe o Provider
@@ -28,6 +29,7 @@ function App() {
                   <Route path="/about" element={<About />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/create-account" element={<CreateAccount />} />
+                  <Route path="/todosEventos" element={<TodosEventos />} />
                   <Route path="/meusEventos" element={<MeusEventos />} />
                   <Route path="/evento/:id" element={<PaginaEvento />} />
                   <Route path="/criar-evento" element={<PaginaCriarEvento/>} />

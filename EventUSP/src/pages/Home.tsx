@@ -76,7 +76,10 @@ function Home() {
                     })
                 );
 
+                // Ordena a lista de eventos, tratando o campo 'numeroLikes' caso seja nulo.
+                eventosCompletos.sort((a, b) => (b.numeroLikes ?? 0) - (a.numeroLikes ?? 0));
                 setEventos(eventosCompletos);
+
             } catch (err) {
                 if (err instanceof Error) {
                     setError(err.message);

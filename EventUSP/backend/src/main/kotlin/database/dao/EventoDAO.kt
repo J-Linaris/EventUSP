@@ -52,7 +52,8 @@ class EventoDAO(id: EntityID<Long>) : LongEntity(id) {
             organizador = organizador.toModel(),
             participantesInteressados = listaParticipantesDTO,
             // **MELHORIA**: Garante que o número de likes é sempre consistente
-            numeroLikes = listaParticipantesDTO.size,
+//            numeroLikes = listaParticipantesDTO.size,
+            numeroLikes = this.numeroLikes,
             reviews = reviews.map { it.toModel() }.toMutableList(),
             imagens = imagens.map { it.toModel() }.toMutableList()
         )

@@ -16,6 +16,7 @@ import br.usp.eventUSP.model.UsuarioOrganizador
 import br.usp.eventUSP.model.UsuarioParticipante
 import br.usp.eventUSP.repository.EventoRepository
 import br.usp.eventUSP.repository.ImagemEventoRepository
+import br.usp.eventUSP.repository.ReviewRepository
 import br.usp.eventUSP.repository.UsuarioOrganizadorRepository
 import br.usp.eventUSP.repository.UsuarioParticipanteRepository
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -100,17 +101,22 @@ object DatabaseSeeder {
                 val eventoRepo = EventoRepository()
                 val imagemRepo = ImagemEventoRepository()
 
-                val eventoShow = eventoRepo.create(
-                    Evento(
-                        titulo = "Show de Talentos CCUSP",
-                        descricao = "Uma noite para celebrar os talentos musicais da nossa comunidade. Venha assistir e apoiar os artistas locais!",
-                        dataHora = LocalDateTime.now().plusDays(10).withHour(19).withMinute(0),
-                        localizacao = "Centro Cultural USP - R. do Anfiteatro, 109",
-                        categoria = "Música",
-                        organizador = organizador1,
-                        numeroLikes = 0
-                    )
+            val eventoJunIME = eventoRepo.create(
+                Evento(
+                    titulo = "JunIME",
+                    descricao = "VEM AI! ✨ Dia 13/06 das 18h às 23h no estacionamento do bloco B do IME teremos a nossa tradicional festa junina, a JUNIME!!\n" +
+                            "Nossos amados times e entidades imeanas se juntarão à aaamat para fazermos uma linda festa junina com muitas comidinhas, brincadeira e\n" +
+                            "diversão! ❤\uFE0F\uD83E\uDD0D❤\uFE0F\uD83E\uDD0D\n" +
+                            "Aguardamos vocês todes a caráter e muito alegres para curtimos muito! \uD83E\uDD29\uD83E\uDD20",
+                    // Coloca para o dia anterior para permitir que as reviews sejam cadastradas
+//                        dataHora = LocalDateTime.now().minusDays(1),
+                    dataHora = LocalDateTime.now().plusDays(10).withHour(18).withMinute(0),
+                    localizacao = "Estacionamento do bloco B do IME",
+                    categoria = "Festa",
+                    organizador = organizadorAAAMAT,
+                    numeroLikes = 0
                 )
+            )
 
                 val eventoFut = eventoRepo.create(
                     Evento(
@@ -120,10 +126,37 @@ object DatabaseSeeder {
                         localizacao = "Praça do Relógio Solar, Tv. do Jardim - Butantã, São Paulo - SP, 05508-000",
                         categoria = "Esportivo",
                         organizador = organizador1,
-                        numeroLikes = 0
+                        numeroLikes = 10
                     )
                 )
-
+            val eventoFEAFU = eventoRepo.create(
+                Evento(
+                    titulo = "FEAFU",
+                    descricao = "FEAFAU: onde dois mundos se misturam e tudo pode acontecer\n" +
+                            "\n" +
+                            "\uD83D\uDCC6dia:08/08\n" +
+                            "⏰horário: 23h00 - 6h00\n" +
+                            "\uD83E\uDD42open bar\n" +
+                            "\n" +
+                            "_se prepare para a união do ano _\n" +
+                            "abertura das vendas 06/07 pela blacktag ou com um de nossos vendedores \uD83D\uDC99\uD83D\uDC9C\n" +
+                            "\n" +
+                            "FEA:\n" +
+                            "Helena: 11 99366-9089\n" +
+                            "Bia: 11 96068-9807\n" +
+                            "Marco: \u202A11 98154‑9523\u202C\n" +
+                            "\n" +
+                            "FAU:\n" +
+                            "ju carvalho: \u202A+55 11 97121‑9977\u202C\n" +
+                            "ju pellici:\u202A+55 71 98436‑0550\u202C\n" +
+                            "mel:\u202A+55 13 99700‑5306",
+                    dataHora = LocalDateTime.parse("2025-08-08T23:00:00"),
+                    localizacao = "Hey Hey Club - Rua Marquês de Itu, 284",
+                    categoria = "Festa",
+                    organizador = organizadorFAU,
+                    numeroLikes = 119
+                )
+            )
             val eventoFesta = eventoRepo.create(
                 Evento(
                     titulo = "FAU Junina",
@@ -148,7 +181,17 @@ object DatabaseSeeder {
                         numeroLikes = 0
                     )
                 )
-
+            val eventoShow = eventoRepo.create(
+                Evento(
+                    titulo = "Show de Talentos CCUSP",
+                    descricao = "Uma noite para celebrar os talentos musicais da nossa comunidade. Venha assistir e apoiar os artistas locais!",
+                    dataHora = LocalDateTime.now().plusDays(10).withHour(19).withMinute(0),
+                    localizacao = "Centro Cultural USP - R. do Anfiteatro, 109",
+                    categoria = "Cultural",
+                    organizador = organizador1,
+                    numeroLikes = 0
+                )
+            )
                 val eventoVoltaUSP = eventoRepo.create(
                     Evento(
                         titulo = "Volta da USP",
@@ -170,51 +213,6 @@ object DatabaseSeeder {
                         categoria = "Tecnologia",
                         organizador = organizador1,
                         numeroLikes = 0
-                    )
-                )
-
-                val eventoJunIME = eventoRepo.create(
-                    Evento(
-                        titulo = "JunIME",
-                        descricao = "VEM AI! ✨ Dia 13/06 das 18h às 23h no estacionamento do bloco B do IME teremos a nossa tradicional festa junina, a JUNIME!!\n" +
-                                "Nossos amados times e entidades imeanas se juntarão à aaamat para fazermos uma linda festa junina com muitas comidinhas, brincadeira e\n" +
-                                "diversão! ❤\uFE0F\uD83E\uDD0D❤\uFE0F\uD83E\uDD0D\n" +
-                                "Aguardamos vocês todes a caráter e muito alegres para curtimos muito! \uD83E\uDD29\uD83E\uDD20",
-                        // Coloca para o dia anterior para permitir que as reviews sejam cadastradas
-                        dataHora = LocalDateTime.now().minusDays(1),
-                        localizacao = "Estacionamento do bloco B do IME",
-                        categoria = "Festa",
-                        organizador = organizadorAAAMAT,
-                        numeroLikes = 0
-                    )
-                )
-
-                val eventoFEAFU = eventoRepo.create(
-                    Evento(
-                        titulo = "FEAFU",
-                        descricao = "FEAFAU: onde dois mundos se misturam e tudo pode acontecer\n" +
-                                "\n" +
-                                "\uD83D\uDCC6dia:08/08\n" +
-                                "⏰horário: 23h00 - 6h00\n" +
-                                "\uD83E\uDD42open bar\n" +
-                                "\n" +
-                                "_se prepare para a união do ano _\n" +
-                                "abertura das vendas 06/07 pela blacktag ou com um de nossos vendedores \uD83D\uDC99\uD83D\uDC9C\n" +
-                                "\n" +
-                                "FEA:\n" +
-                                "Helena: 11 99366-9089\n" +
-                                "Bia: 11 96068-9807\n" +
-                                "Marco: \u202A11 98154‑9523\u202C\n" +
-                                "\n" +
-                                "FAU:\n" +
-                                "ju carvalho: \u202A+55 11 97121‑9977\u202C\n" +
-                                "ju pellici:\u202A+55 71 98436‑0550\u202C\n" +
-                                "mel:\u202A+55 13 99700‑5306",
-                        dataHora = LocalDateTime.parse("2025-08-08T23:00:00"),
-                        localizacao = "Hey Hey Club - Rua Marquês de Itu, 284",
-                        categoria = "Festa",
-                        organizador = organizadorFAU,
-                        numeroLikes = 119
                     )
                 )
 
@@ -255,7 +253,7 @@ object DatabaseSeeder {
                 imagemRepo.create(
                     ImagemEvento(
                         eventoId = eventoJunIME.id!!,
-                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.29350-15/504369286_633822496347450_4271396892581817284_n.heic?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjE0NDB4MTgwMC5zZHIuZjI5MzUwLmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=106&_nc_oc=Q6cZ2QFt3f5OlH39_tbbCuymbapNGFujL2hqeh4t1cCAm7vXOVo4-qtKN7icPoYfuh9MeUEpW9u4L3nozXHy3BcqSXA9&_nc_ohc=oayRe3dqmDIQ7kNvwFKxGR1&_nc_gid=cumNK1dlmrfXtVTYjc89uw&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzY0OTI2NTE1OTQ5Mjg5NDc2Mg%3D%3D.3-ccb7-5&oh=00_AfR3Bxu-wy7Fm9boKF97bKFIiWShux5ypM-Wud5YZeI9fA&oe=6870BDF4&_nc_sid=7a9f4b",
+                        url = "https://pbs.twimg.com/media/GOtMekyW4AEUKwZ?format=jpg&name=large",
                         descricao = "Capa",
                         ordem = 1
                     )
@@ -298,7 +296,7 @@ object DatabaseSeeder {
                 imagemRepo.create(
                     ImagemEvento(
                         eventoId = eventoFEAFU.id!!,
-                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.2885-15/515867790_18471973543077572_6786818823752811255_n.jpg?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEzNTB4MTY4OC5zZHIuZjgyNzg3LmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2QEznxjvvLNvry6Dv1i5p_q5P5j86ebKBOqVkNAaNb1rNtkT0RW00D1O-lWWukORG6e-WJVkKQlfg5pxoqEkB9um&_nc_ohc=TStV55a2TJAQ7kNvwFILmmm&_nc_gid=PQWijq955Y1pd0LlC4QQ8A&edm=AA5fTDYBAAAA&ccb=7-5&ig_cache_key=MzY3MTAyNzA0ODA3MjE0MDk3MA%3D%3D.3-ccb7-5&oh=00_AfSFryy_V_XKVkdZOEqZVAF5U8j-g-FVOKl_k-fr94isWQ&oe=6870C430&_nc_sid=7edfe2",
+                        url = "https://d106p58duwuiz5.cloudfront.net/event/cover/e699c29fe6974541d7160a749161d382.png",
                         descricao = "Capa",
                         ordem = 1
                     )
@@ -306,32 +304,52 @@ object DatabaseSeeder {
 
 
                 // --- Adicionar reviews ---
+            val reviewRepository = ReviewRepository()
 
-                participanteMessi.demonstrarInteresse(eventoJunIME)
-                participanteMessi.adicionarReview(
+            participanteMessi.demonstrarInteresse(eventoJunIME)
+            var reviewMessi = participanteMessi.adicionarReview(
                     evento = eventoJunIME,
                     nota = 5,
                     comentario = "Muito bom, a palha italiana da batimeduca estava uma delícia!"
                 )
+            // CORREÇÃO: Salva a review no banco de dados
+            if (reviewMessi != null) {
+                reviewRepository.create(reviewMessi)
+            }
 
-                participanteCristiano.demonstrarInteresse(eventoJunIME)
-                participanteCristiano.adicionarReview(
-                    evento = eventoJunIME,
-                    nota = 0,
-                    comentario = "Um lixo, sem música e com a quadrilha mais triste que eu já vi"
-                )
+            participanteCristiano.demonstrarInteresse(eventoJunIME)
+            var reviewCristiano = participanteCristiano.adicionarReview(
+                evento = eventoJunIME,
+                nota = 0,
+                comentario = "Um lixo, sem música e com a quadrilha mais triste que eu já vi"
+            )
+            // CORREÇÃO: Salva a review no banco de dados
+            if (reviewCristiano != null) {
+                reviewRepository.create(reviewCristiano)
+            }
 
-                participanteNeymar.demonstrarInteresse(eventoJunIME)
-                participanteNeymar.adicionarReview(
-                    evento = eventoJunIME,
-                    nota = 3,
-                    comentario = "O ime é o ime do ime"
-                )
+
+            participanteNeymar.demonstrarInteresse(eventoJunIME)
+            var reviewNeymar = participanteNeymar.adicionarReview(
+                evento = eventoJunIME,
+                nota = 3,
+                comentario = "O ime é o ime do ime"
+            )
+            // CORREÇÃO: Salva a review no banco de dados
+            if (reviewNeymar != null) {
+                reviewRepository.create(reviewNeymar)
+            }
 
                 // Volta para a data real
-                eventoJunIME.dataHora = LocalDateTime.parse("2025-06-13T18:00:00")
+                eventoJunIME.dataHora = LocalDateTime.parse("2026-07-13T18:00:00")
+                eventoJunIME.numeroLikes = eventoJunIME.participantesInteressados.size
                 eventoRepo.update(eventoJunIME)
 
+//                eventoVoltaUSP.numeroLikes = 185
+//                eventoRepo.update(eventoVoltaUSP)
+//
+//                eventoFEAFU.numeroLikes = 119
+//                eventoRepo.update(eventoFEAFU)
                 println("Povoamento da base de dados concluído.")
 //            } else {
 //                println("A base de dados já contém dados. Povoamento ignorado.")
