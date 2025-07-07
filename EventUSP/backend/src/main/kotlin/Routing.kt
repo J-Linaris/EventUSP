@@ -24,9 +24,58 @@ import java.util.*
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 
+// Definição de uma classe de dados para a requisição de interesse
+@kotlinx.serialization.Serializable
+data class InteresseRequest(val eventoId: Long)
+
 fun Application.configureRouting() {
     routing {
         route("/api") {
+            // --- NOVA ROTA DE NÍVEL SUPERIOR PARA INTERESSE ---
+            route("/interesse") {
+                val participanteRepository = UsuarioParticipanteRepository()
+                val eventoRepository = EventoRepository()
+
+                authenticate {
+                    post {
+                        val request = call.receive<InteresseRequest>()
+                        val eventoId = request.eventoId
+
+                        val participanteId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
+                            ?: return@post call.respond(HttpStatusCode.Unauthorized)
+
+                        // Validações
+                        if (eventoRepository.findById(eventoId) == null) {
+                            return@post call.respond(HttpStatusCode.NotFound, mapOf("message" to "Evento não encontrado"))
+                        }
+                        if (participanteRepository.findById(participanteId) == null) {
+                            return@post call.respond(HttpStatusCode.NotFound, mapOf("message" to "Participante não encontrado"))
+                        }
+
+                        // Adiciona o interesse
+                        participanteRepository.addInteresse(participanteId, eventoId)
+                        call.respond(HttpStatusCode.Created, mapOf("message" to "Interesse registrado"))
+                    }
+
+                    delete {
+                        val request = call.receive<InteresseRequest>()
+                        val eventoId = request.eventoId
+
+                        val participanteId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
+                            ?: return@delete call.respond(HttpStatusCode.Unauthorized)
+
+                        // Remove o interesse
+                        val success = participanteRepository.removeInteresse(participanteId, eventoId)
+
+                        if (success) {
+                            call.respond(HttpStatusCode.OK, mapOf("message" to "Interesse removido"))
+                        } else {
+                            call.respond(HttpStatusCode.NotFound, mapOf("message" to "Interesse não encontrado"))
+                        }
+                    }
+                }
+            }
+
             // Rotas para Eventos
 
             route("/eventos") {
@@ -107,10 +156,11 @@ fun Application.configureRouting() {
                             }
                         }
                     }
-                    authenticate {
-                        route("/interesse") {
+
+                    route("/interesse") {
                             val participanteRepository = UsuarioParticipanteRepository()
 
+                        authenticate {
                             post {
                                 val eventoId = call.parameters["id"]?.toLongOrNull()
                                     ?: return@post call.respondText(

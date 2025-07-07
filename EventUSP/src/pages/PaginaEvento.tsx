@@ -83,7 +83,7 @@ function ReviewItem({ review, currentUser, onDelete }: { review: Review, current
             <div className="review-header-item">
                 <p className="review-nota"><strong>Nota:</strong> {"⭐".repeat(review.nota)}</p>
                 {/* O botão de excluir só aparece se o usuário for o dono da review */}
-                {isOwner && (
+                {isOwner && currentUser?.accountType === 'participante' && (
                     <button onClick={() => onDelete(review.id)} className="btn-delete-review" title="Excluir review">
                         ❌
                     </button>
@@ -255,9 +255,11 @@ function PaginaEvento() {
 
         try {
             // 2. Chama a API
-            const response = await authFetch(`/proxy/api/eventos/${id}/interesse`, {
+            const response = await authFetch(`/proxy/api/interesse`, {
                 method: method,
+                body: JSON.stringify({ eventoId: evento?.id }) // Envia o ID do evento no corpo
             });
+
 
             if (!response.ok) {
                 // Se a API falhar, lança um erro para o bloco catch

@@ -68,11 +68,6 @@ function Navbar() {
                         Meus Eventos
                     </button>
                 </Link>
-                <Link to="/about">
-                    <button className="navbarButton">
-                        Sobre nós
-                    </button>
-                </Link>
 
                 {/* Renderização condicional do botão de Login ou Perfil */}
                 {user ? (

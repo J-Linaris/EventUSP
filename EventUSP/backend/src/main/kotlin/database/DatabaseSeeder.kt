@@ -58,7 +58,7 @@ object DatabaseSeeder {
                 organizador1.nome = "Centro Cultural USP"
                 organizador1.email = "ccusp@usp.br"
                 organizador1.senha = "senha123"
-                organizador1.fotoPerfil = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSABqV-VQBSF1Qyj1Qyo6RiLfpA0McI1leTvQ&s"
+                organizador1.fotoPerfil = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb7Cn7TcVdTYSdpbMIqDHLA8fX6-ro14BvFw&s"
                 organizador1 = organizadorRepo.create(organizador1)
 
                 var organizadorFAU = UsuarioOrganizador()
@@ -206,7 +206,7 @@ object DatabaseSeeder {
 
                 val eventoHackathon = eventoRepo.create(
                     Evento(
-                        titulo = "Hackathon de IA do IME",
+                        titulo = "HackFools",
                         descricao = "24 horas de programação, inovação e colaboração. Forme a sua equipa e crie uma solução de IA para resolver um problema real.",
                         dataHora = LocalDateTime.now().plusDays(25).withHour(9).withMinute(0),
                         localizacao = "Auditório Jacy Monteiro - Bloco B do IME-USP",
@@ -278,7 +278,7 @@ object DatabaseSeeder {
                 imagemRepo.create(
                     ImagemEvento(
                         eventoId = eventoJunIME.id!!,
-                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.2885-15/504103862_17980172231833932_601677786975488720_n.jpg?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0uaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjc1NzYxLmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2QFt3f5OlH39_tbbCuymbapNGFujL2hqeh4t1cCAm7vXOVo4-qtKN7icPoYfuh9MeUEpW9u4L3nozXHy3BcqSXA9&_nc_ohc=c47PbAak97UQ7kNvwFFFjbT&_nc_gid=cumNK1dlmrfXtVTYjc89uw&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzY1MjkyMTQzMDY1NTc3NDE4Mw%3D%3D.3-ccb7-5&oh=00_AfSNAthb7GoKYjprBSU7kerIzxnKu2GlCXgmySmGOW_38g&oe=6870DDC5&_nc_sid=7a9f4b",
+                        url = "https://f.i.uol.com.br/fotografia/2022/06/29/165652972362bca33b8a1d8_1656529723_3x2_md.jpg",
                         descricao = "Mapa",
                         ordem = 2
                     )
@@ -287,7 +287,7 @@ object DatabaseSeeder {
                 imagemRepo.create(
                     ImagemEvento(
                         eventoId = eventoJunIME.id!!,
-                        url = "https://instagram.fcgh22-1.fna.fbcdn.net/v/t51.2885-15/504436141_17980172240833932_6546190095323171467_n.jpg?stp=dst-jpg_e35_p480x480_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkNBUk9VU0VMX0lURU0uaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjc1NzYxLmRlZmF1bHRfaW1hZ2UifQ&_nc_ht=instagram.fcgh22-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2QFt3f5OlH39_tbbCuymbapNGFujL2hqeh4t1cCAm7vXOVo4-qtKN7icPoYfuh9MeUEpW9u4L3nozXHy3BcqSXA9&_nc_ohc=mkucgYkuKLMQ7kNvwGTrMbS&_nc_gid=cumNK1dlmrfXtVTYjc89uw&edm=AP4sbd4BAAAA&ccb=7-5&ig_cache_key=MzY1MjkyMTQzMDY3MjU4NDY0Mg%3D%3D.3-ccb7-5&oh=00_AfQP9uoLYRlSnxKemOW3oN4T-fUR7csuQV56ZdM7_6RhVg&oe=6870BE84&_nc_sid=7a9f4b",
+                        url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNNKlZSCrMLvQA-bN0H6eVL2spgGzlIJ0PAA&s",
                         descricao = "Preços parte 1",
                         ordem = 3
                     )
