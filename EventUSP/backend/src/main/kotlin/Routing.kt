@@ -308,13 +308,15 @@ fun Application.configureRouting() {
                                     nota = reviewReq.nota,
                                     comentario = reviewReq.comentario
                                 ) ?: return@post call.respondText(
+
                                     "Erro ao criar review",
-                                    status = HttpStatusCode.InternalServerError
+                                    status = HttpStatusCode.Forbidden,
                                 )
 
                                 val reviewSalva = reviewRepository.create(novaReview)
 
-                                call.respond(HttpStatusCode.Created, mapOf("message" to "Review criada"))
+                                // Em vez de enviar um mapa com uma mensagem, envie o objeto da review salva.
+                                call.respond(HttpStatusCode.Created, reviewSalva)
 
                             }
                         }
@@ -359,7 +361,44 @@ fun Application.configureRouting() {
                     }
                 }
             }
+            // --- NOVA ROTA DE NÍVEL SUPERIOR PARA REVIEWS ---
+            route("/reviews") {
+                val reviewRepository = ReviewRepository()
 
+                // Você pode mover outras rotas de review para cá se quiser,
+                // mas vamos focar apenas na de exclusão por enquanto.
+                authenticate {
+                    delete("/{id}") {
+                        val reviewId = call.parameters["id"]?.toLongOrNull()
+                            ?: return@delete call.respondText(
+                                "ID de review inválido",
+                                status = HttpStatusCode.BadRequest
+                            )
+
+                        // Validação extra (opcional mas recomendada):
+                        // Verificar se o usuário que está deletando é o dono da review
+                        val participanteId = call.principal<JWTPrincipal>()?.payload?.getClaim("userId")?.asLong()
+                        val review = reviewRepository.findById(reviewId)
+
+                        if (review == null) {
+                            return@delete call.respondText("Review não encontrada", status = HttpStatusCode.NotFound)
+                        }
+
+                        if (review.participanteId != participanteId) {
+                            return@delete call.respond(HttpStatusCode.Forbidden, "Você não tem permissão para excluir esta review.")
+                        }
+
+                        // Se tudo estiver OK, deleta
+                        val deleted = reviewRepository.delete(reviewId)
+                        if (deleted) {
+                            call.respond(HttpStatusCode.NoContent)
+                        } else {
+                            // Este caso é coberto pelo findById acima, mas é bom manter por segurança
+                            call.respondText("Review não encontrada", status = HttpStatusCode.NotFound)
+                        }
+                    }
+                }
+            }
             // Rotas para Usuários Organizadores
             route("/organizadores") {
                 val organizadorRepository = UsuarioOrganizadorRepository()

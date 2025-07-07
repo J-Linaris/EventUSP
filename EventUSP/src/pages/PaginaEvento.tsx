@@ -46,16 +46,20 @@ interface Evento {
     reviews?: Review[];
     participantesInteressados?: Participante[]; // Usando a interface Participante
 }
+// Tipagem para o usuário logado, vindo do AuthContext
+interface CurrentUser {
+    id: number;
+    accountType: string;
+    // adicione outros campos do usuário se necessário
+}
 
 // --- Novo Componente para um Item de Review Individual ---
 // Este componente recebe uma review e busca o nome do autor por conta própria.
-function ReviewItem({ review }: { review: Review }) {
+function ReviewItem({ review, currentUser, onDelete }: { review: Review, currentUser: CurrentUser | null, onDelete: (reviewId: number) => void }) {
     const [authorName, setAuthorName] = useState<string>("Carregando autor...");
-
     useEffect(() => {
         const fetchAuthorName = async () => {
             try {
-                // Rota baseada no seu arquivo Routing.kt: /api/participantes/{id}
                 const response = await fetch(`/proxy/api/participantes/${review.participanteId}`);
                 if (!response.ok) {
                     throw new Error("Participante não encontrado.");
@@ -64,16 +68,27 @@ function ReviewItem({ review }: { review: Review }) {
                 setAuthorName(participanteData.nome);
             } catch (error) {
                 console.error("Erro ao buscar nome do participante:", error);
-                setAuthorName("Participante Anônimo"); // Fallback em caso de erro
+                setAuthorName("Participante Anônimo");
             }
         };
 
         fetchAuthorName();
-    }, [review.participanteId]); // Executa apenas quando o ID do participante muda
+    }, [review.participanteId]);
+
+    // Verifica se o usuário logado é o autor da review
+    const isOwner = currentUser?.id === review.participanteId;
 
     return (
         <div className="review-item">
-            <p className="review-nota"><strong>Nota:</strong> {"⭐".repeat(review.nota)}</p>
+            <div className="review-header-item">
+                <p className="review-nota"><strong>Nota:</strong> {"⭐".repeat(review.nota)}</p>
+                {/* O botão de excluir só aparece se o usuário for o dono da review */}
+                {isOwner && (
+                    <button onClick={() => onDelete(review.id)} className="btn-delete-review" title="Excluir review">
+                        ❌
+                    </button>
+                )}
+            </div>
             <p className="review-comentario">"{review.comentario}"</p>
             <span className="review-author">- {authorName}</span>
         </div>
@@ -94,9 +109,12 @@ function PaginaEvento() {
     const [isLiking, setIsLiking] = useState(false);
     const [isHovering, setIsHovering] = useState(false);
     const { user, authFetch } = useAuth();
-
+    // Lógica para verificar se o usuário atual já fez uma review
+    const usuarioJaFezReview = evento?.reviews?.some(r => r.participanteId === user?.id) || false;
     // Deriva o estado de interesse diretamente do objeto 'evento'. Esta é a única fonte de verdade.
     const jaTemInteresse = evento?.participantesInteressados?.some(p => p.id === user?.id) || false;
+    // --- NOVO ESTADO PARA O HOVER DAS ESTRELAS ---
+    const [hoveredNota, setHoveredNota] = useState<number | null>(null);
 
     useEffect(() => {
         if (!id) return; // Se não houver ID, não faz nada
@@ -255,6 +273,35 @@ function PaginaEvento() {
         }
     };
 
+    // --- NOVA FUNÇÃO PARA DELETAR A REVIEW ---
+    const handleDeleteReview = async (reviewId: number) => {
+        // Guarda o estado original para o caso de erro
+        const originalReviews = evento?.reviews || [];
+
+        // Atualização otimista: remove a review da UI imediatamente
+        setEvento(prev => prev ? {
+            ...prev,
+            reviews: prev.reviews?.filter(r => r.id !== reviewId)
+        } : null);
+
+        try {
+            // A rota DELETE é em /api/reviews/{id}, não é um sub-recurso de evento
+            const response = await authFetch(`/proxy/api/reviews/${reviewId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error("Falha ao excluir a review.");
+            }
+            // Se a API funcionou, a UI já está correta.
+        } catch (error) {
+            alert(error instanceof Error ? error.message : "Erro ao excluir review.");
+            // Rollback: se a API falhar, restaura a review na UI
+            setEvento(prev => prev ? { ...prev, reviews: originalReviews } : null);
+        }
+    };
+
+
     if (loading) return <p>Carregando evento...</p>;
     if (error) return <p>Erro ao carregar evento: {error}</p>;
     if (!evento) return <p>Evento não encontrado.</p>;
@@ -316,8 +363,13 @@ function PaginaEvento() {
                         <div className="reviews-section">
                             <div className="reviews-header">
                                 <h2>Reviews</h2>
-                                {/* 4. O botão de Adicionar Review só aparece se o usuário for participante e não houver reviews */}
-                                {user && user.accountType === 'participante' && (!evento.reviews || evento.reviews.length === 0) && (
+                                {/* --- LÓGICA DO BOTÃO CORRIGIDA --- */}
+                                {/* O botão só aparece se:
+                                    1. O usuário é um participante
+                                    2. Ele já demonstrou interesse no evento
+                                    3. Ele ainda não fez uma review para este evento
+                                */}
+                                {user && user.accountType === 'participante' && jaTemInteresse && !usuarioJaFezReview && (
                                     <button onClick={() => setReviewModalOpen(true)} className="btn-add-review">
                                         Adicionar Review
                                     </button>
@@ -326,22 +378,18 @@ function PaginaEvento() {
 
                             {evento.reviews && evento.reviews.length > 0 ? (
                                 <div className="reviews-list">
-                                    {/* Mapeia cada review para o novo componente ReviewItem */}
+                                    {/* Mapeia as reviews, passando o usuário atual e a função de deletar */}
                                     {evento.reviews.map(review => (
-                                        <ReviewItem key={review.id} review={review} />
+                                        <ReviewItem
+                                            key={review.id}
+                                            review={review}
+                                            currentUser={user}
+                                            onDelete={handleDeleteReview}
+                                        />
                                     ))}
                                 </div>
                             ) : (
-                                // Se não houver reviews, verificamos o tipo de usuário aqui:
-                                // A condição é: "O usuário está logado E seu papel é 'participante'?"
-                                user && user.accountType === 'organizador' ? (
-                                    <p>Nenhuma review ainda :(</p>
-                                ) : ( user && user.accountType === 'participante' ? (
-                                        <p>Nenhuma review ainda. Deixe a sua!</p>
-                                    ) : (
-                                        <p>Nenhuma review ainda, logue para deixar sua review</p>
-                                    )
-                                )
+                                <p>Nenhuma review ainda.</p>
                             )}
                         </div>
                     </div>
@@ -360,8 +408,10 @@ function PaginaEvento() {
                                     {[1, 2, 3, 4, 5].map(star => (
                                         <span
                                             key={star}
-                                            className={star <= nota ? 'star-filled' : 'star-empty'}
+                                            className={`${star <= (hoveredNota || nota) ? (star <= nota ? 'star-filled' : 'star-hover') : 'star-empty'}`}
                                             onClick={() => setNota(star)}
+                                            onMouseEnter={() => setHoveredNota(star)}
+                                            onMouseLeave={() => setHoveredNota(null)}
                                         >
                                             ⭐
                                         </span>
