@@ -95,8 +95,7 @@ fun Application.configureRouting() {
                                 call.respondText(e.message ?: "Evento não encontrado", status = HttpStatusCode.NotFound)
                             }
                         }
-                    }
-                    authenticate {
+
                         delete {
                             val id = call.parameters["id"]?.toLongOrNull()
                                 ?: return@delete call.respondText("ID inválido", status = HttpStatusCode.BadRequest)
