@@ -362,10 +362,9 @@ fun Application.configureRouting() {
                                     evento = evento,
                                     nota = reviewReq.nota,
                                     comentario = reviewReq.comentario
-                                ) ?: return@post call.respondText(
-
-                                    "Erro ao criar review",
+                                ) ?: return@post call.respond(
                                     status = HttpStatusCode.Forbidden,
+                                    mapOf("message" to "Review só pode ser feita até 48 horas depois do evento.")
                                 )
 
                                 val reviewSalva = reviewRepository.create(novaReview)

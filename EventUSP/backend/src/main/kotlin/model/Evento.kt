@@ -98,7 +98,7 @@ class Evento(
         if (participantesInteressados.none { it.id == participante.id }) return null
 
         // Verifica se já se passaram 48 horas desde o fim do evento
-//        if (!passaram48HorasDesdeOFim()) return null
+        if (!passaram48HorasDesdeOFim()) return null
 
         val review = Review(
             eventoId = this.id!!,

@@ -109,8 +109,8 @@ object DatabaseSeeder {
                             "diversão! ❤\uFE0F\uD83E\uDD0D❤\uFE0F\uD83E\uDD0D\n" +
                             "Aguardamos vocês todes a caráter e muito alegres para curtimos muito! \uD83E\uDD29\uD83E\uDD20",
                     // Coloca para o dia anterior para permitir que as reviews sejam cadastradas
-//                        dataHora = LocalDateTime.now().minusDays(1),
-                    dataHora = LocalDateTime.now().plusDays(10).withHour(18).withMinute(0),
+                        dataHora = LocalDateTime.now().minusDays(1),
+//                    dataHora = LocalDateTime.now().minuDays(10).withHour(18).withMinute(0),
                     localizacao = "Estacionamento do bloco B do IME",
                     categoria = "Festa",
                     organizador = organizadorAAAMAT,
@@ -161,7 +161,7 @@ object DatabaseSeeder {
                 Evento(
                     titulo = "FAU Junina",
                     descricao = "Descrição gigante!",
-                    dataHora = LocalDateTime.now().plusDays(2).withHour(19).withMinute(0),
+                    dataHora = LocalDateTime.now().minusDays(1).withHour(19).withMinute(0),
                     localizacao = "Universidade de São Paulo - R. do Lago, 876 - Butantã, São Paulo - SP, 05508-080",
                     categoria = "Cultural",
                     organizador = organizador1,
@@ -174,7 +174,7 @@ object DatabaseSeeder {
                         titulo = "Copa USP de Natação",
                         descricao = "VENHAM APOIAR SEUS ATLETAS!!\nAtléticas Participantes:\n" +
                                 "- IME\n - POLI\n- FEA\n- SANFRAN\n- ECA\n- FAU\n- EACH\n- IRI",
-                        dataHora = LocalDateTime.now().plusDays(5).withHour(19).withMinute(0),
+                        dataHora = LocalDateTime.now().minusDays(1).withHour(19).withMinute(0),
                         localizacao = "Av. Ibirapuera, 1315 - Vila Clementino, São Paulo - SP, 04029-000",
                         categoria = "Esportivo",
                         organizador = organizador1,
@@ -341,7 +341,7 @@ object DatabaseSeeder {
             }
 
                 // Volta para a data real
-                eventoJunIME.dataHora = LocalDateTime.parse("2026-07-13T18:00:00")
+                eventoJunIME.dataHora = LocalDateTime.parse("2026-07-07T18:00:00")
                 eventoJunIME.numeroLikes = eventoJunIME.participantesInteressados.size
                 eventoRepo.update(eventoJunIME)
 
